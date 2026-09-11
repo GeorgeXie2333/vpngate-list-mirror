@@ -7,7 +7,7 @@ A public HTTPS mirror of the server directory returned by the
 Anyone can download the directory and its complete public OpenVPN configurations:
 no login, registration, API key, or consumer-side GitHub token is required.
 
-GitHub Actions attempts a refresh at minute **17 of every hour (UTC)**. A complete,
+GitHub Actions attempts a refresh **every 4 hours**, at minute **17 (UTC)**. A complete,
 validated response is committed to Git. GitHub Raw serves a small version index;
 jsDelivr distributes files pinned to one full data commit SHA.
 
@@ -42,7 +42,7 @@ in this table use `@latest`:
 These are convenient download links and may serve cached data. `@latest` resolves
 to the latest semver release, falling back to the default branch when there are
 no tagged releases ([jsDelivr resolution rules](https://github.com/jsdelivr/jsdelivr#github)).
-It does not guarantee hourly freshness or a consistent snapshot across files
+It does not guarantee freshness on this schedule or a consistent snapshot across files
 or endpoints. Use the index workflow below when those properties matter.
 
 | File | Contents |
@@ -93,11 +93,11 @@ GitHub Raw is also cached. An anonymous header probe on 2026-09-11 observed
 Browser `cache: "no-store"` controls browser caching, not every upstream cache.
 [GitHub scheduling](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 can be delayed or dropped under load, and public-repository schedules can be
-disabled after 60 days without activity. There is no strict hourly publication
+disabled after 60 days without activity. There is no strict publication deadline
 or worldwide CDN visibility guarantee.
 
 Consumers can poll the small index every 10–15 minutes with jitter. Suggested
-age indicators are 3 hours for stale and 24 hours for very stale; consumers
+age indicators are 12 hours for stale and 24 hours for very stale; consumers
 choose their own thresholds. Reject older indexes when a newer verified index
 is already cached. On an unsupported schema, retain the previous data and
 report the incompatibility. A node absent from the next snapshot is removed

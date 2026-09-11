@@ -199,7 +199,7 @@ if (typeof process !== "undefined" && process.versions?.node && process.argv[1])
       await rename(temporary, target);
       temporary = null;
       console.log(`Verified ${snapshot.index.server_count} nodes; fetched ${snapshot.index.fetched_at}; data ${snapshot.index.data_commit}`);
-      if (Date.now() - timestamp(snapshot.index.fetched_at) > 3 * 3600000) console.warn("Snapshot is older than 3 hours");
+      if (Date.now() - timestamp(snapshot.index.fetched_at) > 12 * 3600000) console.warn("Snapshot is older than 12 hours");
       console.log(`Saved ${output}; configuration was not executed`);
     } catch (error) {
       console.error(`Refresh/export failed: ${error.message}; previous output was retained`);

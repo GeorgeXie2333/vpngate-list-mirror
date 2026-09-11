@@ -8,7 +8,7 @@ Keep the repository public and set `main` as its default branch. Enable Actions
 and allow the pinned official `actions/checkout` and `actions/setup-python`
 actions on standard GitHub-hosted Ubuntu runners. Default token permissions may
 remain read-only; only the `publish` job in `sync.yml` requests `contents: write`.
-Do not enable paid/larger runners or upload hourly snapshot artifacts.
+Do not enable paid/larger runners or upload snapshot artifacts on each run.
 
 The target branch must allow normal fast-forward pushes by the job's built-in
 `GITHUB_TOKEN`. Mandatory PRs, signatures or checks that the token cannot satisfy
@@ -32,8 +32,9 @@ gh workflow run sync.yml --repo GeorgeXie2333/vpngate-list-mirror --ref main
 gh run list --repo GeorgeXie2333/vpngate-list-mirror --workflow sync.yml --limit 5
 ```
 
-The cron expression is `17 * * * *` (UTC). The workflow file must exist on the
-default branch, and scheduled workflows only run there. Manual publication from
+The cron expression is `17 */4 * * *`: every four hours at 00:17, 04:17, 08:17,
+12:17, 16:17 and 20:17 UTC (six runs per day). The workflow file must exist on
+the default branch, and scheduled workflows only run there. Manual publication from
 other refs is skipped. `concurrency: vpngate-sync` and
 `cancel-in-progress: false` prevent active scheduled/manual runs from replacing
 each other. GitHub may replace older pending runs, delay scheduled work, or drop
@@ -123,9 +124,9 @@ checked again if browser access changes; they are not controlled by this repo.
 ## History and dependency maintenance
 
 The 2026-09-11 implementation check returned 100 nodes: 1,347,159 CSV bytes,
-1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. At hourly
-changes that is 8,760 snapshots / 17,520 commits and roughly 24 GB of logical
-uncompressed file versions per year. This is **not** an estimate of the actual
+1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. If all six daily
+runs succeed with changed data, that is 2,190 snapshots / 4,380 commits and roughly
+6 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
 Git pack: cross-file compression and deltas depend on real content and order.
 
 Record repository size after 7 and 30 days and review monthly. The GitHub repo

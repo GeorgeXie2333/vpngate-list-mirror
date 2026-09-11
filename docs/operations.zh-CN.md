@@ -6,7 +6,7 @@
 
 仓库保持公开，默认分支设为 `main`，启用 Actions 并允许固定 SHA 的官方 checkout 和
 setup-python Action，使用标准托管 Ubuntu runner。全局默认令牌可继续只读，只有
-`sync.yml` 的发布 job 请求 `contents: write`。不需要更大付费 runner 或每小时上传数据 artifact。
+`sync.yml` 的发布 job 请求 `contents: write`。不需要更大付费 runner 或每次运行都上传数据 artifact。
 
 目标分支必须允许内置 `GITHUB_TOKEN` 正常快进推送。无法满足的强制 PR、签名或状态检查
 会阻止发布，不要通过允许 force-push 绕过。若组织要求代码分支仅可通过 PR 修改，应评审后
@@ -23,7 +23,8 @@ gh workflow run sync.yml --repo GeorgeXie2333/vpngate-list-mirror --ref main
 gh run list --repo GeorgeXie2333/vpngate-list-mirror --workflow sync.yml --limit 5
 ```
 
-调度表达式 `17 * * * *` 使用 UTC；文件必须位于默认分支，计划任务只在默认分支运行。
+调度表达式 `17 */4 * * *` 使用 UTC，每 4 小时执行一次，即每天 00:17、04:17、08:17、
+12:17、16:17、20:17，共 6 次。文件必须位于默认分支，计划任务只在默认分支运行。
 非 `main` 的手动发布被跳过。固定 concurrency group 配合 `cancel-in-progress: false`
 避免活动中的定时与手动同步互相覆盖，但 GitHub 可能替换旧的待运行任务。
 繁忙时调度可能延迟或丢弃；公开仓库连续 60 天无活动时可自动停用，需要到 Actions 重新启用。
@@ -91,8 +92,8 @@ Web Crypto 校验。确认响应可读取而非 opaque，三个数据文件和�
 ## 历史与依赖维护
 
 2026-09-11 实现检查返回 100 个节点：CSV 1,347,159 字节，节点 JSON 1,384,056 字节，
-国家 JSON 1,297 字节，合计约 2.73 MB。若每小时都有变化，一年约 8,760 次快照、
-17,520 个提交，未压缩文件版本逻辑累计约 24 GB。这不是实际 Git pack 大小；压缩和差分
+国家 JSON 1,297 字节，合计约 2.73 MB。若每天 6 次都成功且数据有变化，按一年 365 天计算，
+约 2,190 次快照、4,380 个提交，未压缩文件版本逻辑累计约 6 GB。这不是实际 Git pack 大小；压缩和差分
 收益取决于真实内容与排列，不能预先保证比例。
 
 运行后第 7、30 天记录体积，之后每月检查。GitHub 仓库 API 的 size 为近似 KiB；
