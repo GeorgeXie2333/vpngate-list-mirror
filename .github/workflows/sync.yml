@@ -26,11 +26,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version-file: .python-version
-      - name: Verify offline invariants before publication
-        run: |
-          python -m unittest discover -s tests -v
-          node --test tests/test_consumer.mjs
-      - name: Fetch, validate, publish and probe
+      - name: Check code, fetch, validate, publish and probe
         env:
           GH_TOKEN: ${{ github.token }}
         run: python -m mirror sync

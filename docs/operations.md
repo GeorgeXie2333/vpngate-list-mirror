@@ -49,8 +49,10 @@ publishing. Ordinary PR and push checks use only offline fixtures.
 
 ## Publication transaction
 
-The sync job runs offline checks, fetches one complete source response and
-generates deterministic data in memory. It clones only the publication branch
+The sync command runs the full Python and JavaScript offline suites alongside
+one source fetch. Both suites must pass and the fetch must succeed before data
+generation or publication; test subprocesses receive no publication token.
+It generates deterministic data in memory and clones only the publication branch
 tip into its own temporary checkout. A code/schema/data change since the tested
 source revision stops publication; documentation-only movement can be retained.
 Only the three allowed data files and `latest.json` are staged.
@@ -93,11 +95,14 @@ Read these separately in the Actions summary:
 | `fetched_at` | Source response finished and passed validation |
 | `data_changed` / file sizes / counts | Differences and scope of this response |
 | `push_confirmed_at` | GitHub accepted the publication ref update, or its success was subsequently confirmed |
+| `durations_seconds` | Elapsed time for checks/fetch, validation, publication, visibility probes and the command total; excludes runner queuing/setup |
 | `visibility_probes[path].cdn.verified_at` | This runner downloaded and verified this exact SHA file through CDN |
 | `visibility_probes[path].raw.verified_at` | Same check through Raw fallback |
 
 New SHA URLs are only probed after push, avoiding intentional pre-publication
-404 requests. A failed CDN probe does not undo valid Git data; the summary
+404 requests. All six CDN/Raw downloads run concurrently; each retains its size
+limit, timeout and complete SHA-256 check, and failures are reported separately.
+A failed CDN probe does not undo valid Git data; the summary
 reports a warning and the Raw result. These are observations from one network
 location, not the time every CDN edge became visible. A pushed snapshot can
 temporarily be unavailable to a particular client, which retains its old cache.
