@@ -32,8 +32,8 @@ gh workflow run sync.yml --repo GeorgeXie2333/vpngate-list-mirror --ref main
 gh run list --repo GeorgeXie2333/vpngate-list-mirror --workflow sync.yml --limit 5
 ```
 
-The cron expression is `17 */4 * * *`: every four hours at 00:17, 04:17, 08:17,
-12:17, 16:17 and 20:17 UTC (six runs per day). The workflow file must exist on
+The cron expression is `59 * * * *`: minute 59 of every hour in UTC
+(24 runs per day). The workflow file must exist on
 the default branch, and scheduled workflows only run there. Manual publication from
 other refs is skipped. `concurrency: vpngate-sync` and
 `cancel-in-progress: false` prevent active scheduled/manual runs from replacing
@@ -129,9 +129,9 @@ checked again if browser access changes; they are not controlled by this repo.
 ## History and dependency maintenance
 
 The 2026-09-11 implementation check returned 100 nodes: 1,347,159 CSV bytes,
-1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. If all six daily
-runs succeed with changed data, that is 2,190 snapshots / 4,380 commits and roughly
-6 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
+1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. If all 24 daily
+runs succeed with changed data, that is 8,760 snapshots / 17,520 commits and roughly
+24 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
 Git pack: cross-file compression and deltas depend on real content and order.
 
 Record repository size after 7 and 30 days and review monthly. The GitHub repo

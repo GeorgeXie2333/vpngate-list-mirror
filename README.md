@@ -7,7 +7,7 @@ A public HTTPS mirror of the server directory returned by the
 Anyone can download the directory and its complete public OpenVPN configurations:
 no login, registration, API key, or consumer-side GitHub token is required.
 
-GitHub Actions attempts a refresh **every 4 hours**, at minute **17 (UTC)**. A complete,
+GitHub Actions attempts a refresh at minute **59 of every hour (UTC)**. A complete,
 validated response is committed to Git. GitHub Raw serves a small version index;
 jsDelivr distributes files pinned to one full data commit SHA.
 
@@ -97,7 +97,7 @@ disabled after 60 days without activity. There is no strict publication deadline
 or worldwide CDN visibility guarantee.
 
 Consumers can poll the small index every 10–15 minutes with jitter. Suggested
-age indicators are 12 hours for stale and 24 hours for very stale; consumers
+age indicators are 3 hours for stale and 24 hours for very stale; consumers
 choose their own thresholds. Reject older indexes when a newer verified index
 is already cached. On an unsupported schema, retain the previous data and
 report the incompatibility. A node absent from the next snapshot is removed

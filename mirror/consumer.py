@@ -159,7 +159,7 @@ def main(argv=None):
         index, files = load_snapshot(args.repo, cache=args.cache, index_file=args.index_file,
                                      max_age_hours=args.max_age_hours)
         age = check_freshness(index)
-        if age > 12:
+        if age > 3:
             print(f"Warning: last successful fetch was {age:.1f} hours ago", file=sys.stderr)
         servers = parse_json(files["data/servers.json"])["servers"]
         selected = next((server for server in servers if server["country_code"] == args.country.upper()), None)
