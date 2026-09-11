@@ -1,6 +1,6 @@
 # VPN Gate directory mirror
 
-[中文说明](README.zh-CN.md) · [Data protocol](docs/protocol.md) · [Operations](docs/operations.md)
+[中文说明](README.zh-CN.md) · [Data protocol](docs/protocol.md) · [Operations](docs/operations.md) · [Initial verification](docs/verification.md)
 
 A public HTTPS mirror of the server directory returned by the
 [official VPN Gate CSV API](https://www.vpngate.net/api/iphone/).

@@ -1,6 +1,6 @@
 # VPN Gate 服务器目录镜像
 
-[English](README.md) · [数据协议](docs/protocol.zh-CN.md) · [运维说明](docs/operations.zh-CN.md)
+[English](README.md) · [数据协议](docs/protocol.zh-CN.md) · [运维说明](docs/operations.zh-CN.md) · [首次验收](docs/verification.md)
 
 公开镜像[官方 CSV API](https://www.vpngate.net/api/iphone/) 实际返回的服务器目录。
 任何用户、开发者或自动化工具都可以通过 HTTPS 下载清单及完整公开 OpenVPN 配置，
