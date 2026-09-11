@@ -20,21 +20,30 @@ a connection will succeed.
 
 ## Public downloads
 
-Start with the [latest successful snapshot index](https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json).
-Read `data_commit` from that response and replace `COMMIT` below with its **full
-40-character value**. These templates are public; they need no credentials.
+The default download links use `@latest` and need no credentials:
 
 ```text
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/vpngate.csv
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/servers.json
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/countries.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json
 ```
 
-Same-commit GitHub Raw fallback (replace the file name as needed):
+Choose another jsDelivr endpoint if it works better on your network. All links
+in this table use `@latest`:
 
-```text
-https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/servers.json
-```
+| Endpoint | Servers JSON | Original CSV | Countries JSON |
+| --- | --- | --- | --- |
+| jsDelivr default (`cdn.jsdelivr.net`) | [JSON](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [Countries](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| jsDelivr Fastly (`fastly.jsdelivr.net`) | [JSON](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [Countries](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| jsDelivr Gcore (`gcore.jsdelivr.net`) | [JSON](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [Countries](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| `testingcf.jsdelivr.net` | [JSON](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [Countries](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| `quantil.jsdelivr.net` | [JSON](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [Countries](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+
+These are convenient download links and may serve cached data. `@latest` resolves
+to the latest semver release, falling back to the default branch when there are
+no tagged releases ([jsDelivr resolution rules](https://github.com/jsdelivr/jsdelivr#github)).
+It does not guarantee hourly freshness or a consistent snapshot across files
+or endpoints. Use the index workflow below when those properties matter.
 
 | File | Contents |
 | --- | --- |
@@ -48,6 +57,17 @@ is convenient for manual inspection but can lag behind the index. It is not the
 version-discovery endpoint.
 
 ## Refresh and consistency
+
+Read the [latest successful snapshot index](https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json)
+and replace `COMMIT` with its `data_commit`, using the **full 40-character SHA**:
+
+```text
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/servers.json
+https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/servers.json
+```
+
+The second URL is the same-commit GitHub Raw fallback. Replace the file name for
+CSV or countries; the CDN hostname may also be replaced with one from the table.
 
 1. Fetch `latest.json` once and validate the supported `schema_version`.
 2. Keep its `data_commit` fixed while downloading all required files.
@@ -93,8 +113,18 @@ The repository's Python examples use Python 3.13+ and its standard library. The
 JavaScript example needs Node.js 22+ or a browser with Fetch and Web Crypto on
 HTTPS. All examples only save/decode configurations; none starts a VPN.
 
-From a public checkout, curl can fetch the index and Python can verify the
-snapshot, select Japan and write the unchanged configuration:
+Quick download with the default `@latest` URL (subject to the caching above):
+
+```bash
+curl --fail --silent --show-error --location --max-time 30 \
+  --max-filesize 16777216 --proto '=https' --proto-redir '=https' \
+  https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json \
+  --output servers.download.json
+```
+
+For a verified snapshot, the following examples use the Raw index and full
+commit SHA. From a public checkout, curl fetches the index and Python verifies
+the snapshot, selects Japan and writes the unchanged configuration:
 
 ```bash
 curl --fail --silent --show-error --location --max-time 30 \
@@ -158,8 +188,11 @@ async function refresh() {
 await refresh(); // handle rejection in your UI; current remains intact
 ```
 
-Both download hosts support anonymous cross-origin GET in the observed responses
-(`Access-Control-Allow-Origin: *`). The browser example uses `credentials: "omit"`
+The default CDN and GitHub Raw support anonymous cross-origin GET in the observed
+responses (`Access-Control-Allow-Origin: *`). An anonymous probe of
+`countries.json` on 2026-09-11 also returned HTTP 200 and that CORS header from
+all five CDN endpoints above; availability can vary by network and time.
+The browser example uses `credentials: "omit"`
 and no authorization or custom conditional headers. Raw may return JSON as
 `text/plain`; parsing after byte verification works regardless. A non-exposed
 ETag is not required. The JavaScript module verifies all three file hashes,

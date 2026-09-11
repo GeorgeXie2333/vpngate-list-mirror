@@ -14,20 +14,28 @@ GitHub Raw 提供小型版本索引，jsDelivr 按完整数据提交 SHA 分发�
 
 ## 公开下载
 
-先读取[最新成功快照索引](https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json)，
-再用其中 `data_commit` 的 **完整 40 位 SHA** 替换以下 `COMMIT`：
+默认下载地址使用 `@latest`，可直接复制，无需任何凭据：
 
 ```text
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/vpngate.csv
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/servers.json
-https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/countries.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json
 ```
 
-同一提交的 GitHub Raw 回退地址，另外两个文件只需替换文件名：
+可按网络情况选择以下 jsDelivr 入口，表内链接均使用 `@latest`：
 
-```text
-https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/servers.json
-```
+| 入口 | 节点 JSON | 原始 CSV | 国家 JSON |
+| --- | --- | --- | --- |
+| jsDelivr 默认（`cdn.jsdelivr.net`） | [JSON](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [国家](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| jsDelivr Fastly（`fastly.jsdelivr.net`） | [JSON](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [国家](https://fastly.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| jsDelivr Gcore（`gcore.jsdelivr.net`） | [JSON](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [国家](https://gcore.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| `testingcf.jsdelivr.net` | [JSON](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [国家](https://testingcf.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+| `quantil.jsdelivr.net` | [JSON](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json) | [CSV](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/vpngate.csv) | [国家](https://quantil.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countries.json) |
+
+这些链接方便直接下载，但可能返回缓存数据。`@latest` 指向最新语义化版本发布；
+没有标签发布时回退到默认分支，详见 [jsDelivr 解析规则](https://github.com/jsdelivr/jsdelivr#github)。
+它不保证每小时刷新，也不保证不同文件或入口返回同一快照。
+需要判断新鲜度并校验完整性时，使用下方的索引流程。
 
 | 文件 | 内容 |
 | --- | --- |
@@ -40,6 +48,17 @@ https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/
 仅方便人工查看，可能有缓存延迟，不用于发现最新版本。
 
 ## 新鲜度与一致性
+
+读取[最新成功快照索引](https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json)，
+用其中 `data_commit` 的 **完整 40 位 SHA** 替换 `COMMIT`：
+
+```text
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/servers.json
+https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/servers.json
+```
+
+第二个地址是同一提交的 GitHub Raw 回退入口。下载 CSV 或国家列表时替换文件名；
+CDN 域名也可以换成上表中的其他入口。
 
 1. 一次读取索引，检查支持的 `schema_version`。
 2. 固定该索引的 `data_commit`，下载所需文件。
@@ -68,7 +87,17 @@ SHA-256 用于完整性与跨文件一致性，**不是独立来源认证**。
 
 ## 使用示例
 
-公开克隆本仓库后执行；Python 示例使用 Python 3.13+ 标准库，不需要 pip 包或 `jq`。
+默认 `@latest` 快速下载示例，缓存行为见上文：
+
+```bash
+curl --fail --silent --show-error --location --max-time 30 \
+  --max-filesize 16777216 --proto '=https' --proto-redir '=https' \
+  https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/servers.json \
+  --output servers.download.json
+```
+
+以下完整校验示例使用 Raw 索引和完整提交 SHA。公开克隆本仓库后执行；
+Python 使用 Python 3.13+ 标准库，不需要 pip 包或 `jq`。
 Windows 使用 `curl.exe` 和已安装的 Python 命令。
 
 ```bash
@@ -127,7 +156,9 @@ async function refresh() {
 await refresh(); // 在界面中处理异常并展示旧缓存时间
 ```
 
-两个下载域名的匿名请求观测到 `Access-Control-Allow-Origin: *`。
+默认 CDN 和 GitHub Raw 的匿名请求观测到 `Access-Control-Allow-Origin: *`。
+2026-09-11 对上表五个 CDN 入口的 `countries.json` 匿名检查也均返回 HTTP 200 和该跨域响应头；
+实际可用性仍随网络和时间变化。
 浏览器使用 `credentials: "omit"`，不携带认证或自定义条件请求头。
 Raw 可能以 `text/plain` 返回 JSON，字节校验后正常解析即可；无需读取未暴露的 ETag。
 JavaScript 会验证三个文件的哈希、节点 ID、配置和国家统计；Python 还会从原始 CSV
