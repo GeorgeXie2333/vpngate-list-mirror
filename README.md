@@ -1,0 +1,194 @@
+# VPN Gate directory mirror
+
+[中文说明](README.zh-CN.md) · [Data protocol](docs/protocol.md) · [Operations](docs/operations.md)
+
+A public HTTPS mirror of the server directory returned by the
+[official VPN Gate CSV API](https://www.vpngate.net/api/iphone/).
+Anyone can download the directory and its complete public OpenVPN configurations:
+no login, registration, API key, or consumer-side GitHub token is required.
+
+GitHub Actions attempts a refresh at minute **17 of every hour (UTC)**. A complete,
+validated response is committed to Git. GitHub Raw serves a small version index;
+jsDelivr distributes files pinned to one full data commit SHA.
+
+This mirrors the API response, not every VPN Gate server worldwide. Scores,
+Ping, speed, country information, and session counts come from upstream. This
+project does not measure node performance or verify that a node is online.
+It does not connect to a VPN, execute configuration directives, create a TUN
+interface, or change system networking. Directory updates do not guarantee that
+a connection will succeed.
+
+## Public downloads
+
+Start with the [latest successful snapshot index](https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json).
+Read `data_commit` from that response and replace `COMMIT` below with its **full
+40-character value**. These templates are public; they need no credentials.
+
+```text
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/vpngate.csv
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/servers.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@COMMIT/data/countries.json
+```
+
+Same-commit GitHub Raw fallback (replace the file name as needed):
+
+```text
+https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/COMMIT/data/servers.json
+```
+
+| File | Contents |
+| --- | --- |
+| `data/vpngate.csv` | Original UTF-8 CSV response bytes, including markers, all columns and full Base64 configurations |
+| `data/servers.json` | Normalized unique nodes, upstream metrics, country fields and complete Base64 configurations |
+| `data/countries.json` | Country/region groups, original names and unique node counts |
+| `latest.json` | Schema version, successful fetch time, generation times, data commit, SHA-256 hashes, byte sizes and counts |
+
+The [fixed branch JSON link](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@main/data/servers.json)
+is convenient for manual inspection but can lag behind the index. It is not the
+version-discovery endpoint.
+
+## Refresh and consistency
+
+1. Fetch `latest.json` once and validate the supported `schema_version`.
+2. Keep its `data_commit` fixed while downloading all required files.
+3. Check the exact response byte lengths and SHA-256 hashes before parsing or
+   using the data. Do not hash reserialized JSON.
+4. On CDN failure, try GitHub Raw at the **same commit**.
+5. Validate counts and snapshot references, then replace the local snapshot as a
+   whole. Retain the last verified cache if any required file fails.
+
+`fetched_at` is this mirror's most recent successful retrieval, not an upstream
+directory update time. `source_updated_at` is `null` when upstream does not
+provide a reliable value. An unchanged successful response renews `fetched_at`
+in the small index while retaining the same data commit and large-file blobs.
+
+The [jsDelivr documentation](https://github.com/jsdelivr/jsdelivr#caching) specifies
+12-hour branch caching, 7-day version-alias caching (including `latest`), and
+long-lived immutable commit content. `@main`, `@latest`, timestamps in query
+parameters and purge requests are not the consistency mechanism. Purge is not
+required or used.
+
+GitHub Raw is also cached. An anonymous header probe on 2026-09-11 observed
+`Cache-Control: max-age=300`; this is not a contractual refresh deadline.
+Browser `cache: "no-store"` controls browser caching, not every upstream cache.
+[GitHub scheduling](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+can be delayed or dropped under load, and public-repository schedules can be
+disabled after 60 days without activity. There is no strict hourly publication
+or worldwide CDN visibility guarantee.
+
+Consumers can poll the small index every 10–15 minutes with jitter. Suggested
+age indicators are 3 hours for stale and 24 hours for very stale; consumers
+choose their own thresholds. Reject older indexes when a newer verified index
+is already cached. On an unsupported schema, retain the previous data and
+report the incompatibility. A node absent from the next snapshot is removed
+from the current directory; its disappearance does not prove it is offline.
+
+SHA-256 provides integrity and cross-file consistency. It is **not independent
+source authentication**, because the index and files are distributed through
+the same project's publication chain.
+
+## Examples
+
+The repository's Python examples use Python 3.13+ and its standard library. The
+JavaScript example needs Node.js 22+ or a browser with Fetch and Web Crypto on
+HTTPS. All examples only save/decode configurations; none starts a VPN.
+
+From a public checkout, curl can fetch the index and Python can verify the
+snapshot, select Japan and write the unchanged configuration:
+
+```bash
+curl --fail --silent --show-error --location --max-time 30 \
+  --max-filesize 65536 --proto '=https' --proto-redir '=https' \
+  https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/latest.json \
+  --output latest.download.json
+
+python3 examples/consume.py --index-file latest.download.json \
+  --country JP --output selected.ovpn
+
+# Or run the combined curl/Python script:
+bash examples/consume.sh JP selected.ovpn
+```
+
+On Windows use `curl.exe` and an installed Python executable. No `jq`, pip
+packages, login or API token is needed. Python uses a version directory and one
+atomic `current.json` pointer in `.cache/vpngate`. Use one writer per cache
+directory. Optional `--max-age-hours 24` rejects an excessively old snapshot
+before installing it. An unsuccessful refresh exits nonzero and retains the
+last successful cache; a failed selection does not overwrite the output file.
+
+Python API, from the repository root:
+
+```python
+from pathlib import Path
+from mirror.consumer import load_snapshot
+from mirror.snapshot import parse_json
+from mirror.validate import decode_config
+
+index, files = load_snapshot("GeorgeXie2333/vpngate-list-mirror")
+servers = parse_json(files["data/servers.json"])["servers"]
+japan = [server for server in servers if server["country_code"] == "JP"]
+if japan:
+    Path("selected.ovpn").write_bytes(decode_config(japan[0]["openvpn_config_base64"]))
+print(index["fetched_at"], index["data_commit"])
+```
+
+JavaScript CLI:
+
+```bash
+node examples/consume.mjs JP selected.ovpn
+```
+
+JavaScript in an HTTPS page that serves a copy of `examples/consume.mjs`:
+
+```javascript
+import { loadSnapshot, decodeConfig } from "./examples/consume.mjs";
+
+let current = null;
+async function refresh() {
+  const next = await loadSnapshot({ previous: current });
+  current = next; // one complete in-memory cache switch, only after verification
+  const japan = current.servers.filter(server => server.country_code === "JP");
+  if (japan.length) {
+    const config = new Blob([decodeConfig(japan[0])], {
+      type: "application/octet-stream"
+    });
+    console.log(current.index.fetched_at, japan.length, config.size);
+  }
+}
+await refresh(); // handle rejection in your UI; current remains intact
+```
+
+Both download hosts support anonymous cross-origin GET in the observed responses
+(`Access-Control-Allow-Origin: *`). The browser example uses `credentials: "omit"`
+and no authorization or custom conditional headers. Raw may return JSON as
+`text/plain`; parsing after byte verification works regardless. A non-exposed
+ETag is not required. The JavaScript module verifies all three file hashes,
+node IDs, configuration bytes and country totals before returning a new
+snapshot. Python additionally re-derives normalized values from the raw CSV.
+
+## Development and operation
+
+```bash
+python -m unittest discover -s tests -v
+node --test tests/test_consumer.mjs
+python -m mirror build --source-file tests/fixtures/normal.csv --output build/offline
+python -m mirror check-live  # optional HTTPS integration check; no publication
+python -m mirror verify     # verify a published checkout including latest.json
+```
+
+Default tests are offline. They cover quoting, empty values, duplicate and
+conflicting nodes, malformed Base64, truncation, empty directories, timeouts,
+size limits, old indexes, hash mismatches, mixed snapshots, failed cache
+replacement, publication races and an uncertain push acknowledgment.
+
+To refresh, open [Sync VPN Gate](https://github.com/GeorgeXie2333/vpngate-list-mirror/actions/workflows/sync.yml)
+and select **Run workflow** on `main`. Only its publication job has
+`contents: write`; PR checks are read-only. It uses the built-in `GITHUB_TOKEN`,
+never a personal access token. Official Actions are pinned to complete SHAs and
+updated through Dependabot PRs. The standard runner and short-lived working
+files need no server, database, Pages site, extra account or paid service.
+
+See [operations](docs/operations.md) for branch settings, troubleshooting,
+publication timestamps and history growth, and [CONTRIBUTING](CONTRIBUTING.md)
+for changes. The code is MIT-licensed; upstream directory data and configurations
+retain their own rights and notices. See [NOTICE](NOTICE).

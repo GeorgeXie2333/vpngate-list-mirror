@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "VPN Gate mirror index v1",
+  "required": [
+    "schema_version",
+    "source_url",
+    "source_updated_at",
+    "fetched_at",
+    "generated_at",
+    "index_generated_at",
+    "data_commit",
+    "source_record_count",
+    "server_count",
+    "country_count",
+    "files",
+    "workflow_run_url"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "source_url": {
+      "const": "https://www.vpngate.net/api/iphone/"
+    },
+    "source_updated_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "index_generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "data_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_record_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "server_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "country_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "files": {
+      "type": "object",
+      "required": [
+        "data/vpngate.csv",
+        "data/servers.json",
+        "data/countries.json"
+      ],
+      "properties": {
+        "data/vpngate.csv": {
+          "$ref": "#/$defs/file"
+        },
+        "data/servers.json": {
+          "$ref": "#/$defs/file"
+        },
+        "data/countries.json": {
+          "$ref": "#/$defs/file"
+        }
+      },
+      "additionalProperties": true
+    },
+    "workflow_run_url": {
+      "type": "string",
+      "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/actions/runs/[0-9]+$"
+    }
+  },
+  "$defs": {
+    "file": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "sha256",
+        "bytes",
+        "server_count"
+      ],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        },
+        "server_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      }
+    }
+  }
+}
