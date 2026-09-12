@@ -1,7 +1,7 @@
 {
   "kind": "vpngate-pool",
   "schema_version": 1,
-  "server_count": 668,
+  "server_count": 743,
   "servers": [
     {
       "config": {
@@ -90,7 +90,7 @@
       "hostname": "vpn682330402",
       "id": "v1:00e8cb3703f62233fd73bde65875e31791997a90d9448c07fbccbd40ce00f48f",
       "ip": "46.241.10.171",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 0,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "fde8d137a14d476e41d4dceee50d346a55c687f8d13b3dc7befd5961dec233ba",
@@ -103,7 +103,7 @@
           "port": 1243
         }
       ],
-      "score": 622429,
+      "score": 624886,
       "speed_bps": 64062958,
       "tcp_probe": {
         "checked_at": null,
@@ -415,7 +415,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "8499ca9d2a4de671682f61376ff92de6e64bb1e512d28b9941c097d68b353023",
       "ping_ms": 9,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 625877,
@@ -591,6 +591,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/842aa6b57fcfe2f7d0b485d8abae15ff4404500bfeaf070eace25aee4f8b8504.json",
+        "sha256": "569c7398df91dee0cf74a4ae186ff9645b9f6ad725d8199f007f307ccd3d6233"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn403790020",
+      "id": "v1:0467fce2b2438432f8d3a25c0712922ec763cb7faff6042a97fd74935bb90621",
+      "ip": "221.158.213.241",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 44,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "842aa6b57fcfe2f7d0b485d8abae15ff4404500bfeaf070eace25aee4f8b8504",
+      "ping_ms": 37,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "221.158.213.241",
+          "port": 1833
+        }
+      ],
+      "score": 1198417,
+      "speed_bps": 18762748,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/f60997ccf15a794e0f7a683403f35f20491c4c5e52d607c1c5a3cc099c2c43fd.json",
         "sha256": "15cc07716a6a42491afb18c6e879d4db67a30e1a21f99476da6a3a55c05c355e"
       },
@@ -605,7 +645,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "f60997ccf15a794e0f7a683403f35f20491c4c5e52d607c1c5a3cc099c2c43fd",
       "ping_ms": 15,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -645,7 +685,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "9eb469aabe1a87bbe5705237ecb0c49d9e68b2f83e0bbc521d30a446dc79c5e8",
       "ping_ms": 19,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -835,12 +875,12 @@
       "hostname": "vpn980909101",
       "id": "v1:06df3dddd618cba2e82314adea4e5468f6d434ce92b9c4b0cf6cb402671a8310",
       "ip": "58.188.112.80",
-      "last_seen_at": "2026-09-12T09:29:18.335Z",
-      "num_vpn_sessions": 42,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 24,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "5bc9f7cc6e850013d7e3a5df7f8e12b2503d3e03f02e468a7794a518d2b42057",
-      "ping_ms": 7,
-      "present_in_latest_source": false,
+      "ping_ms": 67,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -848,7 +888,7 @@
           "port": 443
         }
       ],
-      "score": 536549,
+      "score": 402795,
       "speed_bps": 3525541,
       "tcp_probe": {
         "checked_at": null,
@@ -945,6 +985,86 @@
     },
     {
       "config": {
+        "bytes": 13562,
+        "path": "pool/configs/0f9d4ea46a5c6aa193a4d40c680b4ea6f2c1f670e8581daa78c2fe5ce38c887b.json",
+        "sha256": "c320172f30f3a3439fc6e0ce786b43e93f7942385ae51736d5a63f6aa4ea4a30"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn240582959",
+      "id": "v1:0750f2a35c89648bace4be522ae4118e48d560d99b75f3f81fcf77f06a810fac",
+      "ip": "180.196.142.104",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 7,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "0f9d4ea46a5c6aa193a4d40c680b4ea6f2c1f670e8581daa78c2fe5ce38c887b",
+      "ping_ms": 5,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "180.196.142.104",
+          "port": 1517
+        }
+      ],
+      "score": 618186,
+      "speed_bps": 977221342,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/42d6380c6a0a09b697f2a15708c7efbf0ed4c474c235d6306bb380975f1265c4.json",
+        "sha256": "079ee4b9e16c4a55748a498238c8b36692efa917a448ea1f31354661c5abcbf4"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn425329581",
+      "id": "v1:0779bf6a9ab74e015a16c451aeb5b8b16caf90181342455904b59fce8c91f554",
+      "ip": "118.240.176.150",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 11,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "42d6380c6a0a09b697f2a15708c7efbf0ed4c474c235d6306bb380975f1265c4",
+      "ping_ms": 2,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "118.240.176.150",
+          "port": 1582
+        }
+      ],
+      "score": 714710,
+      "speed_bps": 477222657,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13558,
         "path": "pool/configs/f4c8a5722aa7c8811924d1114f89c6be9d8263df84684de83cae5a4cf5ddf1c1.json",
         "sha256": "018a2ae3fcd2dbe207d3765ee8236761a361bbf6f30b21ef17e72f29ee002d27"
@@ -960,7 +1080,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "f4c8a5722aa7c8811924d1114f89c6be9d8263df84684de83cae5a4cf5ddf1c1",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1030,11 +1150,11 @@
       "hostname": "vpn750532477",
       "id": "v1:0803e389c247292a9f37f6ebf560614f3969fe4b4df05a179892227ed2a69878",
       "ip": "98.188.162.135",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
-      "num_vpn_sessions": 63,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 30,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "1d554bafd7e1c89292e1df22c32f25ec7c660a6e419e6119c5117a7e493f7973",
-      "ping_ms": 23,
+      "ping_ms": 38,
       "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
@@ -1043,7 +1163,7 @@
           "port": 1254
         }
       ],
-      "score": 2202893,
+      "score": 1934174,
       "speed_bps": 50887524,
       "tcp_probe": {
         "checked_at": null,
@@ -1150,12 +1270,12 @@
       "hostname": "vpn715953533",
       "id": "v1:09e0816580641a69871220361db459294574118acea144ac7b8b2a3e3d6f78d0",
       "ip": "118.42.53.222",
-      "last_seen_at": "2026-09-12T08:59:15.250Z",
-      "num_vpn_sessions": 21,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 29,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "0bafc74d643e89a78c3f3c4e5b94bd690063712e5312e79771116552556c2c7e",
       "ping_ms": 29,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1163,8 +1283,8 @@
           "port": 995
         }
       ],
-      "score": 1192977,
-      "speed_bps": 79731249,
+      "score": 1221547,
+      "speed_bps": 63796494,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -1315,7 +1435,7 @@
       "openvpn_config_bytes": 10003,
       "openvpn_config_sha256": "791dd2d71a1c8c3fc522b54a64ac36de64d18672b7358be81a5ffef937c4752e",
       "ping_ms": 22,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1395,7 +1515,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "2b78e2f9d066cda8c2a39df28cc8b8983a9e9a03942990042bd3067ba29a822f",
       "ping_ms": 45,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1595,7 +1715,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "9ad3cc4188a8bc5b9c43cfdba21936b12a0773360da93daf3daef1c09948c4b4",
       "ping_ms": 15,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1645,6 +1765,46 @@
       ],
       "score": 780896,
       "speed_bps": 428631462,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/f2e400626a76d93bdf5634d626deaf126258c3c35052ac1bec5519b699c4aa0e.json",
+        "sha256": "ba23559acbb08406acd7eb62910db6776f671d79fcc675e42d857523e1c06364"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn634694743",
+      "id": "v1:0f5e9184bf88771488321b82e7d6eee4c6f710ed62bffcdb402714537f386ca8",
+      "ip": "61.98.36.106",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 3,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "f2e400626a76d93bdf5634d626deaf126258c3c35052ac1bec5519b699c4aa0e",
+      "ping_ms": 36,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "61.98.36.106",
+          "port": 1722
+        }
+      ],
+      "score": 523678,
+      "speed_bps": 92140996,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -1750,12 +1910,12 @@
       "hostname": "vpn212779120",
       "id": "v1:1078f40bf0edd1556373507a30ea2abdc3f2967230e6b725fb230511ed57d3fa",
       "ip": "218.158.29.38",
-      "last_seen_at": "2026-09-12T10:59:15.739Z",
-      "num_vpn_sessions": 10,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 13,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "be83ebb0cba0026bf33a432a30b216b37dd0c7aa2f53a75c535d07f1d638a274",
-      "ping_ms": 29,
-      "present_in_latest_source": false,
+      "ping_ms": 28,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -1763,8 +1923,48 @@
           "port": 1879
         }
       ],
-      "score": 640122,
-      "speed_bps": 426000319,
+      "score": 663680,
+      "speed_bps": 63350404,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/e13e196597b152d89dad9ca6de9ea10ce7be9b225c8a33c6ce77cdec9b8dc0c9.json",
+        "sha256": "00d732b1403063d02b7f588c8481a8e8a352074291b1a14a7412bb99c85a2a4f"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn997435699",
+      "id": "v1:109bebe97e24f1b7b2e78cfa6a7110b8ab3e7d0227f164db150df143220c90f9",
+      "ip": "119.193.204.120",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 14,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "e13e196597b152d89dad9ca6de9ea10ce7be9b225c8a33c6ce77cdec9b8dc0c9",
+      "ping_ms": 32,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "119.193.204.120",
+          "port": 995
+        }
+      ],
+      "score": 581794,
+      "speed_bps": 561564603,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -1936,6 +2136,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/cdb951470cb51981444d05247b2a866b0cb56bb0a712a7bc1a84d6f252601aa8.json",
+        "sha256": "3575a7cd2390fa6fa75249aa33e1f2da297c9912adecf141845de3fb846389e4"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-192",
+      "id": "v1:1299ff5be60e4383d504909b8654d85ae8ba5ef075cf0431b7ec204582146d00",
+      "ip": "219.100.37.209",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 305,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "cdb951470cb51981444d05247b2a866b0cb56bb0a712a7bc1a84d6f252601aa8",
+      "ping_ms": 25,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.209",
+          "port": 443
+        }
+      ],
+      "score": 1885671,
+      "speed_bps": 261852607,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/a9357d9bc55cb47fcbf0d03a00ea716648bcb497abd809536bfefc8230aa01e0.json",
         "sha256": "812ffe0ba9bd885f07af3cde6a6ebc0e208ac14a415402c376085db8fa772793"
       },
@@ -1990,7 +2230,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "7e2b6eb8ca1ff2d2b0f28371ab7591204b7509f26b8e02ffa262a47c56ae776a",
       "ping_ms": 18,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2300,7 +2540,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "4b9e1a23334d71af68d7bf6139ceb966376e637b8790da7788dff85a60b426ae",
       "ping_ms": 41,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2380,7 +2620,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "8159755e355fa261cf8b8eaf8a1bd7e3e7e5ebc8919ee9b90720bf6ab6804c55",
       "ping_ms": 2,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2490,12 +2730,12 @@
       "hostname": "public-vpn-111",
       "id": "v1:194b10833a3c146d147b360961a3203dfd3207cddfd2631164345f6a5cd18174",
       "ip": "219.100.37.59",
-      "last_seen_at": "2026-09-12T13:29:18.526Z",
-      "num_vpn_sessions": 43,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 37,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "ca8c3e4adb3f8cb0e8cfcde9cf95a831b75fdfba2c441f9108bef014d87cb2e3",
       "ping_ms": 8,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2503,7 +2743,7 @@
           "port": 443
         }
       ],
-      "score": 2494447,
+      "score": 2318448,
       "speed_bps": 287666552,
       "tcp_probe": {
         "checked_at": null,
@@ -2725,7 +2965,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "b7a89a8f59e351c8eb98af06ede0b75bb0c4fa156999ec5d41caac66cb7cb59d",
       "ping_ms": 19,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2765,7 +3005,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "eaa8ffe2fb1d2735ec49dd38f7352f834689829b296f93da3c063385c9afbe65",
       "ping_ms": 3,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -2845,7 +3085,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "629d6edf797e26346797cf12585b5d86f1e26af7269700543564d03cf757a1ab",
       "ping_ms": 37,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3031,6 +3271,86 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/706492d1b80a103938f65becea38c39400a6b507c2592172558675f1ec039622.json",
+        "sha256": "5106760f253ef799e854fc68f5a128223c75a1dc097eab0d01ae17f0b6942711"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn615376617",
+      "id": "v1:1dec3a3c6f45ca8134655bcf7ab82c02680bfd8a9444c037806f0605004af611",
+      "ip": "119.200.186.239",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 32,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "706492d1b80a103938f65becea38c39400a6b507c2592172558675f1ec039622",
+      "ping_ms": 29,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "119.200.186.239",
+          "port": 995
+        }
+      ],
+      "score": 1401766,
+      "speed_bps": 440486961,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/714983893bf7b9c913d92cacf47486141ca6421aa85fa201d4c74edc76503bc3.json",
+        "sha256": "fd57d990790536f90efc74aaa16a08f62b2819eca68d570f26162919a9a7c1e7"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-50",
+      "id": "v1:1df8e77fcceca38045036cc6080ca5a02d2b162a53b0ee517cd05122f8fbaf1f",
+      "ip": "219.100.37.14",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 74,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "714983893bf7b9c913d92cacf47486141ca6421aa85fa201d4c74edc76503bc3",
+      "ping_ms": 24,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.14",
+          "port": 443
+        }
+      ],
+      "score": 1959987,
+      "speed_bps": 293177233,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/4bc25f067d00750f94c8111ed69a411a6c173ffb55d57736c193a85ab851d938.json",
         "sha256": "273d1dfae1ebe57d9003aa1038a923526ab0a342bec61bc75a95a1e400e87028"
       },
@@ -3085,7 +3405,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "bfcb0b2ce05f5461e02210a25755f39b8799aa6274437284baa5b55dcea143b4",
       "ping_ms": 125,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 610854,
@@ -3115,12 +3435,12 @@
       "hostname": "vpn739058737",
       "id": "v1:1f51ac0adcfbee6fa085f88534508053d77847da7162ddd3469b36823aec4b40",
       "ip": "210.106.122.21",
-      "last_seen_at": "2026-09-12T13:29:18.526Z",
-      "num_vpn_sessions": 3,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 4,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "674a98cf07beaa3c5c551fde5a81e6c228b12cb8ca464fa1728cbd05562e07f4",
       "ping_ms": 31,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3128,7 +3448,7 @@
           "port": 1341
         }
       ],
-      "score": 607000,
+      "score": 627507,
       "speed_bps": 87794735,
       "tcp_probe": {
         "checked_at": null,
@@ -3160,7 +3480,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "b266d64cef798b92fd5ced7392634c344bc3ec5f90be5dc602d208f9582a15e3",
       "ping_ms": 58,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3400,7 +3720,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "45f4bb717483824f85ae0630ebd7fed16d57fd772de0a680763095308c766725",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3440,7 +3760,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "8b2303a1fcabccb7fda2fcc9b57064105809c0015061c294b74bfc6d180ba9c3",
       "ping_ms": 32,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3835,12 +4155,12 @@
       "hostname": "public-vpn-146",
       "id": "v1:23cc4534e1e409467d6c6f423b0dc625614a145246b4ffbdfca016ab97d20958",
       "ip": "219.100.37.94",
-      "last_seen_at": "2026-09-12T10:59:15.739Z",
-      "num_vpn_sessions": 71,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 78,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "15589b75e3697e1bc7b4511cd0f15ac2abdc72e1b965583721f2d50223932fa8",
-      "ping_ms": 12,
-      "present_in_latest_source": false,
+      "ping_ms": 24,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -3848,8 +4168,8 @@
           "port": 443
         }
       ],
-      "score": 2656718,
-      "speed_bps": 288098789,
+      "score": 2005261,
+      "speed_bps": 344866680,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -3920,7 +4240,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "c0bee0584e3f93b34ae442413d7fae3d6c2d2ba68bae29f103512ed6f6abb919",
       "ping_ms": 18,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 471656,
@@ -4381,6 +4701,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/9b0a049d6c38fd6bbfa81f79ac809a967aeed9c9032410646782374af4508339.json",
+        "sha256": "14b4e32598b5d36142c98203f3d3b551cabb66248038d089abe4e374561eeab0"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn994870951",
+      "id": "v1:28b5f0f0ea8f7f296989565d455c324d08548c7aff56ad09076dd7a2e1dfa6fc",
+      "ip": "119.231.58.147",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 2,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "9b0a049d6c38fd6bbfa81f79ac809a967aeed9c9032410646782374af4508339",
+      "ping_ms": 2,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "119.231.58.147",
+          "port": 1856
+        }
+      ],
+      "score": 648626,
+      "speed_bps": 368828317,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/a3436027763396cb513d6760d31dd6d798c91fbb9b7a82d93642bc883a8d720c.json",
         "sha256": "e723cb032420adee505792d37bf2d7828553e49d437186458ba5d9499027e031"
       },
@@ -4395,7 +4755,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "a3436027763396cb513d6760d31dd6d798c91fbb9b7a82d93642bc883a8d720c",
       "ping_ms": 47,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -4575,6 +4935,41 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/0d6c7fd5c0a015fd9bc0c3e7d9d8abe46c811ee12b19a3653f0e4204a52bf71b.json",
+        "sha256": "ab04cacad4b5e14ff527338ea2dac43eea7a11da7ec5a3e7491c44f25d78554b"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn999680564",
+      "id": "v1:2c14dcdfedfaf76742202abac4118fbd6fb8ed901d959552ac8363bf1f62c2f5",
+      "ip": "138.64.70.36",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 17,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "0d6c7fd5c0a015fd9bc0c3e7d9d8abe46c811ee12b19a3653f0e4204a52bf71b",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 1430175,
+      "speed_bps": 87346337,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
         "worker_id": null
       }
     },
@@ -4915,7 +5310,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "4aca37f19206aa0925d48cdf5acd26f1a441cd2ea64702933465a36666d1e045",
       "ping_ms": 36,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 508626,
@@ -5180,7 +5575,7 @@
       "hostname": "vpn967882324",
       "id": "v1:317258d36da97cb2ff23b1639902bed6f79b57bf86ce5e0051168c496d12e714",
       "ip": "133.32.176.139",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 4,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "b8af077916b2d14fc3c27a461ee4f2b3464655696318e6206606cd2fcd50d160",
@@ -5188,7 +5583,7 @@
       "present_in_latest_source": true,
       "probe_reason": "udp",
       "probe_targets": [],
-      "score": 668707,
+      "score": 670730,
       "speed_bps": 351866611,
       "tcp_probe": {
         "checked_at": null,
@@ -5375,7 +5770,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "9d0c5e16434cea01169e9e6a5de9c9d1a4efa897ae5e754d47a576d86503909b",
       "ping_ms": 23,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -5521,6 +5916,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/202d3a53495c11d2c500d1f69ada6b2ff74bda2a9a3ee90fbadcf80adbc2b24f.json",
+        "sha256": "c1493f9033d6a29809519bf57a57abd84b33037badcad07e5d7634455dcf9656"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn755967672",
+      "id": "v1:339e9af0b17a482a201e40bc7c5462dee116ba61903e8baa2dfd2d3ce601e3d2",
+      "ip": "203.133.220.104",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 11,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "202d3a53495c11d2c500d1f69ada6b2ff74bda2a9a3ee90fbadcf80adbc2b24f",
+      "ping_ms": 21,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "203.133.220.104",
+          "port": 1731
+        }
+      ],
+      "score": 850441,
+      "speed_bps": 61289310,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/068d9a742a2712d087cfd7503abe502427136dbf64c267aad45dec1aca6dac7f.json",
         "sha256": "ec21151cf2bf9095064af11ee07c954cf9b15e023e5917c07da7d8bf8f5aa8bb"
       },
@@ -5615,7 +6050,7 @@
       "openvpn_config_bytes": 10009,
       "openvpn_config_sha256": "56ba4e411108c250c0fc189df59eae6ebf7d0984fca25d099ecd0d0a5b8da40d",
       "ping_ms": 9,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 686363,
@@ -5946,6 +6381,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/235b3022880d9802826e8fc9ceba12fcd10c950eb1b0c46d4fb8419404d1d878.json",
+        "sha256": "522319f50d4d4b014b009dcd9447196117e9f5061d8f718104a1c438d6f9f60c"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn925106395",
+      "id": "v1:382e4f426d04835aa0a95c1c8d0ecb3458422447042a7c674b568545c3a9cc47",
+      "ip": "153.204.155.50",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "235b3022880d9802826e8fc9ceba12fcd10c950eb1b0c46d4fb8419404d1d878",
+      "ping_ms": 15,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "153.204.155.50",
+          "port": 1829
+        }
+      ],
+      "score": 974683,
+      "speed_bps": 132598140,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/9189a6cf0641a419d0feac904805e55ac53ad9d759ac256e8f6f1c4b3008b064.json",
         "sha256": "82a826f67d47c72f3bfc8d819d525f11e85826441329fc5b6040efed6439060b"
       },
@@ -6195,7 +6670,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "fd3bd9bd16f394591c981e45aa92cbed5d216ab72accdd63f1ced8c43d5ae16c",
       "ping_ms": 15,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -6395,7 +6870,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "eb4bbf8c28752dc9b16dd63f81f6398a4eae8553697288cc574574c9fd76b5d2",
       "ping_ms": 25,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -6741,6 +7216,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/74a57413a690d0e230cc01f5b7d6372f14f9aa6bcd11672b147141e665ca24d2.json",
+        "sha256": "d6140b5fa7329dbac4f6707658139907142c2203f21a60a97313b94f635e2289"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn462957625",
+      "id": "v1:3cad41aca917107f0861e51ed19ae8b48da2a43fce690c85aea950af796fce7f",
+      "ip": "85.15.113.114",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "74a57413a690d0e230cc01f5b7d6372f14f9aa6bcd11672b147141e665ca24d2",
+      "ping_ms": 115,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "85.15.113.114",
+          "port": 1653
+        }
+      ],
+      "score": 468531,
+      "speed_bps": 58314968,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/c9a34fbc8a9cf998ab9949dfb0c25126cb79f04e0edaa504c0f3480e878fc263.json",
         "sha256": "9c54e97820fbcb1beb9d04d9f20f399689a6f6bbc679bd58b02f5360b3f74762"
       },
@@ -6755,7 +7270,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "c9a34fbc8a9cf998ab9949dfb0c25126cb79f04e0edaa504c0f3480e878fc263",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -6896,6 +7411,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/fa79a144071efc3c7e56c2d92ced1a9d0acc64a7f07642644a23135b2f7e2f78.json",
+        "sha256": "ac899b51b83bf5f49e030ec7628d4d3c03d2b9c9386f34aba9b24085be2e7025"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn440254653",
+      "id": "v1:3d6e65879295ca6d03e5448cc2f06a871c93e8a8474c7610b6b71f2d13e0f9b4",
+      "ip": "180.31.135.18",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "fa79a144071efc3c7e56c2d92ced1a9d0acc64a7f07642644a23135b2f7e2f78",
+      "ping_ms": 6,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "180.31.135.18",
+          "port": 1665
+        }
+      ],
+      "score": 650717,
+      "speed_bps": 5221493,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/efaa9c4768bb8a16878aca7eef8b11eeed5c0886a9e00ef03ba5eb27c0c4db6a.json",
         "sha256": "0be8f8cbbb15a4b36340e80d897e9bb3be1f7dbc6c02553f6cea5055e7ac0fe6"
       },
@@ -6905,12 +7460,12 @@
       "hostname": "public-vpn-239",
       "id": "v1:3d975259148df1a4c7e4ff16a25f0305ffea6d65f88e12d334207a05e795ce8b",
       "ip": "219.100.37.189",
-      "last_seen_at": "2026-09-12T10:59:15.739Z",
-      "num_vpn_sessions": 50,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 62,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "efaa9c4768bb8a16878aca7eef8b11eeed5c0886a9e00ef03ba5eb27c0c4db6a",
-      "ping_ms": 21,
-      "present_in_latest_source": false,
+      "ping_ms": 9,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -6918,8 +7473,8 @@
           "port": 443
         }
       ],
-      "score": 1153156,
-      "speed_bps": 323677749,
+      "score": 1502331,
+      "speed_bps": 308988109,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -7110,7 +7665,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "f19d189a4fa1d4711954a603f72c1dcdd211345c279bbbeace3e03da32f3e1f4",
       "ping_ms": 29,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -7216,6 +7771,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/48733cd987bdc7789b5d1b214a1640489f2b31f7464cfe430660f5acc6eb9416.json",
+        "sha256": "3d356714ac8081ecd5cda2e05f32518963369543c941f1742959750e8638c44f"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn357389446",
+      "id": "v1:3fed452297e3df9b4535b7b4efc2eb020197d544b69309a936b5a319bfc14cbd",
+      "ip": "116.36.148.140",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 2,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "48733cd987bdc7789b5d1b214a1640489f2b31f7464cfe430660f5acc6eb9416",
+      "ping_ms": 45,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "116.36.148.140",
+          "port": 1337
+        }
+      ],
+      "score": 527551,
+      "speed_bps": 60581965,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/cb9065d976514c55c77e065a78bded12ffbba79d422e92cfa6fadadef8770b1c.json",
         "sha256": "5c5798ea19180de6ac7e376d25abc3904ed122beb72c43c90302b1bcf98cea86"
       },
@@ -7260,12 +7855,12 @@
       "hostname": "vpn295573517",
       "id": "v1:40700dbb610e2f82a517c7d6922d2586f22c6f37459281056fb2ce954c659a52",
       "ip": "220.74.83.17",
-      "last_seen_at": "2026-09-12T09:29:18.335Z",
-      "num_vpn_sessions": 31,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 25,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "35584164b7d301c9ff1ac329a5bf0544555781b02df4bc4a5b6026dcec52a3d7",
       "ping_ms": 28,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -7273,7 +7868,7 @@
           "port": 1660
         }
       ],
-      "score": 768016,
+      "score": 787005,
       "speed_bps": 342454376,
       "tcp_probe": {
         "checked_at": null,
@@ -7395,6 +7990,46 @@
       ],
       "score": 613005,
       "speed_bps": 91659081,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/6398e2bf2140b7b028f8c634f26f1086311da3e03ae0750ec3ada36e29f953fb.json",
+        "sha256": "bfcf180eaefe53f58a7e410b7a1bc8f6d54b9cae32dbf6955a63a11a79e8b17d"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn364756227",
+      "id": "v1:416e6fbfebc5633240ec587236cdd7dec12122d9381497b1d315769e14cfa920",
+      "ip": "106.167.234.98",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 15,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "6398e2bf2140b7b028f8c634f26f1086311da3e03ae0750ec3ada36e29f953fb",
+      "ping_ms": 20,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "106.167.234.98",
+          "port": 1629
+        }
+      ],
+      "score": 846824,
+      "speed_bps": 19108870,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -7660,7 +8295,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "4722d3309ce32f6403472c5e395acfaaef7d3f8113bd56f655de4d2a6c9cf9c5",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -7700,7 +8335,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "938476c6982c9c5ba82a3ebc4615c408ab8db63bf68e87ec68ca97275500937b",
       "ping_ms": 45,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -7985,6 +8620,46 @@
       ],
       "score": 2053268,
       "speed_bps": 726577233,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/971df90c3d4620da69ae5c5bc98007ccba900206cc23ad08f099dbd33c2c8ba3.json",
+        "sha256": "9e79f37b9e05977fde56ae193c18b55760d313b83b6897bb87d52876813d8bc2"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn492448361",
+      "id": "v1:4641b12b0bae1d1deedd1d807d171ec59553233d203d9ab15c81a81f7b2e2931",
+      "ip": "14.45.235.221",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 2,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "971df90c3d4620da69ae5c5bc98007ccba900206cc23ad08f099dbd33c2c8ba3",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "14.45.235.221",
+          "port": 995
+        }
+      ],
+      "score": 584373,
+      "speed_bps": 54648099,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -8541,6 +9216,41 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/caa4a7bdecab96d65ed57a3bda5b805177760402b4018582909cc910de4d58f9.json",
+        "sha256": "95135e1ed813e0be3f781fa0f6dc4e3cecbad2e931907575f91514faa0b47dd8"
+      },
+      "country_code": "US",
+      "country_name": "United States",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn771768155",
+      "id": "v1:4cbb26af8af6a3b49b04f2fdb970e7a3bef454f4ec6eb2005354d613fb58c9e9",
+      "ip": "104.28.246.229",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "caa4a7bdecab96d65ed57a3bda5b805177760402b4018582909cc910de4d58f9",
+      "ping_ms": null,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 928846,
+      "speed_bps": 23262475,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/f88c7835a7d45719905f664322749a740b7dfb6b91926fc2683fa38a4692fd76.json",
         "sha256": "daf992bdae01e1db76e945e7a8a1472d56878b82cd1e6310849b147b3bc09727"
       },
@@ -8870,7 +9580,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "f2f46d439166fa807c4016bf7d08501c734347550dc68df9f91322e7c2866613",
       "ping_ms": 41,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -8880,6 +9590,46 @@
       ],
       "score": 619228,
       "speed_bps": 77860948,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/8f4db9e5aab2a2a2774e4f122ec5273cc9ba5c2dad9c3a4fe7740144d2fa6e8d.json",
+        "sha256": "8ce8f75474b680e195a5b72fc1ae9bfb23975544026c7ba707af40363a8e9b11"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-231",
+      "id": "v1:4f4bc4e53579579fc08b95db7174da12be7780d777caf0a8908a1bab221fe35c",
+      "ip": "219.100.37.188",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 54,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "8f4db9e5aab2a2a2774e4f122ec5273cc9ba5c2dad9c3a4fe7740144d2fa6e8d",
+      "ping_ms": 30,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.188",
+          "port": 443
+        }
+      ],
+      "score": 2224004,
+      "speed_bps": 315384158,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -8950,7 +9700,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "da550d85d6969c732706f9d5d2237614dde0ded3d6c7efff82a0d36a80d5667d",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -9030,7 +9780,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "cdcd9ee0c67995b7db70ea2f7f1d7978e946837bd97d9099c0f1f21007d34847",
       "ping_ms": 19,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -9185,7 +9935,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "567aa5e912dde4d10fd4762009b6b8f85b5c447be5272008189535a7c93947f1",
       "ping_ms": 48,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 455712,
@@ -9220,7 +9970,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "77f792340727bda1419807da61b2119b1e6ca4cdbc6407299b6db5deab24f7b3",
       "ping_ms": 30,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -9340,7 +10090,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "ca57bd471d782753749da0b88cf64537317ee1999a896b06fd23fca4409fa113",
       "ping_ms": 110,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -9375,12 +10125,12 @@
       "hostname": "public-vpn-127",
       "id": "v1:5214cb30613645feda69701e5e214cf8b17d79fb7e639de3ca1ea7598812afad",
       "ip": "219.100.37.63",
-      "last_seen_at": "2026-09-12T09:29:18.335Z",
-      "num_vpn_sessions": 57,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 52,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "fc1458d49ee9b46e5aebb1c81b03e43e13896fc0341e1e1d6dd4a5e7d8ee18b7",
-      "ping_ms": 10,
-      "present_in_latest_source": false,
+      "ping_ms": 19,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -9388,8 +10138,8 @@
           "port": 443
         }
       ],
-      "score": 1598666,
-      "speed_bps": 193937122,
+      "score": 1550563,
+      "speed_bps": 244636426,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -9960,7 +10710,7 @@
       "hostname": "laud",
       "id": "v1:5775c190d4f671ff8f463c06b922ae189af3e01344eef97da77648da14058442",
       "ip": "115.179.206.241",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 156,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "6a5e6b62efd78615abcc02f58abe22662bc939fa3f11a38e1ff7aca8aba8f79d",
@@ -9973,7 +10723,7 @@
           "port": 443
         }
       ],
-      "score": 1309940,
+      "score": 1311808,
       "speed_bps": 202430080,
       "tcp_probe": {
         "checked_at": null,
@@ -10005,7 +10755,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "b400ad52a546355fa5c119da1cd223732d002c816046d16419f19defff7c1af1",
       "ping_ms": 21,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -10125,7 +10875,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "7243568d571032c36ceebc73ee5e241cb617d9a8b17eda06666659a3f7faad58",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -10440,7 +11190,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "41c29a5134005f5184546481374a2dafb907a66d2224c3f4a8edd285922e6744",
       "ping_ms": 16,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 600606,
@@ -10696,6 +11446,41 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/41febeef1da60e7ce26571bb7092971465dc4bfcfb941c30a788b1002df5048f.json",
+        "sha256": "0b6035f6bd87b1a9d0731ce35651c1ff6e1374d21aadb6068fdc71eba9a7cce9"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn441577358",
+      "id": "v1:5d736b7097102b2ea20af58c5efe02f294889729baeedb38af8d638ee6a38b4d",
+      "ip": "61.21.196.167",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "41febeef1da60e7ce26571bb7092971465dc4bfcfb941c30a788b1002df5048f",
+      "ping_ms": 16,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 614724,
+      "speed_bps": 98739614,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/ed1d8bdaea12b61d59e81c82bb9d5f9fc994b7a5cb9b9a0d978a1519c4513d22.json",
         "sha256": "464dc6bdebf0bcbf50d51e682ea9a2a882e52121430ad1bf6a87b20be391587f"
       },
@@ -10856,6 +11641,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/b0788c88ec80576db0a6bdedbb10f959d815e68b830511d1ed14baf2cfa66c18.json",
+        "sha256": "4eb8f3e1204c9c9f9bff1a240d1b6beb374997fe538f0386617f6c7b439336e8"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn153644369",
+      "id": "v1:60868d674da4fc5cfc1c9bdc71f8540c705972fb1051143901119a611022a322",
+      "ip": "112.170.151.111",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 7,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "b0788c88ec80576db0a6bdedbb10f959d815e68b830511d1ed14baf2cfa66c18",
+      "ping_ms": 32,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "112.170.151.111",
+          "port": 995
+        }
+      ],
+      "score": 548478,
+      "speed_bps": 341437448,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/4551eb087c586f6efb3e8f56c33c65d58888d0f024489838d83e4b5245f88845.json",
         "sha256": "6ef332674f25089ff5cc8f57054e075e3b8af0a93aad9878bde6d316f81d258d"
       },
@@ -10870,7 +11695,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "4551eb087c586f6efb3e8f56c33c65d58888d0f024489838d83e4b5245f88845",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -11140,16 +11965,16 @@
       "hostname": "vpn732871625",
       "id": "v1:63f1d99926ffe68b0748c8f189db492b22353b9f6d298f5b609b824819da616c",
       "ip": "138.64.208.87",
-      "last_seen_at": "2026-09-12T07:59:13.620Z",
-      "num_vpn_sessions": 1,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 9,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "322fc133d29dc3ca180343f5e878c80951a25ea27a1b4345fdd107e2d14d2aae",
       "ping_ms": 7,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "udp",
       "probe_targets": [],
-      "score": 683606,
-      "speed_bps": 206621896,
+      "score": 715054,
+      "speed_bps": 189701265,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -11315,6 +12140,41 @@
     },
     {
       "config": {
+        "bytes": 13566,
+        "path": "pool/configs/647f880af37e4fa6304753284d968e4f1e275edb49c2cc0c1755af48c017d44f.json",
+        "sha256": "16e08b08184de93fc0e792abc30d406421b53501dc2678754a4bb2a5c7e46032"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn616995105",
+      "id": "v1:64a4a4597e7d9bff7ed026920f4b86b8e17db5c0da647c730fcc1f35bb0a1100",
+      "ip": "188.168.121.188",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10009,
+      "openvpn_config_sha256": "647f880af37e4fa6304753284d968e4f1e275edb49c2cc0c1755af48c017d44f",
+      "ping_ms": 114,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 424743,
+      "speed_bps": 83226564,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13554,
         "path": "pool/configs/94bef6bf6487491bbe5e4a10e15491362cd8dfa99d7b4f0c58133602c1c8a2d0.json",
         "sha256": "ca99e53d21cbfdec211423cd7ea9a9b85151663f13b4be34d036e4c2819db353"
@@ -11380,6 +12240,46 @@
       ],
       "score": 904417,
       "speed_bps": 89156600,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/a59de6a73559ac675d8a532fdc4f012570bf8ca61cd1a86023d447b2f530c2d6.json",
+        "sha256": "12210552140e705203225b32c5c17d88ee747ff741e8f6fde4ec875b439cb9d2"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-200",
+      "id": "v1:65311e64600dadf8b2cc7ac41cf22e6b7444403128d8278750b5d45ec9977ce8",
+      "ip": "219.100.37.213",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 69,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "a59de6a73559ac675d8a532fdc4f012570bf8ca61cd1a86023d447b2f530c2d6",
+      "ping_ms": 11,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.213",
+          "port": 443
+        }
+      ],
+      "score": 1917097,
+      "speed_bps": 374225629,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -11591,6 +12491,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/cf29e28f94b09f65d58b1df6f891e99507231dfdb9b982b610282bbf8b2bb3d8.json",
+        "sha256": "94a78670bd3bbf4cf869ed5516a49a0e78782bf6408045677f072f84ca724433"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn754234555",
+      "id": "v1:68504615dacd4025ea0377eb5e936542154eeacd390fd602ec13ea80ac13d3e8",
+      "ip": "58.120.113.176",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 29,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "cf29e28f94b09f65d58b1df6f891e99507231dfdb9b982b610282bbf8b2bb3d8",
+      "ping_ms": 34,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "58.120.113.176",
+          "port": 1288
+        }
+      ],
+      "score": 1390401,
+      "speed_bps": 285552680,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/e58c355db5ab6e4d1ee8529bd78eaa9941c4b7d48d0e94240a08ea3d90111dfc.json",
         "sha256": "73dc462500843c870d66c7cc27bcf5527d297939cbcb278bd65fa43083bdf058"
       },
@@ -11701,6 +12641,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/cada605760e3037de5feff3db56161eed30c2c9b44644dd3b20e9d82e6b88f62.json",
+        "sha256": "08c81861519728a98ea0aa37b87fd41478652e8fc3081b41d18ce9751fbe3cbb"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn960273320",
+      "id": "v1:69c4ff01e4418d2f1d45949e924eff3bb1d5f8b1b842f3c76f6a6055ac2b87b8",
+      "ip": "125.196.144.134",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 66,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "cada605760e3037de5feff3db56161eed30c2c9b44644dd3b20e9d82e6b88f62",
+      "ping_ms": 6,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "125.196.144.134",
+          "port": 1571
+        }
+      ],
+      "score": 1442330,
+      "speed_bps": 409330563,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/97ef0d078989714d6ef99d3da7548fa6ee745aedc4b904ef1665b9ff98a3626c.json",
         "sha256": "ff0063dc588342fdecc9b90516d4d8dfade33e5538c212eea29e1711e245e919"
       },
@@ -11725,6 +12705,86 @@
       ],
       "score": 2336906,
       "speed_bps": 981318459,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/7a00b09fc6d0d48acd47cf44b1ec3c65648428a66c871792ca0e3291a37c3851.json",
+        "sha256": "4ae484ac277a77b8c2a74381f06f09fb33684940ea3c373f11cf86bae27d9259"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn847639952",
+      "id": "v1:6ae8c456a2791901b3f8ceba5ddb0b6d522d259ad450862b41fb55f06b06f797",
+      "ip": "126.214.74.160",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "7a00b09fc6d0d48acd47cf44b1ec3c65648428a66c871792ca0e3291a37c3851",
+      "ping_ms": 6,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "126.214.74.160",
+          "port": 1898
+        }
+      ],
+      "score": 611071,
+      "speed_bps": 838347347,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/0a4cc9b990434b5ea4208f30cc25afd869b7d7df2b4e84f1b732bb30310804e7.json",
+        "sha256": "d124f0a512f2c3d51e3e95807f218196cb5c3eae3969cf68f3c78a97a2f6b91c"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn394757206",
+      "id": "v1:6b72a8f55a17da7207f772cb6c240bd094d49e07526ebf281e62bf42f8eff129",
+      "ip": "126.66.112.167",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 14,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "0a4cc9b990434b5ea4208f30cc25afd869b7d7df2b4e84f1b732bb30310804e7",
+      "ping_ms": 4,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "126.66.112.167",
+          "port": 1726
+        }
+      ],
+      "score": 622390,
+      "speed_bps": 718130806,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -12050,6 +13110,46 @@
     },
     {
       "config": {
+        "bytes": 13558,
+        "path": "pool/configs/b511072e4b0322312c88e7b2d11124b469bb76188d8223ce2f39d809e7ab32e6.json",
+        "sha256": "47b044e488cecbda8558932d79c2b1463faed12f428c36274e163cf8384ba995"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn380244252",
+      "id": "v1:6e0af0250cbe55626f34380c38c4db12e91f14ad432115bfb35edf0d80e2ec0b",
+      "ip": "46.45.48.100",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "b511072e4b0322312c88e7b2d11124b469bb76188d8223ce2f39d809e7ab32e6",
+      "ping_ms": 38,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "46.45.48.100",
+          "port": 1946
+        }
+      ],
+      "score": 558615,
+      "speed_bps": 99950649,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13562,
         "path": "pool/configs/05f4d38994f14de5a26c134a40a1d9ca5a1e7ccb67e5d5c21a1469772567c2c2.json",
         "sha256": "312e52f37e6965f9c427007f6e359002a9b7b3b86aae45396f941c70bb9ea763"
@@ -12075,6 +13175,46 @@
       ],
       "score": 658123,
       "speed_bps": 505577120,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/2042bf8f07eec7531e39cfc0bfd39af514245e2d2d20436e1d3ceef8f663592a.json",
+        "sha256": "9c84e8f8e33b82668398474b123165c74a39669ba39efabacad92814283d568f"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn258521217",
+      "id": "v1:6f271dc73c9a4b5bc631e2599236d0dbf0297408963301832638f4810a8fc6f1",
+      "ip": "113.153.86.227",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 22,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "2042bf8f07eec7531e39cfc0bfd39af514245e2d2d20436e1d3ceef8f663592a",
+      "ping_ms": 7,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "113.153.86.227",
+          "port": 1291
+        }
+      ],
+      "score": 700051,
+      "speed_bps": 92906475,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -12185,7 +13325,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "2dfcdfa7f6d8cf6e6f5d3f3efa7946f971f9e5d2262057818624b9fbaab359ce",
       "ping_ms": 10,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -12305,7 +13445,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "94488f2a4798f0827727a3b1bcbf653433b58e293c57cb837ba114aaeb8d5d6f",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -12315,6 +13455,46 @@
       ],
       "score": 636754,
       "speed_bps": 313456340,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/1bc50e030c7861d60a209a0da1a77429cb997da3e67f8ed5bc2ca3dce5f8032f.json",
+        "sha256": "5c5a8e8324752b6354b31da0ee9630edd7a49b783c196175931e38a7ac857867"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn598832486",
+      "id": "v1:71ae9e24392569a2001dd24e73cc770b14d93260b3376bbf2944dab4733a4ad5",
+      "ip": "222.120.134.151",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 21,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "1bc50e030c7861d60a209a0da1a77429cb997da3e67f8ed5bc2ca3dce5f8032f",
+      "ping_ms": 31,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "222.120.134.151",
+          "port": 1918
+        }
+      ],
+      "score": 1361126,
+      "speed_bps": 81230507,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -12385,7 +13565,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "3f1b8f70994c3c479952eddebd93a843d60bcb9229f675f46ad90e92be96419c",
       "ping_ms": 9,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 600329,
@@ -12801,6 +13981,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/3e9b500d30d8a78c2da4c12ffec604bc8f46df4fe163809c86261103ee9277ac.json",
+        "sha256": "9f9581cdf5db292c4db1400e028691b8f9e171481c78cd8625c0de87a30a88c3"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn133034159",
+      "id": "v1:760f894add2189c1b5683f384f3024af2017b8181f6adbad417c08ccac680547",
+      "ip": "58.87.159.114",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 6,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "3e9b500d30d8a78c2da4c12ffec604bc8f46df4fe163809c86261103ee9277ac",
+      "ping_ms": 2,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "58.87.159.114",
+          "port": 1276
+        }
+      ],
+      "score": 590620,
+      "speed_bps": 759907048,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/698e36f5e6b3b5e1623c39d9b0248f4a75c172766edf7d480aaef3fd06434ed6.json",
         "sha256": "cd50e7c25990693efcb32571b5c39b4e026e424285ef01c485c64fd8cc4092cc"
       },
@@ -13106,6 +14326,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/6e1fd4d9fcea6b9d3eab3546ce7e54b00f14107d537305cf73ebbc24007cafa9.json",
+        "sha256": "a1db4d70499885b54ae4760d670e2e85fd58d6692a0ef838e6a8ed5408da5840"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn840615397",
+      "id": "v1:78c3e2d1ebecb866f301f6b28a877a54777eec8728c404473664ec06d86c8820",
+      "ip": "61.254.210.198",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 4,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "6e1fd4d9fcea6b9d3eab3546ce7e54b00f14107d537305cf73ebbc24007cafa9",
+      "ping_ms": 32,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "61.254.210.198",
+          "port": 1685
+        }
+      ],
+      "score": 545801,
+      "speed_bps": 493680443,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/2e81af74d01724f2cc7346026fa9956d16ebc669ebb95d04a1092f061b990ba8.json",
         "sha256": "4952083460fbb05017e556f7bb877edfdddafd08d0c0ef9d6d88856f656e0f9c"
       },
@@ -13200,7 +14460,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "49a16ac54d6effdadb344f8c507c7bdb20f9ca62d6b7847448469d2523d208d4",
       "ping_ms": 8,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 591298,
@@ -13275,7 +14535,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "35fc0c4e1174d506ea2f9b26366657e53539a2e6883e7a44a438451dd9e0823f",
       "ping_ms": 32,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -13315,7 +14575,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "c60d92fb693822824f48e2ab281cd9855f7bb27bc0d5ae83023cb52776ca1712",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -13355,7 +14615,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "cef55426542fbc2348e3f0c18e97e6b356501d61cca6e9c3e6a009c3b2e0db5d",
       "ping_ms": 5,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 591790,
@@ -13370,6 +14630,46 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/351bdbdab122a4454f83773d7a04d1c1afe1cc4b9e132e9ba5fda57db9d33a3b.json",
+        "sha256": "ad20e7da9e9bda9f9a013768f4c0a7588b81cc83b22c3994d16f9504191a1308"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn609102436",
+      "id": "v1:7b37c4ff8162b57f621cfea8ec5257b8d9a8ff0433406725930c82de72251ab4",
+      "ip": "58.120.240.122",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 4,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "351bdbdab122a4454f83773d7a04d1c1afe1cc4b9e132e9ba5fda57db9d33a3b",
+      "ping_ms": 33,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "58.120.240.122",
+          "port": 1794
+        }
+      ],
+      "score": 533659,
+      "speed_bps": 498331177,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
         "worker_id": null
       }
     },
@@ -13440,6 +14740,46 @@
       ],
       "score": 1375997,
       "speed_bps": 84027291,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/2b8a63d4b29502c79d1c8254308d07c1879d6b49a71be363aa25e4efad9a6bb8.json",
+        "sha256": "f4c81c957deab6d7c4a83e49299e3dfde4c2a7c4a7dddb3e35723abeb332d562"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn752870532",
+      "id": "v1:7c04131e7479ee064fecce1d3ddbd13f905dad6fe663632ee2be5447c2263ad2",
+      "ip": "85.15.101.36",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 1,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "2b8a63d4b29502c79d1c8254308d07c1879d6b49a71be363aa25e4efad9a6bb8",
+      "ping_ms": 118,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "85.15.101.36",
+          "port": 1528
+        }
+      ],
+      "score": 554336,
+      "speed_bps": 75891803,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -13705,7 +15045,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "6dd2ceac57c0354e0fb96890ab1ebde08ebeb60762cf813b55698dcc4ba39580",
       "ping_ms": 23,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -13715,6 +15055,86 @@
       ],
       "score": 911888,
       "speed_bps": 39796529,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/c90fb69a7e02862289e533266659735a06b4071e3ba7208d2bb1d3c1c0f30135.json",
+        "sha256": "e0db538b7e957df1e46b0f1683a59d03d1cc84fca44ac65a00409f66c98568b4"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn360771210",
+      "id": "v1:7efef96dd3ed9ade56991ef13427349a507f0f653674b2680af5b72337ef3627",
+      "ip": "77.35.39.197",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "c90fb69a7e02862289e533266659735a06b4071e3ba7208d2bb1d3c1c0f30135",
+      "ping_ms": 128,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "77.35.39.197",
+          "port": 1211
+        }
+      ],
+      "score": 559211,
+      "speed_bps": 631506398,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/ca9bd9fa551480ac865482d90a52513a8cae0830d17f866f9b97adbfdc110958.json",
+        "sha256": "aac19a5e48723461b326987c70e32a2b53996618ff35d817d7da0a5ecf0d43e4"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn857977917",
+      "id": "v1:809e0be9c417b8e7df93e72b6d1cc0c1576872ca7eb7995686a8d08d5a0aaaad",
+      "ip": "46.48.161.79",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "ca9bd9fa551480ac865482d90a52513a8cae0830d17f866f9b97adbfdc110958",
+      "ping_ms": 111,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "46.48.161.79",
+          "port": 1826
+        }
+      ],
+      "score": 483838,
+      "speed_bps": 75815382,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -13775,12 +15195,12 @@
       "hostname": "public-vpn-229",
       "id": "v1:812e59b7e9433120048c35c7472e23821ea7099cf7d0d3090a1fce427892039d",
       "ip": "219.100.37.217",
-      "last_seen_at": "2026-09-12T13:29:18.526Z",
-      "num_vpn_sessions": 172,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 176,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "2239645adbdd7793fc8306eb4397458b4b6a8fd66858b601ba74bf8d5b21ab0f",
       "ping_ms": 24,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -13788,7 +15208,7 @@
           "port": 443
         }
       ],
-      "score": 2593575,
+      "score": 2852933,
       "speed_bps": 1005388823,
       "tcp_probe": {
         "checked_at": null,
@@ -13961,6 +15381,86 @@
     {
       "config": {
         "bytes": 13558,
+        "path": "pool/configs/872be45a321f32d161310393a9cd29c00d125687545b14b47b433c24f2044808.json",
+        "sha256": "70d4f597c7acfe7e1f0fec9db261b49152384d0f797b64705e1a4001bb2b145f"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn692069292",
+      "id": "v1:83af1e6e9dcbfe1a76b3448aae96ec3f9daf84b270353bdb2b7fe3731924f78f",
+      "ip": "58.189.21.99",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "872be45a321f32d161310393a9cd29c00d125687545b14b47b433c24f2044808",
+      "ping_ms": 3,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "58.189.21.99",
+          "port": 1354
+        }
+      ],
+      "score": 649743,
+      "speed_bps": 730081073,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/9ce06c01cc85e9426d18ad67d3eff1d11e5b8199763c526697cd1dede1e92f34.json",
+        "sha256": "68a5aea2b10c41e752e8b351545f8d39da533e37cd949d425fc96a4aeff4aeda"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn768789192",
+      "id": "v1:83df0bc3852c2e424749a893aa0f8a8ebcc561c299c50fe702b9bef82cadd0ab",
+      "ip": "202.226.243.14",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 7,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "9ce06c01cc85e9426d18ad67d3eff1d11e5b8199763c526697cd1dede1e92f34",
+      "ping_ms": 19,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "202.226.243.14",
+          "port": 1538
+        }
+      ],
+      "score": 624885,
+      "speed_bps": 590710529,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
         "path": "pool/configs/da136ff74fa57fd3f5e9f59992b8ab440c605cc2969e71c5c320cc4e69f1c492.json",
         "sha256": "5f96946ab63132471e22fff02a169e5248d98b9709286f262d4b42fc0525cf1c"
       },
@@ -14040,6 +15540,46 @@
     },
     {
       "config": {
+        "bytes": 13562,
+        "path": "pool/configs/aed411635f0adf404fac433973220f82c2aaef227176ed9a6bfb4b4e4581d86c.json",
+        "sha256": "12192cc12e91050b67d58079f143b2110895bfd26884fa8c19be9dccc45adc38"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn578943953",
+      "id": "v1:83f656cde6b4ca059fe26a5b650e53e6ff0acc4b9a75cc6df78436117b07c2ad",
+      "ip": "175.215.86.230",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 5,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "aed411635f0adf404fac433973220f82c2aaef227176ed9a6bfb4b4e4581d86c",
+      "ping_ms": 25,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "175.215.86.230",
+          "port": 995
+        }
+      ],
+      "score": 681035,
+      "speed_bps": 163341422,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13558,
         "path": "pool/configs/d3d9de77518ad2c25f883a3113bdcab13d9d2776cca05391e3c2f18115b9566f.json",
         "sha256": "91d4394ddb439b36e18e28ded479cd7589e69a5db333303b404ebe644ebd1d04"
@@ -14075,6 +15615,41 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/d80aeab41ad9f499025ac5ab5d9027d345f7ed09cdc32a94cadfbbf17f236671.json",
+        "sha256": "fd4afd5ddd6b7edefee19abf56d4691da52ded3fcd90aeab9b4e4d8dc904e50e"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn405499822",
+      "id": "v1:854f65e8683c23c129f14b21c7e44b269aa29e982b52a8920e32e4d7d85bd7b4",
+      "ip": "61.44.181.184",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 5,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "d80aeab41ad9f499025ac5ab5d9027d345f7ed09cdc32a94cadfbbf17f236671",
+      "ping_ms": 16,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 588533,
+      "speed_bps": 290734193,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
         "worker_id": null
       }
     },
@@ -14330,7 +15905,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "3c86dbf8472f835de1a5041f8fb5ff0499cd1c291c2d55a50d25c9daa66f0744",
       "ping_ms": 4,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -14370,7 +15945,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "0a52507a181004499e690c76682d187b2b4af4605dfa2dfad99376b6c5a3692a",
       "ping_ms": 14,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -14485,7 +16060,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "d9849351212ba20679555faa29f9732bf62a915afe2b63bd72de7e3fdd62e596",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -14495,6 +16070,46 @@
       ],
       "score": 719135,
       "speed_bps": 268059143,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/b52004be48205ebd0ae7f560763653e52b84c871229d9a2bbc8ead51011e593f.json",
+        "sha256": "04edf6319c3a2777aef45b7ca1d8cded7c47db1da3c2fb3d349b56b401908370"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn344424779",
+      "id": "v1:88c91f75b90eca5f587a2528c063c397e1c84ea92d09313821f63626cfe4165b",
+      "ip": "106.155.138.129",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "b52004be48205ebd0ae7f560763653e52b84c871229d9a2bbc8ead51011e593f",
+      "ping_ms": 6,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "106.155.138.129",
+          "port": 1622
+        }
+      ],
+      "score": 646146,
+      "speed_bps": 591276959,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -14711,6 +16326,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/b26e8a4ae0863e0a49c1b23a04a83b1de92300f34afae7d26827fd161b89296f.json",
+        "sha256": "1a6adeaaf0b952d6a7e4c5f206098f00b4816b1765c5c6e7aa3a0f05a00a92a9"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn154872091",
+      "id": "v1:8b4404c258f623b41cfee4a702b08affc8f0bf7d50fb923681850bb616f3d3be",
+      "ip": "126.216.148.248",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 3,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "b26e8a4ae0863e0a49c1b23a04a83b1de92300f34afae7d26827fd161b89296f",
+      "ping_ms": 4,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "126.216.148.248",
+          "port": 1449
+        }
+      ],
+      "score": 640562,
+      "speed_bps": 504766787,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/f92d2d482e99cede35205582daaa9691d39097e18976d960273e0435da8aa4d9.json",
         "sha256": "bc5a1032ac7cd3b16ddb40fbd78bf568e5df506f2bb7c43fe62d740e87b2aa6a"
       },
@@ -14840,7 +16495,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "89ec7d5b42a137c9dda95a01c18d7296ed671c92706fce393a80ec3a6c32a16b",
       "ping_ms": 27,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -14850,6 +16505,46 @@
       ],
       "score": 569991,
       "speed_bps": 380273364,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/d9a187240030751bf414d528e3322019394f87bfa89082ae931547a0652ca169.json",
+        "sha256": "34276be22d2f31bb2a4357daf2396dcd8b5559f950a722610ee3c5243c6e12a4"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn113571448",
+      "id": "v1:8bdb24639436b644fd32d6b848f3f81bf09fbc8139ed1e2b4e7827987c7962f5",
+      "ip": "61.114.70.52",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 13,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "d9a187240030751bf414d528e3322019394f87bfa89082ae931547a0652ca169",
+      "ping_ms": 10,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "61.114.70.52",
+          "port": 1603
+        }
+      ],
+      "score": 759917,
+      "speed_bps": 744596327,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -15000,7 +16695,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "1d32f13345bcc1cf5e47658fce01c8a00fa0e6dbe18de703995bfbb9e7865928",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -15090,6 +16785,46 @@
       ],
       "score": 581550,
       "speed_bps": 65828888,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/126e4e3dec0921de797d619c698e0c57f61457e2e4b8dbe33566fe4aa1570c6a.json",
+        "sha256": "445511648371bfb43ef7086cc0123d09e8578b7f546af958b56d15f8a6ae68e1"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn873819046",
+      "id": "v1:8f19a79b754afe3690483dde4237d75a854323227cf6cf886902019ffca6af62",
+      "ip": "133.149.80.9",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 40,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "126e4e3dec0921de797d619c698e0c57f61457e2e4b8dbe33566fe4aa1570c6a",
+      "ping_ms": 8,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "133.149.80.9",
+          "port": 1762
+        }
+      ],
+      "score": 792687,
+      "speed_bps": 869297356,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -15465,7 +17200,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "396e17658c9757193e5cec5012cc5dcded172f77c187d9b477e8e5b4193732fe",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -15620,7 +17355,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "1ff9f704577d7b6a0f1994aff2d580af5603d23e06fc2da6487f983b616fd7a4",
       "ping_ms": 6,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -15700,7 +17435,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "ed9add1f8389171ab5531ebaf5db578f41498aa5017d2188630724be76f73cd3",
       "ping_ms": 6,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -15740,7 +17475,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "99bbf01523c3e4f85a50dbeeb20606233ea9dc722d59dbd0f64f8cbbcd1275c6",
       "ping_ms": 6,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -15820,7 +17555,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "0e33ee878fcf382bbb90ac530bba0f804d023d9b70fff48c9492a22262601ae0",
       "ping_ms": 2,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 1479377,
@@ -15956,6 +17691,41 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/7e1cecb8d983824674a5302cf16cecb74f3b6b5941ffb091c182a439d71c09d0.json",
+        "sha256": "f0a7d103eb8cb4321d129abcab19e4d8b4c8ba8a15eaafa0e325874622934a19"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn909153861",
+      "id": "v1:961d00f3cca7312a2a197436650a6631602317d3bd93f0eaa2db2ec2e132c4d1",
+      "ip": "138.64.96.118",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "7e1cecb8d983824674a5302cf16cecb74f3b6b5941ffb091c182a439d71c09d0",
+      "ping_ms": 8,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 636269,
+      "speed_bps": 151024232,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/99b4f6c08c8f1068050cee25b34c2c0c825b18f43d0308eaf89e4955b2b30c1a.json",
         "sha256": "1e7472e5a78484cc5617c588dd9e857c5fa6bfbbc20dc312fafaad742a316440"
       },
@@ -15970,7 +17740,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "99b4f6c08c8f1068050cee25b34c2c0c825b18f43d0308eaf89e4955b2b30c1a",
       "ping_ms": 44,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -16020,6 +17790,46 @@
       ],
       "score": 706249,
       "speed_bps": 434109166,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/7498301433fb4d7a4a1a4bd27e0a478f2f8abb419af7e309b71e309e8d30cc14.json",
+        "sha256": "4c48c7bfc0629fdb8012cf46be16946b17025da47e2890bdcf170933081bfa25"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn483703015",
+      "id": "v1:98e698087d30a249907a338d1c46eebccb78a4d53ebf86c6d23547e2190ff3fb",
+      "ip": "1.241.203.229",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 64,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "7498301433fb4d7a4a1a4bd27e0a478f2f8abb419af7e309b71e309e8d30cc14",
+      "ping_ms": 31,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "1.241.203.229",
+          "port": 995
+        }
+      ],
+      "score": 1023020,
+      "speed_bps": 426030729,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -16090,7 +17900,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "1dc8abd1bc7bef41cb12842bd31769f8096219bcb04129518281d25ea9d6054c",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -16170,7 +17980,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "acea8712e992abff62f51f90e56c9fbd661094d05a168471790cbe5d088bdf8d",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -16591,6 +18401,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/98f2e1bddaa9b02049d68402a36f612328bc73bad82b30e9a169249d46582228.json",
+        "sha256": "1319e4c3d045b905e85c66e33eaf3fd4a46a8eb8d89e9007f9daa06540d2774f"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn187313717",
+      "id": "v1:9fe03b8ed813109458ec77377a716d29b5c82ea467e7c7f3a9ff178bd447d8a6",
+      "ip": "111.238.218.220",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 9,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "98f2e1bddaa9b02049d68402a36f612328bc73bad82b30e9a169249d46582228",
+      "ping_ms": 4,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "111.238.218.220",
+          "port": 1999
+        }
+      ],
+      "score": 639624,
+      "speed_bps": 801533569,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/807a89bda014235363fe752caab84641ebae7e956890763cfafe0d53aa972a3f.json",
         "sha256": "e496f4d48c3a212f9c49e1598fb0c2c209139a91fe1cb36184de3a2508f05fce"
       },
@@ -16906,6 +18756,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/8840e3f32dd13d5b0a6f8b4f6f06c4c808ba9924af31b2d1ea0e45d4bcd0c1d4.json",
+        "sha256": "756602e2ab14d77013b823b6788cf1b3e15b9a8aae0811b03e4e5ead192bec36"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn472873111",
+      "id": "v1:a1a94ecb5968cd3c7f7efbd1338cdcc903b9e86d3f13200beb273576449679f4",
+      "ip": "218.216.15.253",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "8840e3f32dd13d5b0a6f8b4f6f06c4c808ba9924af31b2d1ea0e45d4bcd0c1d4",
+      "ping_ms": 9,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "218.216.15.253",
+          "port": 1567
+        }
+      ],
+      "score": 647615,
+      "speed_bps": 48218779,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/447623a646d38346e6863c8010abb6b8a986f953f5b07fe228d2e0b49786528e.json",
         "sha256": "d106dcafde7c2a40165220a9fd595236eb9706cc111fc17eb1c07266be6a71eb"
       },
@@ -17160,7 +19050,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "d1ea9112e43668d1969c19366df1a27b8bda19bfab79e3222486a1d281923946",
       "ping_ms": 5,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -17240,7 +19130,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "8ac3a9072525baa889bbc2038f456fd3cd7baf2605b165d2b42d5a79a7cd53c7",
       "ping_ms": 8,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -17420,6 +19310,46 @@
     },
     {
       "config": {
+        "bytes": 13562,
+        "path": "pool/configs/63604a5b95edd03214f066a34d81afda9f4ed7ee0d1da3f57222ec0e596d9716.json",
+        "sha256": "98021e8ae4a2efa8ea557381b820155ca52ab97cc5ee3b08c40676c01c645eed"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn906887185",
+      "id": "v1:a5ec92b168ee9763eab04f2a7f6a487a03ce8bd2c675075e91c9b49e25a2488b",
+      "ip": "222.113.90.213",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "63604a5b95edd03214f066a34d81afda9f4ed7ee0d1da3f57222ec0e596d9716",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "222.113.90.213",
+          "port": 1540
+        }
+      ],
+      "score": 685967,
+      "speed_bps": 49182155,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13558,
         "path": "pool/configs/1a520602f419bca4e73bc979d5ef9b30dcbf93b3866d8084cdcb6c316874ae22.json",
         "sha256": "06a7d24c86d5fb16bafe4cb0b78783b66cd6247fbcb617510539d4354fe5d00c"
@@ -17515,7 +19445,7 @@
       "openvpn_config_bytes": 10003,
       "openvpn_config_sha256": "08f64093c08f4cb19280714e2f6d24547d799cfca83ea1f59fda404e82cff562",
       "ping_ms": 36,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -17525,6 +19455,46 @@
       ],
       "score": 502926,
       "speed_bps": 17168105,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/df78fc6a7f00610983e8b5cf40e59e6d4e7f955510dc2d653cfa74008bb311ff.json",
+        "sha256": "be92ff2a3b75675de40b302232a1a4d9af74b2cd206990972fe43caef84e6be5"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-154",
+      "id": "v1:a71734957d3e1749024099fe446a3fd244a847fd0f209da31365301a631c7dad",
+      "ip": "219.100.37.121",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 62,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "df78fc6a7f00610983e8b5cf40e59e6d4e7f955510dc2d653cfa74008bb311ff",
+      "ping_ms": 17,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.121",
+          "port": 443
+        }
+      ],
+      "score": 2667805,
+      "speed_bps": 372949036,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -17605,6 +19575,46 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/b804b2ad2bbdcd130e134342af294ed1b3cc9673b7bb780aa1a93ac43b8ae661.json",
+        "sha256": "9fbe0b9785f4b9f6f07e5d1747edc2006a2d786108cd3459703b7d58d09222c0"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn260197435",
+      "id": "v1:a82d0f7187e8b98dfeb26b2a9ebb060d980fb014164df30249cbb4cf808747c2",
+      "ip": "121.175.252.174",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 16,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "b804b2ad2bbdcd130e134342af294ed1b3cc9673b7bb780aa1a93ac43b8ae661",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "121.175.252.174",
+          "port": 1801
+        }
+      ],
+      "score": 617034,
+      "speed_bps": 459049539,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
         "worker_id": null
       }
     },
@@ -17771,6 +19781,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/41e04253744b9fbd4d866d6e0b16cecf40ea06b8bd0c58d30ff884c44e08be46.json",
+        "sha256": "1f49516f05e7c5c49a335d357f9c7922263f25dd9d1fbba3d6034f1a32832ae2"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn509640821",
+      "id": "v1:a9f3a492044b151784dc19890cd096c47ca0642a4c66937a0a8c9712756a8b54",
+      "ip": "118.19.159.17",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 6,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "41e04253744b9fbd4d866d6e0b16cecf40ea06b8bd0c58d30ff884c44e08be46",
+      "ping_ms": 13,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "118.19.159.17",
+          "port": 1448
+        }
+      ],
+      "score": 614869,
+      "speed_bps": 301302249,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/26f87e5fac9bdbb60393965a519bd6c129c9e08df93c837d1cd9329ca0ac1967.json",
         "sha256": "740acf3da679a6896f552c45f9b80dd2bf6ec892bd315beb9c26c8ce834259a4"
       },
@@ -17840,6 +19890,41 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/39d72752c2f091416667cd848be2edd328e958d7f55ebdbcb8457d010ccb18e4.json",
+        "sha256": "590492438c08487d66fbd2bca01c3a4706e9fb218a3fb2b8929f5345337b8aab"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn740776456",
+      "id": "v1:aa2447f13b61d2c9fed9133e86242a384776db3c7186eb52fb6e587439120817",
+      "ip": "95.27.40.220",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 1,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "39d72752c2f091416667cd848be2edd328e958d7f55ebdbcb8457d010ccb18e4",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 879238,
+      "speed_bps": 28824212,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
         "worker_id": null
       }
     },
@@ -17940,7 +20025,7 @@
       "openvpn_config_bytes": 10009,
       "openvpn_config_sha256": "48cf0535abf84dfa5ca90a8685a60bdc5aa010fa1ae384856413d35827b5eadd",
       "ping_ms": 3,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 616852,
@@ -17970,12 +20055,12 @@
       "hostname": "public-vpn-156",
       "id": "v1:acdd977a572f99ebea76007d93fb646b9ebf7a2af92c7c90bf08f58a2205ff19",
       "ip": "219.100.37.95",
-      "last_seen_at": "2026-09-12T08:59:15.250Z",
-      "num_vpn_sessions": 46,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 64,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "21457eb294897929cd56710c885ca9c30cde119f29a579db12b8f1247be02be0",
-      "ping_ms": 32,
-      "present_in_latest_source": false,
+      "ping_ms": 11,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -17983,8 +20068,8 @@
           "port": 443
         }
       ],
-      "score": 1835294,
-      "speed_bps": 303097884,
+      "score": 1537671,
+      "speed_bps": 323624775,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -18161,6 +20246,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/23f6a5afe938724907f6203acd366d6c0341898dc79759a9dced3d7534752fc4.json",
+        "sha256": "78b7c136cc91f2ce1962d877f3b67fba5c828795a6cfc36dbb326f9bb7407dd8"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn499782909",
+      "id": "v1:af85eb90aa67530a197edd8c4a050b8f684ff0fe9df6aaa6019d2c7594bce1d7",
+      "ip": "180.196.219.210",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "23f6a5afe938724907f6203acd366d6c0341898dc79759a9dced3d7534752fc4",
+      "ping_ms": 8,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "180.196.219.210",
+          "port": 1213
+        }
+      ],
+      "score": 619970,
+      "speed_bps": 614986310,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/9b979d9b56a2ff7a6053a94da24d41619554ac4eac132da8baddd68afef1a413.json",
         "sha256": "60676735f6ac83586029fb63ce7592f32919998dde37a391a508285428a77c4d"
       },
@@ -18250,12 +20375,12 @@
       "hostname": "public-vpn-184",
       "id": "v1:b10d34e1a758dd906b5ff3d3453f982c119cf896f9d70c1349ba57c9375cfe6a",
       "ip": "219.100.37.162",
-      "last_seen_at": "2026-09-12T07:59:35.939Z",
-      "num_vpn_sessions": 107,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 114,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "893df472c4e16d4e61200cee3ad38b3f52f747d021d9a4ac1f9a8f9dbcdfc21d",
-      "ping_ms": 24,
-      "present_in_latest_source": false,
+      "ping_ms": 12,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -18263,8 +20388,8 @@
           "port": 443
         }
       ],
-      "score": 1765143,
-      "speed_bps": 703705833,
+      "score": 2476517,
+      "speed_bps": 669814838,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -18335,7 +20460,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "e478810a749a3f9f05edba56c86825db5e4d80612e242da16315164aab4e8f60",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -18690,12 +20815,12 @@
       "hostname": "vpn444500990",
       "id": "v1:b58d15842bba0d1c2a13bc5af4754dfd7c005940b4f5ea9816ac427205900bca",
       "ip": "121.162.193.161",
-      "last_seen_at": "2026-09-12T09:29:18.335Z",
-      "num_vpn_sessions": 8,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 9,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "5c13f3fc7118dd3948e9b2eecd56ced911faaac1d2a909a2a1c2c1cf577d9c29",
       "ping_ms": 30,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -18703,8 +20828,8 @@
           "port": 995
         }
       ],
-      "score": 763734,
-      "speed_bps": 82712664,
+      "score": 797956,
+      "speed_bps": 122402757,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -19010,12 +21135,12 @@
       "hostname": "vpn849714078",
       "id": "v1:b75fb78eb852e4a24bc000096144be8c547b5fd7dfd61a0b89c8db0983eb4f29",
       "ip": "121.141.56.115",
-      "last_seen_at": "2026-09-12T07:59:13.620Z",
-      "num_vpn_sessions": 6,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "5aca1bff831ba1258ea0f2256cfcf87ab1bd3abe9281f34fe3e8dc4215ff35c9",
       "ping_ms": 27,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -19023,8 +21148,8 @@
           "port": 995
         }
       ],
-      "score": 623267,
-      "speed_bps": 472632209,
+      "score": 665699,
+      "speed_bps": 430014926,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -19105,6 +21230,46 @@
       ],
       "score": 520816,
       "speed_bps": 89730708,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/a7c4314645de4783e1d3c22cd5021f7e6db0356596838849989eef5a4e48988d.json",
+        "sha256": "f09b41055432577854e618990399bcdbca4e781e386828700e71139e21d6d72d"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn917250768",
+      "id": "v1:b83397feba96c284915415b921585a6a7c3adedddb9df3c362181c6a3008c8b4",
+      "ip": "27.94.23.211",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 42,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "a7c4314645de4783e1d3c22cd5021f7e6db0356596838849989eef5a4e48988d",
+      "ping_ms": 3,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "27.94.23.211",
+          "port": 1275
+        }
+      ],
+      "score": 880392,
+      "speed_bps": 802047118,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -19250,7 +21415,7 @@
       "hostname": "vpn516540073",
       "id": "v1:b8f060fc826b38a2e05b553a4b88e2c7141124ed16df191ba5426db5a4fc2a9d",
       "ip": "125.133.70.46",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 9,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "20f8dd75b00aa503f6a51769fc9213d2aaaf57258e7fb240708353b8cad827f0",
@@ -19263,7 +21428,7 @@
           "port": 995
         }
       ],
-      "score": 687646,
+      "score": 687158,
       "speed_bps": 298974924,
       "tcp_probe": {
         "checked_at": null,
@@ -19455,7 +21620,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "1756d63d380d181e8e16f45a3f63856e250ea99faa686f102cf3b12d6d53e11e",
       "ping_ms": 8,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -19535,7 +21700,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "b5b27b6fc4431d3868b1db86f396156dd223f928df733cbd668c0f83082edfc3",
       "ping_ms": 37,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -19575,7 +21740,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "243dece2b5079900bafb19006921a0f3d9ee5ecbae8f973883939bead2294079",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 601579,
@@ -19590,6 +21755,46 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/1255ee8a6a22b992fa9095642cea77493cb02a59e4c33c82389d4859a7cde5ec.json",
+        "sha256": "e776631aa81eb6f23730fee95f2cb7556abc536d5caa0d0f586ca102a28f29ff"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-189",
+      "id": "v1:bb46c8011aebc2f9821a4b731b4003464125392492f5603e370441821e79208c",
+      "ip": "219.100.37.180",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 117,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "1255ee8a6a22b992fa9095642cea77493cb02a59e4c33c82389d4859a7cde5ec",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.180",
+          "port": 443
+        }
+      ],
+      "score": 2820121,
+      "speed_bps": 921804118,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
         "worker_id": null
       }
     },
@@ -19620,6 +21825,86 @@
       ],
       "score": 637751,
       "speed_bps": 567467718,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/7c01094dac788556a79955845ae849d0275daea36064c5e43dedf338fd9819d3.json",
+        "sha256": "479aab4c6f95eb136671c304e0a116f8cd3f1798a6244fc1bea502b9ecf9830c"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn248153573",
+      "id": "v1:bb8a7327d1e1b84065a6e6c0707aa6785c2c0d2817a69305969f0a7cf45cc2e9",
+      "ip": "27.95.108.240",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 36,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "7c01094dac788556a79955845ae849d0275daea36064c5e43dedf338fd9819d3",
+      "ping_ms": 2,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "27.95.108.240",
+          "port": 1581
+        }
+      ],
+      "score": 722268,
+      "speed_bps": 786514689,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/71182cfff36fa827f3ed48fc5e0648f0bb584b1df6c67bb046871e9443a70e27.json",
+        "sha256": "bb735eb4a929152a9c9d0d1bb1b68efe7c41bef152fe8ee77e3c36b6a0beebff"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn157297529",
+      "id": "v1:bb96cc4dbb9e329e1d018614699a36536f49b61f7879fea9437fec4dcfeb8788",
+      "ip": "125.51.64.56",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 15,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "71182cfff36fa827f3ed48fc5e0648f0bb584b1df6c67bb046871e9443a70e27",
+      "ping_ms": 24,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "125.51.64.56",
+          "port": 1233
+        }
+      ],
+      "score": 610681,
+      "speed_bps": 731371176,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -19725,7 +22010,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "d9723c6c4b0d040f2378e57f0db8ebeb12ea58985f29e84b234fbfd6872b08be",
       "ping_ms": 4,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -19735,6 +22020,46 @@
       ],
       "score": 669278,
       "speed_bps": 953504982,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/bd64f6cdf346936fd11a44336a2c5411333e3a991ff258a2b3138d49b4eb4384.json",
+        "sha256": "018a6e2102398f44b3619d5a432a907ef65ff2629eec77185578a6512fbca942"
+      },
+      "country_code": "BD",
+      "country_name": "Bangladesh",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn380761844",
+      "id": "v1:bc77898a0d0aec23b2a0cfa7d4b99e0fc99c7ec869925d30b878b236f0836f9e",
+      "ip": "192.140.252.54",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 4,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "bd64f6cdf346936fd11a44336a2c5411333e3a991ff258a2b3138d49b4eb4384",
+      "ping_ms": 42,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "192.140.252.54",
+          "port": 1497
+        }
+      ],
+      "score": 536209,
+      "speed_bps": 110615491,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -19960,7 +22285,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "e5f3f27985ef449e12951773645ff128974a1afba206e8dea22e3f48cd9363f5",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -20000,7 +22325,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "aa5211a0fc30c6426a04e2aea60a0ef49ce9d5bca6b9e46794f463410fe9d193",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -20080,7 +22405,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "5b262baf1ddaaf34e374eeb8588554abfb98dfec42cc5c53d79e4c86e03e1c20",
       "ping_ms": 10,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -20090,6 +22415,46 @@
       ],
       "score": 597108,
       "speed_bps": 32873411,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/53681ef2c946adb1c7d6e644088e288e6d59a2c9effe5e0a7e054372ea0ea451.json",
+        "sha256": "910e7b8bf6079356a77efde0e086d94c4c15edf68b40ffb1a96d394f80ef142b"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn873672178",
+      "id": "v1:bfc2e67fc59f13d95d304686773d29cd38f0190401138c9e8479431ebab52b75",
+      "ip": "115.37.230.116",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 8,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "53681ef2c946adb1c7d6e644088e288e6d59a2c9effe5e0a7e054372ea0ea451",
+      "ping_ms": 11,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "115.37.230.116",
+          "port": 1629
+        }
+      ],
+      "score": 637443,
+      "speed_bps": 875074744,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -20585,7 +22950,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "22c258ee469f369c67496f0d8305d7b8132e2a21f63a3a26d5f0384f729e1c94",
       "ping_ms": 9,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -20745,7 +23110,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "0233f47ab7e13105d12679379579e519864c293f0995223182b89ab00b198802",
       "ping_ms": 3,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -21135,12 +23500,12 @@
       "hostname": "n26",
       "id": "v1:c8750bca0b20fd94f52a480b37d4807db7a3ca94a880706675f283c53ef4ab04",
       "ip": "110.163.135.59",
-      "last_seen_at": "2026-09-12T13:29:18.526Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 286,
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "b5c7ad5f87eb5274b913d2d8741f7fc9361f70137373df1116ff48bb87d0795e",
       "ping_ms": 9,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -21148,7 +23513,7 @@
           "port": 1194
         }
       ],
-      "score": 1305109,
+      "score": 1304587,
       "speed_bps": 215697025,
       "tcp_probe": {
         "checked_at": null,
@@ -21380,7 +23745,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "ba73117b5b4bd20eb54e8610a36bd09873b8d156a17a5c620534fa64b7c38976",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -21495,7 +23860,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "e621b0f04080be8b29e22ea73b58ddd8ed0427477101f957775c3d60fcb8e17e",
       "ping_ms": 41,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -21775,7 +24140,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "749a6e57f39ebf7aa5e71fe2f7db3e9a98170c03b0d6705411fd3bc02197388d",
       "ping_ms": 25,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -21895,7 +24260,7 @@
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "b936d799421bf624d2410a1cc5e861aedb940d53c4c0b4be354505b04dda649b",
       "ping_ms": 31,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -22130,7 +24495,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "1414a8bcf26a4e72ca841a86eff89162dba3ba0f32a85f617dd3a7c4f4a4a960",
       "ping_ms": 32,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -22155,6 +24520,41 @@
     },
     {
       "config": {
+        "bytes": 13562,
+        "path": "pool/configs/d7a0b4931c6f03ff3cac7e885b4dcf14117dff6fd9b3c24c3aeb8790568bc5fd.json",
+        "sha256": "0acb4de64f017176721163809e5920b00d550c5bc0a06a882f420e213b47ffa8"
+      },
+      "country_code": "UZ",
+      "country_name": "Uzbekistan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn372054718",
+      "id": "v1:d0df294b28d4beb8083ec6f2c349ef67a2f8b5e3b0384a146689e2be1b6adadc",
+      "ip": "213.230.86.122",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "d7a0b4931c6f03ff3cac7e885b4dcf14117dff6fd9b3c24c3aeb8790568bc5fd",
+      "ping_ms": 82,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 429377,
+      "speed_bps": 96807375,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13558,
         "path": "pool/configs/3cfb4c9c36eeb456976b9cbcbccdb25d5e2465b45edf8449d2b64708af182965.json",
         "sha256": "1bc395112aa39f1b97b5dee51494f0e4862e85f40aa6f1b14a13dbda72ddbacb"
@@ -22170,7 +24570,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "3cfb4c9c36eeb456976b9cbcbccdb25d5e2465b45edf8449d2b64708af182965",
       "ping_ms": 3,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 586312,
@@ -22515,7 +24915,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "0c86bb5bac2d1ca3a6fd0bfcce3188d2665fa08b67743fe4d67fc115c0ac74e2",
       "ping_ms": 11,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 601096,
@@ -22856,6 +25256,41 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/3f56ffdd4724ff2049a51bbb2459c69901bba497e1bba36ac2c3596ae77d3adc.json",
+        "sha256": "e8a8c156879b460054cdfc5faced0c699fb054cf491da10cc56dcdf379216555"
+      },
+      "country_code": "TH",
+      "country_name": "Thailand",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn711287228",
+      "id": "v1:d752b324bb613824c4f144d41d8bb2720f6bbc80cc48ec32c65f01fa8c6bd56e",
+      "ip": "171.4.240.240",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 19,
+      "openvpn_config_bytes": 10006,
+      "openvpn_config_sha256": "3f56ffdd4724ff2049a51bbb2459c69901bba497e1bba36ac2c3596ae77d3adc",
+      "ping_ms": 17,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 614251,
+      "speed_bps": 214538494,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/8b2968bd9b401273c0973ad4197c376afaadd94046a3fcf158242ae3192ff0bd.json",
         "sha256": "04f15beed06c4bc536ad1e351aa97b3e0446522d426a3b1f587cf7fcd7ec84f2"
       },
@@ -23185,7 +25620,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "a01a179b2153e81801c27a85453fb983fe305e2e18e623bd645e39a1d8f3e59c",
       "ping_ms": 7,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -23655,7 +26090,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "7e5d87d43ea013c31ee64726b00821132d2b495da08256e58f7c9536b34554c7",
       "ping_ms": 26,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -23760,6 +26195,86 @@
     },
     {
       "config": {
+        "bytes": 13562,
+        "path": "pool/configs/c6592aee87c35ab43d99c20afcfe3730533dbebd01ecf34a8818b82c5babd703.json",
+        "sha256": "807fe9bc0f3d081ba8c949c8ba1556212fab786aed79884f93d0b1c565ac741f"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn616200329",
+      "id": "v1:e1ace77997fee774f1c95ebbd421f4ef83b605559cc3007b65cc5dda9d177278",
+      "ip": "121.140.218.168",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "c6592aee87c35ab43d99c20afcfe3730533dbebd01ecf34a8818b82c5babd703",
+      "ping_ms": 28,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "121.140.218.168",
+          "port": 995
+        }
+      ],
+      "score": 546881,
+      "speed_bps": 724544579,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/b688dc2a6d891f33eee48f45e6b1c5e7fc8058ec05df2e9bf0145fc2a3fd45ae.json",
+        "sha256": "0c83717d1c22eebbd92629a4ab537eff13bdabd8b4347322ca88fc5f7bf05afe"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn807573737",
+      "id": "v1:e23afe8e8f92594f82704dc1b05e511b6aa3f9ace7f31af0354f0e1a6bbc0b0d",
+      "ip": "124.111.152.70",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 2,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "b688dc2a6d891f33eee48f45e6b1c5e7fc8058ec05df2e9bf0145fc2a3fd45ae",
+      "ping_ms": 35,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "124.111.152.70",
+          "port": 1463
+        }
+      ],
+      "score": 619122,
+      "speed_bps": 60339729,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
         "bytes": 13558,
         "path": "pool/configs/906f0a63b6058c8428c1aaa10692372556e2f2dbc5790b2403c55c45c7b1d082.json",
         "sha256": "e16415084f28d2367b43c5f5db610490689f92bd004f09c46780396f770ddc83"
@@ -23775,7 +26290,7 @@
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "906f0a63b6058c8428c1aaa10692372556e2f2dbc5790b2403c55c45c7b1d082",
       "ping_ms": 17,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -23825,6 +26340,46 @@
       ],
       "score": 801203,
       "speed_bps": 85753128,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/3202e5329f018b99c78a9de9cf75cde43c66e9c5f71c85f02e46334794f208b7.json",
+        "sha256": "f7411b44b4dcc2d2a5dc157e39dfaa549e720ff8692d15933fb25fa2ed8ee6f9"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn836123925",
+      "id": "v1:e3e8bc9849878dd9c2ccfb57bba3b9a459bed1276d7e6512c183a91f069a1668",
+      "ip": "119.230.244.45",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 42,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "3202e5329f018b99c78a9de9cf75cde43c66e9c5f71c85f02e46334794f208b7",
+      "ping_ms": 2,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "119.230.244.45",
+          "port": 1902
+        }
+      ],
+      "score": 932971,
+      "speed_bps": 891681203,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -23970,7 +26525,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "75a278c64cef470d4ae3a063ae9aa89defe939eaaa0cf5fa17d5ccbcb9ad9577",
       "ping_ms": 12,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -23990,6 +26545,41 @@
         "probe_source": "cloudflare_workers",
         "round": null,
         "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/33e768f2e80737562c4dbb9d87923ce647ceaffc88a9311047b0865508b58123.json",
+        "sha256": "2f4cc97bf9301b86169bca5dc9b487fff8c0f2f2cc4cce4e5008d02d0901271a"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn616290916",
+      "id": "v1:e5e5d110323620dad1abc8be0b0f4990f9a1637d6cd56689b4239e79729c437a",
+      "ip": "202.222.37.182",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 10,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "33e768f2e80737562c4dbb9d87923ce647ceaffc88a9311047b0865508b58123",
+      "ping_ms": 12,
+      "present_in_latest_source": true,
+      "probe_reason": "udp",
+      "probe_targets": [],
+      "score": 634281,
+      "speed_bps": 176508344,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "not_applicable",
         "worker_id": null
       }
     },
@@ -24236,6 +26826,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/d2f2599944ad03495a5aa3a9de98381005c84997bf7b16ba16d7be68032b4779.json",
+        "sha256": "831cafe2993357f7946fadb45842a40b39580e6171b04f73c5d1b570ab4e5553"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn222286321",
+      "id": "v1:e86ca0a749ffcffac70a65994ab830b395f7c6faa4c8d318ed13e161fcea6fc5",
+      "ip": "113.154.137.98",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 5,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "d2f2599944ad03495a5aa3a9de98381005c84997bf7b16ba16d7be68032b4779",
+      "ping_ms": 7,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "113.154.137.98",
+          "port": 1714
+        }
+      ],
+      "score": 592868,
+      "speed_bps": 36963444,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/ffce627959b856c78bd0dbf620de85f3badb0738d657535dfac9ec53848a6d71.json",
         "sha256": "b1259068491fafb330e26411e1e9b317797c77bb08d5c16086d29a94fb592cb0"
       },
@@ -24260,6 +26890,46 @@
       ],
       "score": 1002224,
       "speed_bps": 2008321798,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/c9b75789099b5ba65c16ad00ea5bb5ddccd928498a245323fa254dea44218bad.json",
+        "sha256": "19c5cf7b87d31cefc85146b7d25eafbd1f27a52bb6fea4d0baf2c2f7b18ff7cb"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn582749252",
+      "id": "v1:e98842af6b123e8954364019121a721b1f528ff54646083b4f8fdfd083b7a65f",
+      "ip": "118.158.49.173",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 4,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "c9b75789099b5ba65c16ad00ea5bb5ddccd928498a245323fa254dea44218bad",
+      "ping_ms": 8,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "118.158.49.173",
+          "port": 1558
+        }
+      ],
+      "score": 649171,
+      "speed_bps": 79091528,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -24605,12 +27275,12 @@
       "hostname": "public-vpn-45",
       "id": "v1:ec24a7b69f80f7c78809bcbb03a75fa76ad3590f788daa7b355581a1bb97597b",
       "ip": "219.100.37.9",
-      "last_seen_at": "2026-09-12T08:59:15.250Z",
-      "num_vpn_sessions": 86,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 96,
       "openvpn_config_bytes": 10004,
       "openvpn_config_sha256": "e761a559957720192be3f17b73e723b9dd835e53dd379da84baa388b460dde49",
-      "ping_ms": 28,
-      "present_in_latest_source": false,
+      "ping_ms": 8,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -24618,8 +27288,8 @@
           "port": 443
         }
       ],
-      "score": 2520148,
-      "speed_bps": 298529616,
+      "score": 1772039,
+      "speed_bps": 313509140,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -24690,7 +27360,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "7406c042262908d79ff973e15df62375e3d134922c0e3186c9b9474349fc5677",
       "ping_ms": 9,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -24756,6 +27426,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/593dad202e3e63727824af4674155d9fe0d44159edb4becdcfd307c1b31d9e1b.json",
+        "sha256": "cca89605cfa535c67bd131cc02acb9a9997261a76d0b52a4c0cd8fe36376aa4b"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn897452363",
+      "id": "v1:ec95ee335256fc0032ae6461ef900a9f7d844eb0008dbb6a1a968963f05a00d1",
+      "ip": "126.111.60.249",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 5,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "593dad202e3e63727824af4674155d9fe0d44159edb4becdcfd307c1b31d9e1b",
+      "ping_ms": 4,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "126.111.60.249",
+          "port": 1426
+        }
+      ],
+      "score": 615978,
+      "speed_bps": 165971097,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/6aaf7d37792e1a6bd13b16bd8c12251514346ae00bd04fa39f4c9f05f66b6b20.json",
         "sha256": "4424b8d6beb0979771915a4dadfaa792c4b4149c81af0d809ec802f853628390"
       },
@@ -24780,6 +27490,46 @@
       ],
       "score": 3035064,
       "speed_bps": 1054125507,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/c95a1cf746c86303e2fdcacc953bf68d8f685092eef96eef44ff7e4d8cb170ec.json",
+        "sha256": "b13c4bb83d04941290a8c0a9e8f3b6659d3b9b19aece12c6624a63467d5a7e44"
+      },
+      "country_code": "RU",
+      "country_name": "Russian Federation",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn466796601",
+      "id": "v1:ed566a8730c01a56ed8f3192fb0225ed017f7f2de3a478170c8dfc544f2ca86f",
+      "ip": "188.113.168.162",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 0,
+      "openvpn_config_bytes": 10008,
+      "openvpn_config_sha256": "c95a1cf746c86303e2fdcacc953bf68d8f685092eef96eef44ff7e4d8cb170ec",
+      "ping_ms": 137,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "188.113.168.162",
+          "port": 1380
+        }
+      ],
+      "score": 470837,
+      "speed_bps": 93737358,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -24900,6 +27650,46 @@
       ],
       "score": 719065,
       "speed_bps": 131148264,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/51611f426c292eb4f6654d1b8a2284af890996190837916d1ab54a14c86ccc19.json",
+        "sha256": "29144008498042c9a82899f67f5d9c026b04779fa2ebe7f8087c2b9cefc1473d"
+      },
+      "country_code": "KR",
+      "country_name": "Korea Republic of",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn218369883",
+      "id": "v1:ee906a1f7f67141e7955e9d999bce252bcd964f1dc06555f637ca19f19e19403",
+      "ip": "221.159.176.55",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 1,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "51611f426c292eb4f6654d1b8a2284af890996190837916d1ab54a14c86ccc19",
+      "ping_ms": 32,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "221.159.176.55",
+          "port": 1266
+        }
+      ],
+      "score": 531199,
+      "speed_bps": 88693921,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -25090,7 +27880,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "b5969dd06e438c41ed522ac5c1358df572f728033f0963fcdd6842c87726358f",
       "ping_ms": 27,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -25330,7 +28120,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "65ea73619e5afa1e0e45f8c997cb1aa3bbbae7aaf2d0b79baf6f838edb10e76a",
       "ping_ms": 30,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -25365,7 +28155,7 @@
       "hostname": "vpn810052773",
       "id": "v1:f528be99284b25795a81a4d001ca79952f85d95bdcfa333c0ab1008406143f27",
       "ip": "183.96.171.71",
-      "last_seen_at": "2026-09-12T13:46:39.013Z",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
       "num_vpn_sessions": 8,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "53d282ca26ed1267617a511c7c9278d2251e773a5abf10d77a85b7c9f8fca488",
@@ -25378,7 +28168,7 @@
           "port": 995
         }
       ],
-      "score": 556600,
+      "score": 559672,
       "speed_bps": 235808696,
       "tcp_probe": {
         "checked_at": null,
@@ -25420,6 +28210,46 @@
       ],
       "score": 509490,
       "speed_bps": 23488199,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13558,
+        "path": "pool/configs/0a3b8aa87de7a92fd8c65cef60e95ac348b508abf4c7d03e4aa661ab1a5d6013.json",
+        "sha256": "61974dd78c0c74272c11e7f68e0886933d3e77544144cae7d8a2fe638a46cd5b"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "public-vpn-123",
+      "id": "v1:f61b0581b9d2b3b975f599b730e8bb69b6aeb824ca1673b23260d759f1f4b92b",
+      "ip": "219.100.37.89",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 49,
+      "openvpn_config_bytes": 10005,
+      "openvpn_config_sha256": "0a3b8aa87de7a92fd8c65cef60e95ac348b508abf4c7d03e4aa661ab1a5d6013",
+      "ping_ms": 20,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "219.100.37.89",
+          "port": 443
+        }
+      ],
+      "score": 2553452,
+      "speed_bps": 456371141,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -25605,7 +28435,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "db98b8fe008973ed3affc187b4f067ae86e6ab1c9a6e02c8f7d48fc8aa834a7e",
       "ping_ms": 10,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "udp",
       "probe_targets": [],
       "score": 590106,
@@ -25635,12 +28465,12 @@
       "hostname": "vpn592512377",
       "id": "v1:f8ca302f7b6e581b9ecccaa262099812da7124ca38715511085b95a83fbcb2b1",
       "ip": "118.104.13.2",
-      "last_seen_at": "2026-09-12T13:29:18.526Z",
-      "num_vpn_sessions": 14,
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 16,
       "openvpn_config_bytes": 10005,
       "openvpn_config_sha256": "533ba2196af45f5ca487c073b2ac78729a780ef64ea7552fe799ccc889ce7a6c",
       "ping_ms": 6,
-      "present_in_latest_source": false,
+      "present_in_latest_source": true,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -25648,8 +28478,48 @@
           "port": 1554
         }
       ],
-      "score": 687852,
-      "speed_bps": 392573316,
+      "score": 697239,
+      "speed_bps": 397798798,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
+        "path": "pool/configs/36f8501132bc12b34e8495d5a1bebd0d58397939cc22ee5d49361ce8c931a4fc.json",
+        "sha256": "c7c436bf94c2ec9b0b251da8ae2e668b703ba442203449e08964e1391b6b9332"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn832583593",
+      "id": "v1:f9903523bc550ccbc3b150a948fc109ecc7a83ea0e8589126e2d5c63be433c6c",
+      "ip": "119.240.25.184",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 9,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "36f8501132bc12b34e8495d5a1bebd0d58397939cc22ee5d49361ce8c931a4fc",
+      "ping_ms": 30,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "119.240.25.184",
+          "port": 1749
+        }
+      ],
+      "score": 1181004,
+      "speed_bps": 12180734,
       "tcp_probe": {
         "checked_at": null,
         "connect_ms": null,
@@ -25680,7 +28550,7 @@
       "openvpn_config_bytes": 10006,
       "openvpn_config_sha256": "f57309386488888373943c5f457b0ed1d284252e0d60b8740146c2384f1d25a5",
       "ping_ms": 30,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -25851,6 +28721,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/ef8474623fd6e190868346170c8a2988b0f25262c74a4f80c7175bfc3b9d3581.json",
+        "sha256": "1eca370d1a840fb0a6c54344440295542b7f9ec3bbadd4c61fc44d210513a5d2"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn970034535",
+      "id": "v1:fc3a651b0a4cd94649b0e5af2e74b1b0b2eb11d3f120ca8a1ba9d3dbd364dc8c",
+      "ip": "115.36.143.236",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 6,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "ef8474623fd6e190868346170c8a2988b0f25262c74a4f80c7175bfc3b9d3581",
+      "ping_ms": 14,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "115.36.143.236",
+          "port": 1598
+        }
+      ],
+      "score": 735764,
+      "speed_bps": 16263179,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/01374af522d8ef889cc55180a7e592a0b1f3f4c3a008bb1083ce2021994196e8.json",
         "sha256": "b9164ab00b0c25dd6e6e4542700f3ccd4c07a40b0ef27a3044955b50a59dfcd7"
       },
@@ -25865,7 +28775,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "01374af522d8ef889cc55180a7e592a0b1f3f4c3a008bb1083ce2021994196e8",
       "ping_ms": 14,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -25966,6 +28876,46 @@
     {
       "config": {
         "bytes": 13562,
+        "path": "pool/configs/0296f3939d4a90d3799269cc3d6dff9c0c06378869abcc5feaacbaf36adc2702.json",
+        "sha256": "f22b62f37291d0cc1404695ed453a4461383f8a8026a5c80467538b2b2ccb338"
+      },
+      "country_code": "JP",
+      "country_name": "Japan",
+      "first_seen_at": "2026-09-12T13:59:20.239Z",
+      "hostname": "vpn160391704",
+      "id": "v1:fc882b291043a7224b7f0a0964a25fdea757a3f04b596cd4ae4ca0780b0b47af",
+      "ip": "126.77.139.139",
+      "last_seen_at": "2026-09-12T13:59:20.239Z",
+      "num_vpn_sessions": 26,
+      "openvpn_config_bytes": 10007,
+      "openvpn_config_sha256": "0296f3939d4a90d3799269cc3d6dff9c0c06378869abcc5feaacbaf36adc2702",
+      "ping_ms": 17,
+      "present_in_latest_source": true,
+      "probe_reason": "tcp",
+      "probe_targets": [
+        {
+          "ip": "126.77.139.139",
+          "port": 1852
+        }
+      ],
+      "score": 1446791,
+      "speed_bps": 281133792,
+      "tcp_probe": {
+        "checked_at": null,
+        "connect_ms": null,
+        "connected_endpoint": null,
+        "consecutive_failures": 0,
+        "last_failure_round": null,
+        "last_success_at": null,
+        "probe_source": "cloudflare_workers",
+        "round": null,
+        "status": "unknown",
+        "worker_id": null
+      }
+    },
+    {
+      "config": {
+        "bytes": 13562,
         "path": "pool/configs/b14270469fc75105085cc3b1e35be48b077c7f8a4cb2fe2ffe5b1af175af1b28.json",
         "sha256": "8910e83bcb586fc69e7765362dbab0255afff586ae3ba5d47e681f68d20b6414"
       },
@@ -26020,7 +28970,7 @@
       "openvpn_config_bytes": 10007,
       "openvpn_config_sha256": "e3c210a6309d735fb5078ddcbf406e9d8c6ce4828896e038a264a41f27cb9541",
       "ping_ms": 2,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -26180,7 +29130,7 @@
       "openvpn_config_bytes": 10008,
       "openvpn_config_sha256": "bc4c2f61c2a2381fe7f6053747e8736777f48a4ddcba749226d2596a76bb682d",
       "ping_ms": 25,
-      "present_in_latest_source": true,
+      "present_in_latest_source": false,
       "probe_reason": "tcp",
       "probe_targets": [
         {
@@ -26244,5 +29194,5 @@
       }
     }
   ],
-  "source_fetched_at": "2026-09-12T13:46:39.013Z"
+  "source_fetched_at": "2026-09-12T13:59:20.239Z"
 }
