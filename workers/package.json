@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:dashboard": "node build-dashboard.mjs",
+    "check:dashboard": "node build-dashboard.mjs --check",
     "test": "node --test test/*.test.mjs",
     "check": "wrangler deploy --dry-run --config wrangler.probe-0.jsonc"
   },

@@ -90,7 +90,16 @@ current-source controls, with four concurrent sockets, three seconds per connect
 and 45 seconds of probe budget. A success on any endpoint marks TCP reachable;
 only all completed endpoint failures can mark unreachable. Platform restrictions,
 port 25, resource errors and unclassified exceptions are unknown. No application
-data is sent. Sockets are actively closed, including timeout paths.
+data is sent. Sockets are actively closed, including timeout paths. An unconfirmed
+closure stops new socket creation for that batch; affected endpoints become `unknown`
+and remaining work is deferred, so the batch can still write KV with at most four
+sockets outstanding.
+
+Invocation delay is limited to three hours, independently of the three-hour source
+freshness check. Bucket selection uses the scheduled time; the result round uses
+actual execution time. Optional v1 batch fields `scheduled_at`, `stop_reason` and
+`unclosed_sockets` record the original schedule and any unconfirmed socket closures.
+They do not authorize backfilling failure rounds.
 
 Actions reads completed batches for current/previous rounds, never waits for a
 probe to finish and never connects to node IPs. Batches carry unique UUIDs,

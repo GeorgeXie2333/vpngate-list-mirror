@@ -53,7 +53,7 @@ def checked_source():
     """Overlap read-only preparation; require both test suites before returning."""
     commands = ([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"],
                 ["node", "--test", "tests/test_consumer.mjs", "tests/test_pool_consumer.mjs",
-                 "workers/test/core.test.mjs"])
+                 "workers/test/core.test.mjs", "workers/test/dashboard.test.mjs"])
     with ThreadPoolExecutor(max_workers=3) as executor:
         source = executor.submit(fetch_source)
         checks = [executor.submit(run_code_check, command) for command in commands]

@@ -64,6 +64,19 @@
       "format": "date-time",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
     },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Original scheduled time; round describes actual probe execution."
+    },
+    "stop_reason": {
+      "enum": [null, "socket_close_unconfirmed"]
+    },
+    "unclosed_sockets": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
     "results": {
       "type": "array",
       "items": {

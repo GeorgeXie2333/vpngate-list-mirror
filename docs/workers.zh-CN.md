@@ -11,7 +11,7 @@
 | 设置 | 保存位置 | 值 |
 | --- | --- | --- |
 | `RESULTS` | 两个探测 Worker 的 KV binding | 同一个新建 KV namespace |
-| `WORKER_ID` | Worker 变量 | 模板已分别设为 `0`、`1` |
+| `WORKER_ID` | Worker 变量 | `0` 或 `1`，文本或 JSON 数字均可，其他值会被拒绝 |
 | `REPOSITORY` | 两个 Worker 变量 | `GeorgeXie2333/vpngate-list-mirror` |
 | `MAX_TARGETS_PER_RUN` | 两个 Worker 变量 | 首次小批验收用 `2`，完整上线用 `40`，允许 1–40 |
 | `PROBE_READ_TOKEN` | Worker 0 Secret 与 GitHub Actions 仓库 Secret | 同一个至少 32 字符的随机秘密，与现有触发令牌分开 |
@@ -23,7 +23,25 @@ Worker 1 无需秘密。两个探测 Worker 都不持有 GitHub 写入或触发�
 无需 `PROBE_READ_TOKEN`，它仅用于后台批次读取。未配置接口时正常累积，TCP 清理暂停；
 上游失败仍保留两套旧索引。
 
-## 部署步骤
+## Dashboard 部署（无需 Wrangler）
+
+打开 [worker-dashboard.js](../workers/worker-dashboard.js)，通过 GitHub 的 **Raw** 按钮下载，
+将完整文件粘贴到两个探测 Worker，并分别部署生产版本。保留各自变量、共享的 `RESULTS`
+绑定及上述 Cron 设置。首次验证继续用 `MAX_TARGETS_PER_RUN=2`、`TCP_PRUNE_ENABLED=false`。
+
+此文件由 `node workers/build-dashboard.mjs` 从 `workers/src` 生成，仅使用 Node.js 标准库。
+命令也会刷新内容完全相同的本地 `build/worker-dashboard.js`。CI 校验发布文件与源码一致；
+修改源码后重新生成，不要手动维护两份 JS。
+
+每次定时调用先记录 `started`，随后记录 `stored`、`no_due_targets` 或 `failed`。
+如果无法确认 socket 已关闭，本批停止开启新连接，受影响端点记为 `unknown`，剩余任务延期，
+并继续尝试一次 KV 写入。日志包含 `stop_reason: socket_close_unconfirmed` 与
+`unclosed_sockets`。最多保留四个未关闭连接，为 KV 请求留出余量。
+
+调度延迟最多允许三小时，同时仍要求源数据不超过三小时。原计划时间决定桶号，实际探测时间
+决定结果轮次；延迟执行不会补算过去轮次的失败。
+
+## 使用 Wrangler 部署（可选）
 
 1. 新代码推送后在 **Actions → Sync VPN Gate → Run workflow → main** 发布首次
    `pool/latest.json`，确认获取时间未超过三小时。仓库 Variable 先设

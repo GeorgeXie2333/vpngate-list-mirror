@@ -12,7 +12,7 @@ Keep the existing `vgate-list-update` Worker and `29,59 * * * *` cron unchanged.
 | Setting | Where | Value |
 | --- | --- | --- |
 | `RESULTS` | Both probe Workers | Same new KV namespace binding |
-| `WORKER_ID` | Worker variables | `0` or `1`, already set in templates |
+| `WORKER_ID` | Worker variables | `0` or `1`, as text or a JSON number; other values are rejected |
 | `REPOSITORY` | Both Worker variables | `GeorgeXie2333/vpngate-list-mirror` |
 | `MAX_TARGETS_PER_RUN` | Both Worker variables | `2` for initial small-batch acceptance, then `40` (allowed 1–40) |
 | `PROBE_READ_TOKEN` | Worker 0 secret and GitHub Actions repository secret | Same random secret of at least 32 characters, separate from the dispatcher credential |
@@ -25,7 +25,28 @@ credentials. The public mirror/pool do not use `PROBE_READ_TOKEN`; it protects
 only the operational batch reader. A missing reader leaves accumulation enabled
 and TCP cleanup paused. Source retrieval failure still retains both old indexes.
 
-## Install and deploy
+## Dashboard deployment (no Wrangler)
+
+Download [worker-dashboard.js](../workers/worker-dashboard.js) using GitHub's **Raw** button,
+then paste the complete file into both probe Workers and deploy each production version.
+Keep their individual variables, shared `RESULTS` binding and Cron schedules from the settings above.
+Start with `MAX_TARGETS_PER_RUN=2` and `TCP_PRUNE_ENABLED=false`.
+
+This file is generated from `workers/src` with `node workers/build-dashboard.mjs`, using
+only Node.js built-ins. The command also refreshes the identical local `build/worker-dashboard.js`
+copy. CI checks the committed file against its sources; edit the sources and regenerate it.
+
+Each scheduled invocation logs `started`, followed by `stored`, `no_due_targets` or `failed`.
+If a socket's closure cannot be confirmed, the batch stops starting new connections,
+marks the affected endpoint `unknown`, defers remaining work, and still attempts one KV write.
+The stored summary includes `stop_reason: socket_close_unconfirmed` and `unclosed_sockets`.
+At most four sockets remain outstanding, leaving capacity for the KV request.
+
+Cron delivery may be up to three hours late, provided source observations are still at most
+three hours old. The original scheduled time chooses the bucket; the actual probe execution
+chooses the result round, so delayed work cannot backfill an old failure round.
+
+## Install and deploy with Wrangler (optional)
 
 1. Allow the new repository code to publish an initial `pool/latest.json` using
    **Actions → Sync VPN Gate → Run workflow → main**. Check its source time is

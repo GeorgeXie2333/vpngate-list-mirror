@@ -17,10 +17,10 @@ function work(targets=[target()], controls=[target(1,[444])]) {
 }
 const success = async e => ({...e,status:"reachable",error:null,connect_ms:5});
 const failure = async e => ({...e,status:"unreachable",error:"timeout",connect_ms:null});
-async function inputs(targets=[target()]) {
-  const bucket=bytes({schema_version:1,bucket:0,targets});
+async function inputs(targets=[target()], {bucketNumber=0}={}) {
+  const bucket=bytes({schema_version:1,bucket:bucketNumber,targets});
   const plan=bytes({schema_version:1,bucket_count:144,source_fetched_at:iso(now),controls:[target(1,[444])],
-    buckets:{"0":{path:"pool/probes/000.json",bytes:bucket.length,sha256:await hash(bucket)}}});
+    buckets:{[bucketNumber]:{path:`pool/probes/${String(bucketNumber).padStart(3,"0")}.json`,bytes:bucket.length,sha256:await hash(bucket)}}});
   const index=bytes({kind:"vpngate-pool",schema_version:1,data_commit:"a".repeat(40),source_fetched_at:iso(now),
     files:{"pool/probe-plan.json":{bytes:plan.length,sha256:await hash(plan)}}});
   const calls=[];
@@ -42,8 +42,12 @@ test("socket opened is awaited and every socket is closed, including timeout rej
   assert.equal((await connectOnce(target().endpoints[0],()=>socket)).status,"reachable");
   const result=await connectOnce(target().endpoints[0],()=>({opened:new Promise(()=>{}),closed:Promise.reject(new Error("closed")),
     close:async()=>{closes++;throw new Error("close failed");}}),{timeout:5});
-  assert.equal(result.error,"timeout");
+  assert.equal(result.error,"platform");
+  assert.equal(result.status,"unknown");
   assert.equal(closes,2);
+  const timeout=await connectOnce(target().endpoints[0],()=>({opened:new Promise(()=>{}),closed:Promise.resolve(),close:async()=>{}}),{timeout:5});
+  assert.equal(timeout.error,"timeout");
+  assert.equal(timeout.status,"unreachable");
   const refused=await connectOnce(target().endpoints[0],()=>{throw new Error("ECONNREFUSED");});
   assert.equal(refused.status,"unreachable");
   const blocked=await connectOnce(target().endpoints[0],()=>{throw new Error("proxy request failed, cannot connect");});
@@ -68,6 +72,57 @@ test("40 endpoint calls include controls, at most four concurrent, oldest target
   assert.equal(calls.length,40);assert.equal(peak,4);assert.equal(batch.results.length,35);
   assert.equal(batch.deferred,25);assert.equal(batch.results.some(r=>r.id===id(0)),false);
   assert.equal(batch.guarded,false);
+});
+
+test("pending socket closure stops new connections and leaves room for the KV write",async t=>{
+  for(const settle of ["resolve","reject"]) await t.test(settle,async()=>{
+    let active=0,peak=0,kvWrites=0;
+    const release=[];
+    const connect=()=>{
+      active++;peak=Math.max(peak,active);
+      let openedResolve,openedReject,closedResolve,closedReject;
+      const opened=new Promise((resolve,reject)=>{openedResolve=resolve;openedReject=reject;});
+      const closed=new Promise((resolve,reject)=>{closedResolve=resolve;closedReject=reject;});
+      release.push(()=>settle==="resolve"?openedResolve():openedReject(new Error("late connect rejection")));
+      // Match workerd: close waits for the pending connection attempt.
+      return {opened,closed,close:()=>opened.then(()=>{active--;closedResolve();},error=>{
+        active--;closedReject(error);throw error;
+      })};
+    };
+    const data=await inputs(Array.from({length:12},(_,n)=>target(n*144,[1000+n])));
+    const env={WORKER_ID:"0",REPOSITORY:"owner/repo",RESULTS:{put:async(key,body)=>{
+      assert.ok(active<=4,"KV needs a free connection slot");
+      kvWrites++;
+      const batch=JSON.parse(body);
+      assert.equal(batch.results.every(r=>r.status==="unknown"),true);
+      assert.equal(batch.deferred,9); // one control plus three targets used the four lanes
+      assert.equal(batch.stop_reason,"socket_close_unconfirmed");
+    }}};
+    try {
+      const result=await scheduled({scheduledTime:now},env,connect,{now:()=>now,read:data.read,
+        attempt:(endpoint,socketConnect,options)=>connectOnce(endpoint,socketConnect,{...options,timeout:5,closeTimeout:5})});
+      assert.equal(result.status,"stored");
+      assert.equal(result.unclosed_sockets,4);
+      assert.equal(peak,4);
+      assert.equal(kvWrites,1);
+    } finally {
+      release.forEach(finish=>finish());
+      await new Promise(resolve=>setImmediate(resolve));
+    }
+    assert.equal(active,0);
+  });
+});
+
+test("rejected close also stops replenishing socket lanes",async()=>{
+  let connections=0;
+  const batch=await runBatch(work(Array.from({length:12},(_,n)=>target(n,[1000+n])),[]),()=>{
+    connections++;
+    return {opened:Promise.resolve(),closed:Promise.resolve(),close:async()=>{throw new Error("close failed");}};
+  });
+  assert.equal(connections,4);
+  assert.equal(batch.unclosed_sockets,4);
+  assert.equal(batch.results.every(r=>r.status==="unknown"),true);
+  assert.equal(batch.deferred,8);
 });
 
 test("shared endpoints do not spend additional calls; results remain bounded",async()=>{
@@ -111,6 +166,42 @@ test("loads only the selected hash-checked bucket, rejects stale/mixed data",asy
   await assert.rejects(loadWork(env,now,{now:()=>now,read:wrong.read}),/Wrong target bucket/);
   const privateTarget=await inputs([{...target(),ip:"10.0.0.1"}]);
   await assert.rejects(loadWork(env,now,{now:()=>now,read:privateTarget.read}),/Invalid target/);
+});
+
+test("delayed invocations keep their bucket and use the actual observation round",async()=>{
+  const env={WORKER_ID:"0",REPOSITORY:"owner/repo"};
+  const data=await inputs();
+  for(const delay of [120000,10800000]) {
+    const loaded=await loadWork(env,now,{now:()=>now+delay,read:data.read});
+    assert.equal(loaded.bucket,0);
+    assert.equal(loaded.round,roundOf(now+delay));
+    assert.equal(loaded.scheduled_at,iso(now));
+  }
+  const previousRound=await inputs([target(71)],{bucketNumber:71});
+  const loaded=await loadWork(env,now-300000,{now:()=>now,read:previousRound.read});
+  assert.equal(loaded.bucket,71);
+  assert.equal(loaded.round,roundOf(now));
+  assert.notEqual(loaded.round,roundOf(now-300000));
+  for(const invalid of [now-10800001,now+300001,-1,now+0.5,undefined]) {
+    await assert.rejects(loadWork(env,invalid,{now:()=>now,read:()=>assert.fail("invalid invocation must not fetch")}),/Stale scheduled invocation/);
+  }
+});
+
+test("worker ID types are consistent between scheduled and HTTP handlers",async()=>{
+  const data=await inputs(),secret="x".repeat(32);
+  const request=new Request(`https://probe.example/v1/batches?round=${roundOf(now)}`,{headers:{Authorization:`Bearer ${secret}`}});
+  const env={REPOSITORY:"owner/repo",PROBE_READ_TOKEN:secret,RESULTS:{list:async()=>({keys:[],list_complete:true})}};
+  for(const worker of ["0",0]) {
+    assert.equal((await loadWork({...env,WORKER_ID:worker},now,{now:()=>now,read:data.read})).worker_id,0);
+    assert.equal((await serve(request,{...env,WORKER_ID:worker},()=>now)).status,200);
+  }
+  for(const worker of ["1",1]) assert.equal((await serve(request,{...env,WORKER_ID:worker},()=>now)).status,404);
+  for(const worker of ["",null,undefined,false,true,"00"," 0 ",2]) {
+    await assert.rejects(loadWork({...env,WORKER_ID:worker},now,{now:()=>now,read:()=>assert.fail("invalid ID must not fetch")}),/Invalid WORKER_ID/);
+    const response=await serve(request,{...env,WORKER_ID:worker},()=>now);
+    assert.equal(response.status,500);
+    assert.equal((await response.json()).error,"invalid_worker_id");
+  }
 });
 
 test("scheduled writes one immutable TTL batch; empty bucket writes nothing",async()=>{
