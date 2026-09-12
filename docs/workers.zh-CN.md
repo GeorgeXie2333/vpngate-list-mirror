@@ -89,6 +89,28 @@ Worker 1 无需秘密。两个探测 Worker 都不持有 GitHub 写入或触发�
 离线测试使用假 socket 和 KV，不能代替真实 TCP、平台错误分类和 CPU 验收。
 完成后记录部署版本、资源测量和对应 Actions URL。
 
+## KV 为空时排查
+
+先区分定时探测、KV 写入和 Actions 读取这三个阶段：
+
+| 现象 | 检查位置与含义 |
+| --- | --- |
+| 日志只有 `fetch` / `GET /v1/batches` | 这是 Actions 读取，不能证明定时探测执行过 |
+| Cron 已配置，但没有 `scheduled` 日志 | 查看 Worker **Settings → Trigger Events → View events** 的 Cron 执行历史，确认正在查看已部署的生产 Worker |
+| Cron 执行历史也为空 | 核对生产部署确实含 `scheduled` 处理器、Cron 保存后仍在列表中，以及账号 Cron 配额；不能仅据此认定为 KV 故障 |
+| `status: no_due_targets` | 当前桶为空或本轮已完成，按设计不写 KV；看后续不同桶 |
+| `status: stored`，所查看的 KV 仍为空 | 比较两个 Worker 的 `RESULTS` 绑定与当前打开的 namespace ID |
+| Actions `pool.reader.errors` 包含 `http_404` | 列表接口地址应是 Worker 0 的 origin；Worker 1 固定返回 404。单条批次 404 也可能是暂不可见 |
+| Actions 报 `http_401` | 核对 Worker 0 与 Actions 的 `PROBE_READ_TOKEN`，不要把秘密贴进日志 |
+| Actions `reader.status: read` 且 `batches_read: 0` | 读取成功但没有新的可见批次，不能将其计为节点失败 |
+
+通过 Dashboard 部署时，JS、变量、KV binding 和 Cron 都需要分别保存到对应 Worker。
+Cron 位置是 **Settings → Triggers → Cron Triggers**；Worker 0 用 `2-57/5 * * * *`，
+Worker 1 用 `4-59/5 * * * *`。无需 Wrangler。
+[官方文档](https://developers.cloudflare.com/workers/configuration/cron-triggers/)说明 Cron
+变更传播可能需 15 分钟，新建或重命名 Worker 的历史记录首次显示可能需 30 分钟。
+超过这些时间仍无记录时，先核对生产部署和触发器状态，再检查平台故障。
+
 ## 读取接口和额度
 
 Worker 0 仅接受携带 `Authorization: Bearer <PROBE_READ_TOKEN>` 的 GET：

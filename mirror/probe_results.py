@@ -12,6 +12,17 @@ from .snapshot import parse_json
 MAX_BATCH = 65536
 
 
+class ProbeHTTPError(MirrorError):
+    def __init__(self, status):
+        self.status = status
+        super().__init__(f"Probe reader HTTP {status}")
+
+
+def _error_code(error):
+    # Report only the status, never remote response text, URLs or credentials.
+    return f"http_{error.status}" if isinstance(error, ProbeHTTPError) else type(error).__name__
+
+
 def read_result(url, token, limit=MAX_BATCH):
     parsed = urllib.parse.urlsplit(url)
     require(parsed.scheme == "https" and parsed.hostname and parsed.port in (None, 443)
@@ -22,7 +33,8 @@ def read_result(url, token, limit=MAX_BATCH):
         connection.request("GET", urllib.parse.urlunsplit(("", "", parsed.path, parsed.query, "")),
                            headers={"Authorization": f"Bearer {token}", "Accept-Encoding": "identity"})
         response = connection.getresponse()
-        require(response.status == 200, f"Probe reader HTTP {response.status}")
+        if response.status != 200:
+            raise ProbeHTTPError(response.status)
         require(response.getheader("Content-Encoding", "identity") == "identity", "Encoded result response")
         deadline, body = time.monotonic() + 5, bytearray()
         while True:
@@ -80,7 +92,7 @@ def collect_batches(base_url, token, now, processed=(), *, read=read_result):
                 require(isinstance(value, dict) and value.get("batch_id") == key.split("/")[-1], "Mismatched batch key")
                 return value, None
             except (OSError, http.client.HTTPException, MirrorError, ValueError) as exc:
-                return None, type(exc).__name__
+                return None, _error_code(exc)
         with ThreadPoolExecutor(max_workers=4) as executor:
             for value, error in executor.map(one, sorted(keys)[:300]):
                 if value is not None:
@@ -88,6 +100,6 @@ def collect_batches(base_url, token, now, processed=(), *, read=read_result):
                 if error:
                     errors.append(error)
     except (OSError, http.client.HTTPException, MirrorError, ValueError, TypeError, AttributeError) as exc:
-        errors.append(type(exc).__name__)
+        errors.append(_error_code(exc))
     return batches, {"status": "partial" if errors else "read", "batches_read": len(batches),
                      "pending": max(0, len(keys) - len(batches)), "errors": errors[:5]}

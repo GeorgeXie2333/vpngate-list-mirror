@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import tempfile
@@ -64,6 +65,19 @@ class PublishTests(unittest.TestCase):
         self.assertIsNone(self.remote_git.blob(index["data_commit"], "latest.json"))
         files = {path: self.remote_git.blob(index["data_commit"], path) for path in DATA_PATHS}
         verify_files(index, files)
+
+    def test_temporary_git_commands_do_not_start_auto_maintenance(self):
+        trace = Path(self.temp.name) / "git-trace.json"
+        traced = Git(self.seed, {**self.env, "GIT_TRACE2_EVENT": str(trace)})
+        # Inherited or repository settings must not spawn a process that can
+        # keep writing after our temporary checkout is removed.
+        self.git.run("config", "maintenance.auto", "true")
+        self.git.run("config", "gc.auto", "1")
+        traced.run("commit", "--allow-empty", "-m", "Temporary checkout operation")
+        events = [json.loads(line) for line in trace.read_text().splitlines()]
+        children = [event["argv"] for event in events if event.get("event") == "child_start"]
+        self.assertFalse(any("--auto" in argv and ("maintenance" in argv or "gc" in argv)
+                             for argv in children), children)
 
     def test_unchanged_response_only_updates_index(self):
         self.publish()

@@ -1,5 +1,6 @@
 import unittest
 import uuid
+from unittest.mock import Mock, patch
 
 from mirror.probe_results import collect_batches
 from mirror.pool import utc_round
@@ -7,6 +8,28 @@ from support import TIME
 
 
 class ResultReadTests(unittest.TestCase):
+    def test_http_errors_report_status_without_response_text_or_credentials(self):
+        for status in (302, 401, 404, 500):
+            with self.subTest(status=status):
+                connection = Mock()
+                connection.getresponse.return_value.status = status
+                connection.getresponse.return_value.reason = "private-server-response"
+                with patch("mirror.probe_results.http.client.HTTPSConnection", return_value=connection):
+                    batches, report = collect_batches("https://probe.example", "private-token", TIME)
+                self.assertFalse(batches)
+                self.assertEqual(report["status"], "partial")
+                self.assertEqual(report["errors"], [f"http_{status}"])
+                connection.request.assert_called_once()
+                connection.close.assert_called_once()
+
+    def test_empty_kv_is_a_successful_read(self):
+        def empty(url, token):
+            return {"batches": [], "list_complete": True}
+        batches, report = collect_batches("https://probe.example", "secret", TIME, read=empty)
+        self.assertFalse(batches)
+        self.assertEqual(report["status"], "read")
+        self.assertEqual(report["errors"], [])
+
     def test_unconfigured_does_no_network(self):
         def forbidden(*args): raise AssertionError("Network must not run")
         self.assertEqual(collect_batches("","",TIME,read=forbidden)[1]["status"],"not_configured")

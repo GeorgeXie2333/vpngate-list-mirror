@@ -19,14 +19,19 @@ def git_environment(token=None):
                GIT_AUTHOR_EMAIL="41898282+github-actions[bot]@users.noreply.github.com",
                GIT_COMMITTER_NAME="github-actions[bot]",
                GIT_COMMITTER_EMAIL="41898282+github-actions[bot]@users.noreply.github.com")
+    # These repositories live only for one publication. Background maintenance
+    # can outlive Git commands and race TemporaryDirectory cleanup.
+    settings = [("maintenance.auto", "false"), ("gc.auto", "0")]
     if token:
         # Authentication stays in the process environment, never in URLs,
         # command arguments, the checkout's config, or a persistent file.
-        count = int(env.get("GIT_CONFIG_COUNT", "0"))
-        env[f"GIT_CONFIG_KEY_{count}"] = "http.https://github.com/.extraheader"
         auth = base64.b64encode(("x-access-token:" + token).encode()).decode()
-        env[f"GIT_CONFIG_VALUE_{count}"] = "AUTHORIZATION: basic " + auth
-        env["GIT_CONFIG_COUNT"] = str(count + 1)
+        settings.append(("http.https://github.com/.extraheader", "AUTHORIZATION: basic " + auth))
+    count = int(env.get("GIT_CONFIG_COUNT", "0"))
+    for index, (key, value) in enumerate(settings, count):
+        env[f"GIT_CONFIG_KEY_{index}"] = key
+        env[f"GIT_CONFIG_VALUE_{index}"] = value
+    env["GIT_CONFIG_COUNT"] = str(count + len(settings))
     return env
 
 

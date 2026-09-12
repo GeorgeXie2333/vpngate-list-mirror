@@ -107,6 +107,30 @@ Offline tests use fake sockets and KV and cannot certify the deployed platform's
 CPU usage or real TCP results. Record deployment version, resource measurements
 and run URL when completing this checklist.
 
+## Troubleshooting empty KV
+
+Check scheduled probing, KV writes and Actions reads separately:
+
+| Observation | Check and meaning |
+| --- | --- |
+| Only `fetch` / `GET /v1/batches` logs | These are Actions reads; they do not prove a scheduled probe ran |
+| Cron exists but no `scheduled` logs | Open **Settings → Trigger Events → View events** for the deployed production Worker |
+| Cron execution history is also empty | Verify the production deployment has the `scheduled` handler, the saved Cron remains listed, and the account has Cron capacity; this alone does not identify a KV fault |
+| `status: no_due_targets` | The bucket is empty or already completed this round; no KV write is expected. Check subsequent buckets |
+| `status: stored` but the KV view is empty | Compare both Workers' `RESULTS` namespace IDs with the namespace being viewed |
+| Actions `pool.reader.errors` includes `http_404` | The listing API must use Worker 0's origin; Worker 1 always returns 404. A single batch 404 can also mean delayed visibility |
+| Actions reports `http_401` | Check that Worker 0 and Actions have the same `PROBE_READ_TOKEN`; do not paste secrets into logs |
+| Actions `reader.status: read` and `batches_read: 0` | The read succeeded with no new visible batches; this is not a node failure |
+
+For dashboard deployments, save the JS, variables, KV binding and Cron separately
+on each Worker. Use **Settings → Triggers → Cron Triggers**, with `2-57/5 * * * *`
+for Worker 0 and `4-59/5 * * * *` for Worker 1. Wrangler is not required.
+The [official documentation](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
+allows up to 15 minutes for Cron changes to propagate and up to 30 minutes for
+the first history entries after creating or renaming a Worker. If history stays
+empty beyond those intervals, check the production deployment and saved triggers,
+then investigate platform issues.
+
 ## Read API and limits
 
 Worker 0 accepts only authenticated GET requests with
