@@ -1,8 +1,8 @@
 name: Sync VPN Gate
 
 on:
-  schedule:
-    - cron: '59 * * * *'
+  # Cloudflare Worker dispatches this workflow at 29,59 * * * * (UTC).
+  # Keep workflow_dispatch for both the Worker and manual refreshes.
   workflow_dispatch:
 
 permissions:

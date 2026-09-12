@@ -7,8 +7,9 @@ A public HTTPS mirror of the server directory returned by the
 Anyone can download the directory and its complete public OpenVPN configurations:
 no login, registration, API key, or consumer-side GitHub token is required.
 
-GitHub Actions attempts a refresh at minute **59 of every hour (UTC)**. A complete,
-validated response is committed to Git. GitHub Raw serves a small version index;
+Cloudflare Worker `vgate-list-update` requests a refresh at minutes **29 and 59
+of every hour (UTC)** (`29,59 * * * *`, 48 attempts per day), dispatching GitHub
+Actions to fetch, validate and commit a complete response. GitHub Raw serves a small version index;
 jsDelivr distributes files pinned to one full data commit SHA.
 
 This mirrors the API response, not every VPN Gate server worldwide. Scores,
@@ -91,10 +92,11 @@ required or used.
 GitHub Raw is also cached. An anonymous header probe on 2026-09-11 observed
 `Cache-Control: max-age=300`; this is not a contractual refresh deadline.
 Browser `cache: "no-store"` controls browser caching, not every upstream cache.
-[GitHub scheduling](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
-can be delayed or dropped under load, and public-repository schedules can be
-disabled after 60 days without activity. There is no strict publication deadline
-or worldwide CDN visibility guarantee.
+The schedule is managed by [Cloudflare Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/),
+not a GitHub Actions `schedule`. Worker dispatch, runner start, successful
+publication and CDN visibility are separate events. An accepted dispatch does
+not mean publication has finished; there is no strict publication deadline or
+worldwide CDN visibility guarantee.
 
 Consumers can poll the small index every 10–15 minutes with jitter. Suggested
 age indicators are 3 hours for stale and 24 hours for very stale; consumers
@@ -216,10 +218,13 @@ replacement, publication races and an uncertain push acknowledgment.
 
 To refresh, open [Sync VPN Gate](https://github.com/GeorgeXie2333/vpngate-list-mirror/actions/workflows/sync.yml)
 and select **Run workflow** on `main`. Only its publication job has
-`contents: write`; PR checks are read-only. It uses the built-in `GITHUB_TOKEN`,
-never a personal access token. Official Actions are pinned to complete SHAs and
-updated through Dependabot PRs. The standard runner and short-lived working
-files need no server, database, Pages site, extra account or paid service.
+`contents: write`; PR checks are read-only. Publication uses the built-in
+`GITHUB_TOKEN`. The external scheduler requires a maintainer's Cloudflare account
+and a GitHub dispatch credential stored as the Worker secret `GH_ACTIONS_TOKEN`;
+consumers need neither. Official Actions are pinned to complete SHAs and updated
+through Dependabot PRs. No self-hosted server, database or Pages site is needed.
+See the [scheduler setup](docs/operations.md#refresh-and-scheduling) for permissions,
+token rotation and trigger diagnostics.
 
 See [operations](docs/operations.md) for branch settings, troubleshooting,
 publication timestamps and history growth, and [CONTRIBUTING](CONTRIBUTING.md)

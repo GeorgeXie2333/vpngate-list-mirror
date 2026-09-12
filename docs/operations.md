@@ -15,11 +15,12 @@ The target branch must allow normal fast-forward pushes by the job's built-in
 will stop automatic publication. Do not enable force-push to work around this.
 If organization policy mandates PR-only code branches, move generated data and
 the discovery index to a dedicated publication branch and update the documented
-index URL as a reviewed architecture change. No PAT or new GitHub App is needed
-for the default single-repository design.
+index URL as a reviewed architecture change. Publication itself needs no PAT;
+the external Worker uses a separate dispatch credential as described below.
 
-No Pages, database, private API, secrets, CDN account or purge permission is
-required. Consumers never use a GitHub token. Standard public-repository runner
+No Pages, database, private consumer API, CDN account or purge permission is
+required. The scheduler needs a Cloudflare account and a Worker secret; consumers
+never use a GitHub token. Standard public-repository runner
 usage is free under [GitHub's documented rules](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
 
 ## Refresh and scheduling
@@ -32,16 +33,43 @@ gh workflow run sync.yml --repo GeorgeXie2333/vpngate-list-mirror --ref main
 gh run list --repo GeorgeXie2333/vpngate-list-mirror --workflow sync.yml --limit 5
 ```
 
-The cron expression is `59 * * * *`: minute 59 of every hour in UTC
-(24 runs per day). The workflow file must exist on
-the default branch, and scheduled workflows only run there. Manual publication from
-other refs is skipped. `concurrency: vpngate-sync` and
-`cancel-in-progress: false` prevent active scheduled/manual runs from replacing
-each other. GitHub may replace older pending runs, delay scheduled work, or drop
-it under high load. Public repository schedules are automatically disabled
-after 60 days without repository activity. Re-enable them from Actions if this
-happens; refreshing the data manually does not justify inventing a source time.
-See [GitHub's schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+The active scheduler is Cloudflare Worker `vgate-list-update`. Its Cron Trigger
+is `29,59 * * * *`: minutes 29 and 59 of every hour in UTC, or 48 planned attempts
+per day. Maintain this trigger in Cloudflare **Workers & Pages → vgate-list-update
+→ Settings → Triggers → Cron Triggers**. The same minute values apply in UTC+8.
+[Cloudflare documents](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
+UTC scheduling and up to 15 minutes for trigger changes to propagate.
+
+The deployed Worker's `scheduled()` handler sends a POST to
+`https://api.github.com/repos/GeorgeXie2333/vpngate-list-mirror/actions/workflows/sync.yml/dispatches`
+with JSON body `{"ref":"main"}`. `sync.yml` intentionally has only
+`workflow_dispatch`, supporting both this API and the manual button. Keep it on
+the default branch and keep the workflow enabled; do not add a second GitHub
+`schedule`. Publication from other refs is skipped. The GitHub native schedule's
+60-day inactivity rule is not the scheduling mechanism used here.
+
+Store the dispatch credential as **Secret** `GH_ACTIONS_TOKEN` in the Worker,
+not in this repository or a consumer example. For a fine-grained PAT, select
+only this repository and grant **Actions: Read and write**; the dispatch token
+does not need Contents write. See the [GitHub dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event).
+Rotate it before expiration and update the Worker secret. The Actions publication
+job continues to use its own short-lived `GITHUB_TOKEN`.
+
+Keep the Worker's bounded request timeout and `redirect: "manual"`; accept only
+HTTP 200 or 204, rejecting redirects and other statuses. `redirect: "error"`
+caused a runtime exception in this deployment. Do not follow redirects with the
+authorization header ([Cloudflare request behavior](https://developers.cloudflare.com/workers/runtime-apis/request/)).
+Check the Worker's `scheduled` event and `workflow_dispatched` log, then the
+corresponding Actions run and its publication summary. A GET to the deployed
+`/__scheduled` URL does not invoke this Worker's scheduled handler; its HTTP
+handler returns 404. Do not expose an unauthenticated HTTP dispatch endpoint.
+
+`concurrency: vpngate-sync` and `cancel-in-progress: false` keep Worker and manual
+runs from cancelling an active sync; GitHub may replace older pending runs.
+Cron time, dispatch acceptance, runner start, successful publication and CDN
+visibility are separate events. Queuing and service failures remain possible;
+this does not guarantee publication exactly every half hour. After an ambiguous
+dispatch timeout, check recent runs before retrying to avoid duplicate requests.
 
 The optional **Optional live source check** workflow (or
 `python -m mirror check-live`) fetches and validates real HTTPS data without
@@ -109,6 +137,9 @@ temporarily be unavailable to a particular client, which retains its old cache.
 
 | Symptom | Action |
 | --- | --- |
+| No Worker `scheduled` event | Check the deployed Worker and its Cron Trigger; allow trigger changes to propagate |
+| Worker dispatch fails | Check `GH_ACTIONS_TOKEN`, expiration, repository scope, Actions write permission, API status and `redirect: "manual"` |
+| Dispatch accepted but no published update | Inspect the Actions run, queue, workflow enabled state and publication summary; acceptance is not completion |
 | Source timeout, 429, 5xx | Read bounded retry result; keep old data and retry manually later |
 | Empty, truncated or structurally invalid CSV/config | Inspect the error and source format; add offline regression fixtures before changing validation |
 | Push denied with unchanged remote | Check job permissions, repository policy and branch rules; do not force-push |
@@ -129,9 +160,9 @@ checked again if browser access changes; they are not controlled by this repo.
 ## History and dependency maintenance
 
 The 2026-09-11 implementation check returned 100 nodes: 1,347,159 CSV bytes,
-1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. If all 24 daily
-runs succeed with changed data, that is 8,760 snapshots / 17,520 commits and roughly
-24 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
+1,384,056 JSON bytes and 1,297 country bytes, about 2.73 MB total. If all 48 daily
+runs succeed with changed data, that is 17,520 snapshots / 35,040 commits and roughly
+48 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
 Git pack: cross-file compression and deltas depend on real content and order.
 
 Record repository size after 7 and 30 days and review monthly. The GitHub repo

@@ -6,7 +6,8 @@
 任何用户、开发者或自动化工具都可以通过 HTTPS 下载清单及完整公开 OpenVPN 配置，
 无需登录、注册、API Key 或消费端 GitHub Token。
 
-GitHub Actions 计划在**每小时第 59 分钟（UTC）**尝试获取一次完整响应，校验后提交。
+Cloudflare Worker `vgate-list-update` 按 **每小时第 29、59 分钟（UTC）**
+（`29,59 * * * *`，每天计划 48 次）触发 GitHub Actions，由其获取完整响应、校验并提交。
 GitHub Raw 提供小型版本索引，jsDelivr 按完整数据提交 SHA 分发文件。
 本项目不声称涵盖全球全部 VPN Gate 节点；国家、评分、Ping、速度和会话数均来自上游。
 本项目不测量节点性能、不验证在线状态、不连接 VPN、不执行配置、不创建 TUN，也不修改系统网络。
@@ -76,9 +77,9 @@ CDN 域名也可以换成上表中的其他入口。
 
 GitHub Raw 同样有缓存。2026-09-11 匿名请求观测到 `max-age=300`，这不是时限承诺；
 浏览器 `cache: "no-store"` 也不能保证所有上游缓存立即更新。
-[GitHub 调度](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
-可能延迟或在繁忙时被丢弃，公开仓库连续 60 天无活动可能停用计划任务。
-因此每小时计划采集、实际推送成功和某地 CDN 可见是不同时间，不承诺严格准点或全网同时刷新。
+调度由 [Cloudflare Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
+管理，GitHub Actions 不再配置 `schedule`。Worker 触发、runner 启动、成功发布和 CDN
+可见是不同事件；请求被接受不等于发布完成，不承诺严格准点或全网同时刷新。
 
 建议消费端每 10–15 分钟加随机偏移检查索引；3 小时可提示陈旧，24 小时可提示严重陈旧，
 阈值由消费端自行决定。已缓存更新索引时拒绝回退；刷新失败或协议不支持时保留旧缓存并显示其时间。
@@ -179,8 +180,10 @@ python -m mirror verify     # 校验含 latest.json 的已发布检出目录
 
 在 [Sync VPN Gate](https://github.com/GeorgeXie2333/vpngate-list-mirror/actions/workflows/sync.yml)
 选择 `main` 并点击 **Run workflow** 可手动刷新。只有发布 job 有 `contents: write`，
-PR 检查只读；使用内置 `GITHUB_TOKEN`，无需 PAT。官方 Actions 固定完整 SHA，
-Dependabot 提交更新 PR。项目无需数据库、自建服务器、Pages、额外账号或付费服务。
+PR 检查只读；发布使用内置 `GITHUB_TOKEN`。外部调度端需要维护者的 Cloudflare 账号，
+以及保存在 Worker Secret `GH_ACTIONS_TOKEN` 中的 GitHub 触发令牌，消费端无需这些凭据。
+官方 Actions 固定完整 SHA，Dependabot 提交更新 PR。无需数据库、自建服务器或 Pages。
+权限、令牌轮换和触发排查见[调度配置](docs/operations.zh-CN.md#刷新与调度)。
 
 故障排查、权限、时间含义和 Git 历史维护见[运维说明](docs/operations.zh-CN.md)。
 贡献见 [CONTRIBUTING](CONTRIBUTING.md)。项目自有代码使用 MIT，上游数据及配置保留原有

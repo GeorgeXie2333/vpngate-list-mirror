@@ -10,8 +10,9 @@ setup-python Action，使用标准托管 Ubuntu runner。全局默认令牌可�
 
 目标分支必须允许内置 `GITHUB_TOKEN` 正常快进推送。无法满足的强制 PR、签名或状态检查
 会阻止发布，不要通过允许 force-push 绕过。若组织要求代码分支仅可通过 PR 修改，应评审后
-改用独立数据发布分支并更新索引 URL。默认单仓库方案无需 PAT、额外 GitHub App、Pages、
-数据库、自建服务器、秘密、CDN 账号或 purge 权限。消费端不用 Token。
+改用独立数据发布分支并更新索引 URL。发布任务本身无需 PAT；外部 Worker 使用单独的触发令牌。
+无需 Pages、数据库、自建服务器、CDN 账号或 purge 权限。调度端需要 Cloudflare 账号及
+Worker Secret，消费端不用 Token。
 公开仓库标准 runner 用量适用 [GitHub 免费规则](https://docs.github.com/en/billing/concepts/product-billing/github-actions)。
 
 ## 刷新与调度
@@ -23,12 +24,35 @@ gh workflow run sync.yml --repo GeorgeXie2333/vpngate-list-mirror --ref main
 gh run list --repo GeorgeXie2333/vpngate-list-mirror --workflow sync.yml --limit 5
 ```
 
-调度表达式 `59 * * * *` 使用 UTC，每小时第 59 分钟执行一次，每天共 24 次。
-文件必须位于默认分支，计划任务只在默认分支运行。
-非 `main` 的手动发布被跳过。固定 concurrency group 配合 `cancel-in-progress: false`
-避免活动中的定时与手动同步互相覆盖，但 GitHub 可能替换旧的待运行任务。
-繁忙时调度可能延迟或丢弃；公开仓库连续 60 天无活动时可自动停用，需要到 Actions 重新启用。
-这些限制见[官方文档](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)。
+当前调度器为 Cloudflare Worker `vgate-list-update`，Cron Trigger 配置为
+`29,59 * * * *`，即 UTC 每小时第 29、59 分钟，每天计划触发 48 次。配置在 Cloudflare
+**Workers & Pages → vgate-list-update → Settings → Triggers → Cron Triggers**
+维护；UTC+8 同样是每小时第 29、59 分钟。[Cloudflare 文档](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
+说明 Cron 使用 UTC，触发配置变更可能需要最多 15 分钟传播。
+
+已部署 Worker 的 `scheduled()` 向
+`https://api.github.com/repos/GeorgeXie2333/vpngate-list-mirror/actions/workflows/sync.yml/dispatches`
+发送 POST，JSON 请求体为 `{"ref":"main"}`。`sync.yml` 只保留 `workflow_dispatch`，
+同时支持 Worker API 调用和手动按钮。文件保留在默认分支，工作流保持启用，不再添加第二套
+GitHub `schedule`。非 `main` 的发布被跳过；GitHub 原生定时任务的 60 天无活动停用规则
+不是当前方案使用的调度机制。
+
+触发令牌在 Worker 中以 **Secret** 类型保存为 `GH_ACTIONS_TOKEN`，不能放进仓库或消费端
+示例。使用 fine-grained PAT 时，仅选择本仓库，授予 **Actions: Read and write**，
+触发令牌无需 Contents 写权限，见 [GitHub dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)。
+到期前轮换令牌并更新 Worker Secret；Actions 发布 job 继续使用自己的短期 `GITHUB_TOKEN`。
+
+Worker 请求保留有限超时和 `redirect: "manual"`，只接受 HTTP 200 或 204，重定向和其他
+状态均报错。`redirect: "error"` 曾在此部署中导致运行时异常；不要携带认证头跟随重定向，
+见 [Cloudflare 请求行为](https://developers.cloudflare.com/workers/runtime-apis/request/)。
+验证时先看 Worker 的 `scheduled` 事件和 `workflow_dispatched` 日志，再核对对应 Actions
+运行及发布摘要。访问已部署 Worker 的 `/__scheduled` 只是普通 GET，不会调用该 Worker
+的定时处理函数，HTTP handler 返回 404；不要暴露无需认证的 HTTP 触发入口。
+
+固定 `concurrency: vpngate-sync` 配合 `cancel-in-progress: false`，使 Worker 和手动触发
+不会取消正在运行的同步，但 GitHub 可能替换旧的待运行任务。Cron 时间、触发请求被接受、
+runner 启动、成功发布及 CDN 可见是不同时间；仍可能排队或遇到服务故障，不保证严格每半小时
+发布。请求超时且无法确定是否被接受时，先查看最近运行，再决定是否重试，避免重复触发。
 
 **Optional live source check** 工作流或 `python -m mirror check-live` 只获取并校验真实
 HTTPS 响应，不发布。普通 PR 与代码 push 检查只使用离线样例。
@@ -77,6 +101,9 @@ PR 检查明确为只读。
 
 | 问题 | 处理 |
 | --- | --- |
+| 没有 Worker scheduled 事件 | 检查已部署 Worker 及 Cron Trigger，配置变更后等待传播 |
+| Worker 触发失败 | 检查 GH_ACTIONS_TOKEN、有效期、仓库范围、Actions 写权限、API 状态及 redirect: "manual" |
+| 触发被接受但数据未发布 | 检查 Actions 运行、排队、工作流启用状态及发布摘要；接受请求不等于发布完成 |
 | 源站超时、429、5xx | 查看有限重试结果，保留旧快照，稍后手动重试 |
 | 空列表、截断、格式或配置异常 | 查看错误及源站变化，增加离线回归样例后再改校验规则 |
 | 远程未变化但推送被拒 | 检查 job 权限、仓库和分支规则；不 force-push |
@@ -95,8 +122,8 @@ Web Crypto 校验。确认响应可读取而非 opaque，三个数据文件和�
 ## 历史与依赖维护
 
 2026-09-11 实现检查返回 100 个节点：CSV 1,347,159 字节，节点 JSON 1,384,056 字节，
-国家 JSON 1,297 字节，合计约 2.73 MB。若每天 24 次都成功且数据有变化，按一年 365 天计算，
-约 8,760 次快照、17,520 个提交，未压缩文件版本逻辑累计约 24 GB。这不是实际 Git pack 大小；压缩和差分
+国家 JSON 1,297 字节，合计约 2.73 MB。若每天 48 次都成功且数据有变化，按一年 365 天计算，
+约 17,520 次快照、35,040 个提交，未压缩文件版本逻辑累计约 48 GB。这不是实际 Git pack 大小；压缩和差分
 收益取决于真实内容与排列，不能预先保证比例。
 
 运行后第 7、30 天记录体积，之后每月检查。GitHub 仓库 API 的 size 为近似 KiB；
