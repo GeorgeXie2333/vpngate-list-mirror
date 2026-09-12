@@ -14,7 +14,9 @@ jsDelivr distributes files pinned to one full data commit SHA.
 
 This mirrors the API response, not every VPN Gate server worldwide. Scores,
 Ping, speed, country information, and session counts come from upstream. This
-project does not measure node performance or verify that a node is online.
+project does not independently measure those upstream metrics. The optional
+rolling pool adds **TCP reachability observed by Cloudflare Workers**; it is
+not a VPN connection test or a guarantee of reachability from your location.
 It does not connect to a VPN, execute configuration directives, create a TUN
 interface, or change system networking. Directory updates do not guarantee that
 a connection will succeed.
@@ -56,6 +58,40 @@ or endpoints. Use the index workflow below when those properties matter.
 The [fixed branch JSON link](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@main/data/servers.json)
 is convenient for manual inspection but can lag behind the index. It is not the
 version-discovery endpoint.
+
+## Rolling node pool
+
+The official API can rotate its returned nodes. The separate pool accumulates
+observations without changing the single-response CSV/JSON interfaces above.
+An absent node is retained for up to seven days; eligible TCP nodes may be
+removed earlier after 24 hours absent and three consecutive valid six-hour
+probe rounds fail. Unknown, UDP, missing and deferred results do not count as
+failures. Configurations are stored once per content hash and downloaded on demand.
+
+```text
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/servers.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/countries.json
+https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/pool/latest.json
+```
+
+The `@latest` convenience links have the same cache caveats as above. For
+consistent program access, use the pool's **own** Raw index, its full commit
+SHA, catalog hashes and per-config descriptors. Do not combine it with the
+root `latest.json`. Both new examples verify downloads and keep configuration
+directives as data:
+
+```bash
+python examples/consume_pool.py --country JP --output selected.ovpn
+node examples/consume_pool.mjs JP selected.ovpn
+```
+
+Two separate Workers perform the TCP connections; GitHub Actions only reads
+completed result batches from their authenticated KV reader and publishes the
+merged state. With no reader configured, accumulation and seven-day expiry
+still work; no TCP cleanup runs. The public pool and configurations require
+no credentials. See [pool protocol and API examples](docs/pool.md) and
+[manual Worker deployment](docs/workers.md). The existing dispatch Worker and
+its `29,59 * * * *` schedule stay unchanged.
 
 ## Refresh and consistency
 
@@ -205,7 +241,7 @@ snapshot. Python additionally re-derives normalized values from the raw CSV.
 
 ```bash
 python -m unittest discover -s tests -v
-node --test tests/test_consumer.mjs
+node --test tests/test_consumer.mjs tests/test_pool_consumer.mjs workers/test/core.test.mjs
 python -m mirror build --source-file tests/fixtures/normal.csv --output build/offline
 python -m mirror check-live  # optional HTTPS integration check; no publication
 python -m mirror verify     # verify a published checkout including latest.json

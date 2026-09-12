@@ -1,0 +1,12 @@
+{
+  "name": "vpngate-tcp-probes",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "wrangler deploy --dry-run --config wrangler.probe-0.jsonc"
+  },
+  "devDependencies": {
+    "wrangler": "4.131.1"
+  }
+}

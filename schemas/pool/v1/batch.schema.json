@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VPN Gate pool v1 batch",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "batch_id",
+    "worker_id",
+    "bucket",
+    "round",
+    "data_commit",
+    "plan_sha256",
+    "bucket_sha256",
+    "started_at",
+    "finished_at",
+    "results",
+    "controls",
+    "guarded",
+    "completed",
+    "deferred"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "batch_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "worker_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "bucket": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 143
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "data_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bucket_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/result"
+      },
+      "maxItems": 40
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/result"
+      },
+      "maxItems": 5
+    },
+    "guarded": {
+      "type": "boolean"
+    },
+    "completed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "deferred": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5000
+    }
+  },
+  "additionalProperties": true
+}

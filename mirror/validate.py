@@ -59,6 +59,21 @@ def nullable_integer(value, field):
     return result
 
 
+def validate_remote(parts):
+    if not 2 <= len(parts) <= 4:
+        raise MirrorError("Invalid remote directive")
+    try:
+        address(parts[1])
+    except MirrorError:
+        if re.fullmatch(r"[0-9.]+", parts[1]) or ":" in parts[1]:
+            raise MirrorError("Invalid remote IP address")
+        hostname(parts[1])
+    if len(parts) >= 3 and (not re.fullmatch(r"[0-9]{1,5}", parts[2]) or not 1 <= int(parts[2]) <= 65535):
+        raise MirrorError("Invalid remote port")
+    if len(parts) == 4 and parts[3] not in PROTOCOLS:
+        raise MirrorError("Invalid remote protocol")
+
+
 def decode_config(encoded):
     if not isinstance(encoded, str) or not encoded or len(encoded) > 4 * ((MAX_CONFIG_BYTES + 2) // 3):
         raise MirrorError("Missing or oversized OpenVPN configuration")
@@ -87,6 +102,16 @@ def decode_config(encoded):
             if line == f"</{block}>":
                 if not content:
                     raise MirrorError("Empty inline configuration block")
+                if block == "connection":
+                    # Retain connection profiles as opaque configuration for the
+                    # pool, whose target extractor deliberately declines them.
+                    for entry in content:
+                        if entry.split(None, 1)[0] == "remote":
+                            try:
+                                validate_remote(shlex.split(entry, comments=True))
+                            except ValueError as exc:
+                                raise MirrorError("Malformed connection remote") from exc
+                            remotes += 1
                 blocks[block] = "\n".join(content)
                 block, content = None, []
             elif re.fullmatch(r"</?[A-Za-z0-9_-]+>", line):
@@ -97,7 +122,7 @@ def decode_config(encoded):
         tag = re.fullmatch(r"<([A-Za-z0-9_-]+)>", line)
         if tag:
             block = tag.group(1)
-            if block in blocks:
+            if block in blocks and block != "connection":
                 raise MirrorError("Duplicate inline configuration block")
             continue
         if line.startswith("</"):
@@ -119,18 +144,7 @@ def decode_config(encoded):
             if len(parts) != 2 or parts[1] not in PROTOCOLS:
                 raise MirrorError("Invalid OpenVPN protocol")
         elif key == "remote":
-            if not 2 <= len(parts) <= 4:
-                raise MirrorError("Invalid remote directive")
-            try:
-                address(parts[1])
-            except MirrorError:
-                if re.fullmatch(r"[0-9.]+", parts[1]) or ":" in parts[1]:
-                    raise MirrorError("Invalid remote IP address")
-                hostname(parts[1])
-            if len(parts) >= 3 and (not re.fullmatch(r"[0-9]{1,5}", parts[2]) or not 1 <= int(parts[2]) <= 65535):
-                raise MirrorError("Invalid remote port")
-            if len(parts) == 4 and parts[3] not in PROTOCOLS:
-                raise MirrorError("Invalid remote protocol")
+            validate_remote(parts)
             remotes += 1
     if block or not (client and dev and remotes):
         raise MirrorError("Incomplete OpenVPN client configuration")

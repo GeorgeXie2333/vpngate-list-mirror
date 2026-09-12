@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - 'data/**'
       - 'latest.json'
+      - 'pool/**'
 
 permissions:
   contents: read
@@ -25,4 +26,4 @@ jobs:
       - name: Python offline tests
         run: python -m unittest discover -s tests -v
       - name: JavaScript offline tests
-        run: node --test tests/test_consumer.mjs
+        run: node --test tests/test_consumer.mjs tests/test_pool_consumer.mjs workers/test/core.test.mjs

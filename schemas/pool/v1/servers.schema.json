@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VPN Gate pool v1 servers",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "source_fetched_at",
+    "server_count",
+    "servers"
+  ],
+  "properties": {
+    "kind": {
+      "const": "vpngate-pool"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "source_fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "server_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5000
+    },
+    "servers": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/node"
+      },
+      "maxItems": 5000
+    }
+  },
+  "additionalProperties": true
+}

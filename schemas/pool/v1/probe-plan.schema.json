@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VPN Gate pool v1 probe-plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bucket_count",
+    "source_fetched_at",
+    "controls",
+    "buckets"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "bucket_count": {
+      "const": 144
+    },
+    "source_fetched_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/target"
+      },
+      "maxItems": 5
+    },
+    "buckets": {
+      "type": "object",
+      "minProperties": 144,
+      "maxProperties": 144,
+      "propertyNames": {
+        "pattern": "^(?:[0-9]|[1-9][0-9]|1[0-3][0-9]|14[0-3])$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^pool/probes/(?:0[0-9]{2}|1[0-3][0-9]|14[0-3])\\.json$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 262144
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

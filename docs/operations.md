@@ -83,7 +83,7 @@ generation or publication; test subprocesses receive no publication token.
 It generates deterministic data in memory and clones only the publication branch
 tip into its own temporary checkout. A code/schema/data change since the tested
 source revision stops publication; documentation-only movement can be retained.
-Only the three allowed data files and `latest.json` are staged.
+Only the three mirror data files, `latest.json` and generated `pool/` files are staged.
 
 For changed bytes, the local graph is `remote H → data D → index I`. Read D's
 actual full SHA, embed it in I's index, validate all files, then push I with a
@@ -91,14 +91,19 @@ single normal fast-forward branch update. This makes both commits available
 together and avoids a commit self-reference. The workflow checkout's
 `GITHUB_SHA` is not substituted for D. On identical bytes, keep D and its data
 generation time and create only a small index commit for the new successful
-fetch. No timestamp is written into the large data files.
+fetch. No timestamp is written into the original mirror data files. Pool
+catalogs contain observation times and change on successful retrieval; unchanged
+configuration blobs are reused. Each dataset's index can reference a different
+data commit, but every file within that dataset is pinned to its own index.
 
 A rejected push causes a remote read, not force-push. If it is only a competing
 documentation commit, rebuild both D and I on the new tip (at most three push
 attempts). Do not rebase D while retaining I's stale SHA reference. A concurrent
 code/data edit causes an explicit failure. A newer published fetch supersedes
 an older result. An uncertain push acknowledgment is resolved by reading the
-remote index/head before retrying. Resets/checkouts occur only inside the
+remote indexes/head before retrying. Both indexes must match when confirming a
+combined pool publication. Processed Worker batch IDs are committed with the
+pool state; failed pushes never acknowledge them. Resets/checkouts occur only inside the
 publisher's disposable directory, never in a maintainer's checkout.
 
 Authentication is added to Git's process environment after validation, not to
@@ -157,6 +162,27 @@ not use `mode: "no-cors"`, credentials, an API token or manual `If-None-Match`.
 `Access-Control-Allow-Origin: *` and currently observed cache headers should be
 checked again if browser access changes; they are not controlled by this repo.
 
+## Node pool operation
+
+See [manual Worker/KV deployment](workers.md) and [pool protocol](pool.md).
+Repository variables `POOL_ENABLED=false` and `TCP_PRUNE_ENABLED=false` pause
+pool updates and TCP-based removal respectively; absent values default to true.
+Disabling the pool retains its previous files and lets its visible timestamp
+age. Disabling TCP pruning still applies observations/probe statuses, seven-day
+record expiry and capacity eviction. No probe reader configured means no new
+TCP result updates or TCP removals. A failed reader is a soft error: the original
+mirror and source observations still publish.
+
+The summary's `pool` object reports `reader.status/errors/pending`, added/count,
+configuration changes/reused bytes, processed/guarded batches, deferred nodes,
+oldest probe age, never-probed count and removals split into `tcp_removed`,
+`expired`, `capacity_evicted`. KV absence/lag is never counted as node failure.
+The pool is seeded only from the existing latest snapshot, not the whole Git history.
+
+Pool publication additionally verifies its two catalogs, probe plan and one
+configuration via CDN and Raw at the pool commit. `pool_visibility` reports
+these HTTPS downloads; they are not node TCP probes.
+
 ## History and dependency maintenance
 
 The 2026-09-11 implementation check returned 100 nodes: 1,347,159 CSV bytes,
@@ -164,6 +190,13 @@ The 2026-09-11 implementation check returned 100 nodes: 1,347,159 CSV bytes,
 runs succeed with changed data, that is 17,520 snapshots / 35,040 commits and roughly
 48 GB of logical uncompressed file versions per 365-day year. This is **not** an estimate of the actual
 Git pack: cross-file compression and deltas depend on real content and order.
+
+The pool adds up to 64 MiB of currently referenced config JSON and catalogs for
+at most 5,000 nodes. At 48 publications/day, a 1 MiB changed catalog alone has
+about 17.1 GiB/year of logical versions before Git compression. Stable config
+content shares a Git blob even as observations change. Newly observed unique
+configurations still grow history: measure actual pack growth, not just current
+working-tree size. Unreferenced configs are removed only from the working tree.
 
 Record repository size after 7 and 30 days and review monthly. The GitHub repo
 API's `size` is an approximate KiB value; `git count-objects -vH` is meaningful

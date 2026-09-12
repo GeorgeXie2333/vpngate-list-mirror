@@ -1,0 +1,152 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {publicIP, validateTarget, connectOnce, classify, runBatch, loadWork, scheduled,
+  serve, hash, roundOf, readBytes} from "../src/core.mjs";
+
+const now = Date.parse("2026-09-01T00:02:00.000Z");
+const iso = n => new Date(n).toISOString();
+const bytes = o => new TextEncoder().encode(JSON.stringify(o));
+const id = n => `v1:${n.toString(16).padStart(8,"0")}${"0".repeat(56)}`;
+function target(n=0, ports=[443]) {
+  return {id:id(n), config_sha256:"b".repeat(64), ip:"8.8.8.8", endpoints:ports.map(port=>({ip:"8.8.8.8",port})),
+    last_seen_at:iso(now), last_probe_round:null, checked_at:null};
+}
+function work(targets=[target()], controls=[target(1,[444])]) {
+  return {worker_id:0,bucket:0,round:roundOf(now),data_commit:"a".repeat(40),plan_sha256:"b".repeat(64),
+    bucket_sha256:"c".repeat(64),targets,controls};
+}
+const success = async e => ({...e,status:"reachable",error:null,connect_ms:5});
+const failure = async e => ({...e,status:"unreachable",error:"timeout",connect_ms:null});
+async function inputs(targets=[target()]) {
+  const bucket=bytes({schema_version:1,bucket:0,targets});
+  const plan=bytes({schema_version:1,bucket_count:144,source_fetched_at:iso(now),controls:[target(1,[444])],
+    buckets:{"0":{path:"pool/probes/000.json",bytes:bucket.length,sha256:await hash(bucket)}}});
+  const index=bytes({kind:"vpngate-pool",schema_version:1,data_commit:"a".repeat(40),source_fetched_at:iso(now),
+    files:{"pool/probe-plan.json":{bytes:plan.length,sha256:await hash(plan)}}});
+  const calls=[];
+  const read=async url=>{calls.push(url); return url.endsWith("latest.json")?index:url.endsWith("probe-plan.json")?plan:bucket;};
+  return {read,calls,index,plan,bucket};
+}
+
+test("numeric public addresses only, no transition or private ranges",()=>{
+  for(const ip of ["8.8.8.8","1.1.1.1","2606:4700:4700::1111"]) assert.equal(publicIP(ip),true,ip);
+  for(const ip of ["127.0.0.1","10.0.0.1","172.31.2.1","192.168.1.1","169.254.169.254","100.64.0.1",
+    "192.0.2.1","224.0.0.1","255.255.255.255","1.01.1.1","::1","::ffff:8.8.8.8","2001:db8::1",
+    "2002:808:808::1","fe80::1%eth0","example.org","1:2:3:4:5:6:7:8:9",null]) assert.equal(publicIP(ip),false,String(ip));
+  assert.throws(()=>validateTarget({...target(),endpoints:[{ip:"1.1.1.1",port:443}]}));
+});
+
+test("socket opened is awaited and every socket is closed, including timeout rejections",async()=>{
+  let closes=0;
+  const socket={opened:Promise.resolve(),closed:Promise.resolve(),close:async()=>{closes++;}};
+  assert.equal((await connectOnce(target().endpoints[0],()=>socket)).status,"reachable");
+  const result=await connectOnce(target().endpoints[0],()=>({opened:new Promise(()=>{}),closed:Promise.reject(new Error("closed")),
+    close:async()=>{closes++;throw new Error("close failed");}}),{timeout:5});
+  assert.equal(result.error,"timeout");
+  assert.equal(closes,2);
+  const refused=await connectOnce(target().endpoints[0],()=>{throw new Error("ECONNREFUSED");});
+  assert.equal(refused.status,"unreachable");
+  const blocked=await connectOnce(target().endpoints[0],()=>{throw new Error("proxy request failed, cannot connect");});
+  assert.equal(blocked.status,"unknown");
+  assert.equal(classify(new Error("unknown internal exception")),"platform");
+  assert.equal(classify(new Error("resource limit: connection refused")),"platform");
+});
+
+test("unknown/private targets and port 25 create zero sockets",async()=>{
+  const connect=()=>assert.fail("must not connect");
+  for(const e of [{ip:"127.0.0.1",port:443},{ip:"example.com",port:443},{ip:"8.8.8.8",port:25}])
+    assert.equal((await connectOnce(e,connect)).status,"unknown");
+});
+
+test("40 endpoint calls include controls, at most four concurrent, oldest targets first",async()=>{
+  let active=0,peak=0,calls=[];
+  const targets=Array.from({length:60},(_,n)=>target(n,[1000+n]));
+  targets[0].checked_at=iso(now-1000);
+  const attempt=async e=>{active++;peak=Math.max(peak,active);calls.push(e.port);
+    await new Promise(resolve=>setTimeout(resolve,1));active--;return success(e);};
+  const batch=await runBatch(work(targets,Array.from({length:5},(_,n)=>target(100+n,[2000+n]))),null,{now:()=>now,attempt});
+  assert.equal(calls.length,40);assert.equal(peak,4);assert.equal(batch.results.length,35);
+  assert.equal(batch.deferred,25);assert.equal(batch.results.some(r=>r.id===id(0)),false);
+  assert.equal(batch.guarded,false);
+});
+
+test("shared endpoints do not spend additional calls; results remain bounded",async()=>{
+  let calls=0;
+  const attempt=async e=>{calls++;return success(e);};
+  const batch=await runBatch(work(Array.from({length:100},(_,n)=>target(n)),[target()]),null,{now:()=>now,attempt});
+  assert.equal(calls,1);assert.equal(batch.results.length,40);assert.equal(batch.deferred,60);
+  const small=await runBatch(work(Array.from({length:5},(_,n)=>target(n))),null,{now:()=>now,attempt,maxTargets:2});
+  assert.equal(small.results.length,2);assert.equal(small.deferred,3);
+});
+
+test("multi endpoint aggregation and network guards",async()=>{
+  const multi=work([target(0,[443,445])]);
+  const one=await runBatch(multi,null,{now:()=>now,attempt:e=>e.port===443?failure(e):success(e)});
+  assert.equal(one.results[0].status,"reachable");
+  const guarded=await runBatch(work(Array.from({length:10},(_,n)=>target(n,[100+n]))),null,
+    {now:()=>now,attempt:e=>e.port===444?success(e):failure(e)});
+  assert.equal(guarded.guarded,true);
+  const controlFail=await runBatch(work(),null,{now:()=>now,attempt:failure});
+  assert.equal(controlFail.guarded,true);
+});
+
+test("budget deferral is unknown, due round suppresses repeated work",async()=>{
+  let time=now;
+  const batch=await runBatch(work([target(0,[443,445])]),null,{now:()=>time,budget:4000,
+    attempt:async e=>{time+=4000;return failure(e);}});
+  assert.equal(batch.results[0].status,"unknown");assert.equal(batch.deferred,1);
+  assert.equal(await runBatch(work([{...target(),last_probe_round:roundOf(now)}]),null,{now:()=>now,attempt:success}),null);
+});
+
+test("loads only the selected hash-checked bucket, rejects stale/mixed data",async()=>{
+  const data=await inputs();
+  const env={WORKER_ID:"0",REPOSITORY:"owner/repo"};
+  const loaded=await loadWork(env,now,{now:()=>now,read:data.read});
+  assert.equal(loaded.bucket,0);assert.equal(data.calls.length,3);
+  assert.match(data.calls[1],new RegExp(`/a{40}/pool/`));
+  assert.equal(data.calls.some(u=>u.endsWith("servers.json")),false);
+  await assert.rejects(loadWork(env,now+4*3600000,{now:()=>now+4*3600000,read:data.read}),/Stale source/);
+  await assert.rejects(loadWork(env,now,{now:()=>now,read:async url=>url.endsWith("000.json")?bytes({}):data.read(url)}),/hash mismatch/);
+  const wrong=await inputs([target(1)]);
+  await assert.rejects(loadWork(env,now,{now:()=>now,read:wrong.read}),/Wrong target bucket/);
+  const privateTarget=await inputs([{...target(),ip:"10.0.0.1"}]);
+  await assert.rejects(loadWork(env,now,{now:()=>now,read:privateTarget.read}),/Invalid target/);
+});
+
+test("scheduled writes one immutable TTL batch; empty bucket writes nothing",async()=>{
+  const writes=[];const env={WORKER_ID:"0",REPOSITORY:"owner/repo",RESULTS:{put:async(...args)=>writes.push(args)}};
+  const data=await inputs();
+  const stored=await scheduled({scheduledTime:now},env,null,{now:()=>now,read:data.read,attempt:success});
+  assert.equal(stored.status,"stored");assert.equal(writes.length,1);assert.equal(writes[0][2].expirationTtl,72*3600);
+  assert.match(writes[0][0],/^results\/\d+\/[0-9a-f-]{36}$/);
+  const empty=await inputs([]);
+  assert.equal((await scheduled({scheduledTime:now},env,null,{now:()=>now,read:empty.read,attempt:success})).status,"no_due_targets");
+  assert.equal(writes.length,1);
+});
+
+test("read API is authenticated and cannot submit targets or write KV",async()=>{
+  const secret="x".repeat(48), round=roundOf(now), key=`results/${round}/00000000-0000-4000-8000-000000000000`;
+  let reads=0;
+  const env={WORKER_ID:"0",PROBE_READ_TOKEN:secret,RESULTS:{
+    list:async()=>{reads++;return {keys:[{name:key}],list_complete:true};},
+    get:async()=>{reads++;return null;},put:()=>assert.fail("HTTP must never write")}};
+  const request=(path,method="GET",auth=true)=>new Request(`https://probe.example${path}`,{method,
+    headers:auth?{Authorization:`Bearer ${secret}`}:{}});
+  assert.equal((await serve(request(`/v1/batches?round=${round}`,"GET",false),env,()=>now)).status,401);
+  assert.equal((await serve(request(`/v1/batches?round=${round}`,"POST"),env,()=>now)).status,405);
+  assert.equal((await serve(request(`/v1/batches?round=${round-2}`),env,()=>now)).status,400);
+  assert.equal((await serve(request(`/v1/batches?round=${round}`),{...env,WORKER_ID:"1"},()=>now)).status,404);
+  const listing=await serve(request(`/v1/batches?round=${round}`),env,()=>now);
+  assert.deepEqual((await listing.json()).batches,[{key}]);
+  assert.equal((await serve(request(`/v1/batch/${key}`),env,()=>now)).status,404); // KV not yet visible.
+  assert.equal((await serve(request("/v1/probe?ip=8.8.8.8"),env,()=>now)).status,404);
+  assert.equal(reads,2);
+});
+
+test("fetch explicitly uses manual redirects and bounded response reads",async()=>{
+  const result=await readBytes("https://example.test/data",2,{fetcher:async(url,options)=>{
+    assert.equal(options.redirect,"manual");return new Response("{}");}});
+  assert.equal(result.length,2);
+  await assert.rejects(readBytes("https://example.test/data",2,{fetcher:async()=>new Response("123")}),/limit/);
+  await assert.rejects(readBytes("https://example.test/data",2,{fetcher:async()=>new Response(null,{status:302})}),/HTTP 302/);
+});

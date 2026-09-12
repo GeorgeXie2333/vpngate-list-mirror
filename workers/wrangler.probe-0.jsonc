@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vgate-tcp-probe-0",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-09-12",
+  "workers_dev": true,
+  "observability": {"enabled": true},
+  "triggers": {"crons": ["2-57/5 * * * *"]},
+  "vars": {"WORKER_ID": "0", "REPOSITORY": "GeorgeXie2333/vpngate-list-mirror", "MAX_TARGETS_PER_RUN": "40"},
+  "kv_namespaces": [{"binding": "RESULTS", "id": "REPLACE_WITH_SHARED_KV_NAMESPACE_ID"}]
+}

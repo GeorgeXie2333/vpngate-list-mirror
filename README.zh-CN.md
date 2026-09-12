@@ -10,7 +10,8 @@ Cloudflare Worker `vgate-list-update` 按 **每小时第 29、59 分钟（UTC）
 （`29,59 * * * *`，每天计划 48 次）触发 GitHub Actions，由其获取完整响应、校验并提交。
 GitHub Raw 提供小型版本索引，jsDelivr 按完整数据提交 SHA 分发文件。
 本项目不声称涵盖全球全部 VPN Gate 节点；国家、评分、Ping、速度和会话数均来自上游。
-本项目不测量节点性能、不验证在线状态、不连接 VPN、不执行配置、不创建 TUN，也不修改系统网络。
+上游指标不是本项目实测值。独立节点池提供“**Cloudflare Workers 观测到的 TCP 可达性**”，
+不代表 VPN 连接成功或用户所在地可达。本项目不连接 VPN、不执行配置、不创建 TUN，也不修改系统网络。
 清单更新不保证连接成功。
 
 ## 公开下载
@@ -47,6 +48,33 @@ https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countr
 
 [固定分支 JSON 链接](https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@main/data/servers.json)
 仅方便人工查看，可能有缓存延迟，不用于发现最新版本。
+
+## 累积节点池
+
+官方 API 会轮换返回的节点。独立节点池累积历史观察，上面的 CSV/JSON 仍严格对应单次
+响应。缺席节点最多保留七天；可探测的 TCP 节点在缺席满 24 小时且连续三个有效六小时
+轮次失败时可提前移除。未知、UDP、缺失和延期结果不累计失败。完整配置按内容哈希复用，
+消费端按需下载。
+
+```text
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/servers.json
+https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/countries.json
+https://raw.githubusercontent.com/GeorgeXie2333/vpngate-list-mirror/main/pool/latest.json
+```
+
+`@latest` 便捷地址受上述缓存限制。程序应从节点池**自己的** Raw 索引发现完整 commit SHA，
+校验目录和配置文件描述；不要混用根目录 `latest.json`。两个新示例均校验下载、筛选国家、
+原样保存配置，不执行指令：
+
+```bash
+python examples/consume_pool.py --country JP --output selected.ovpn
+node examples/consume_pool.mjs JP selected.ovpn
+```
+
+两个探测 Worker 负责全部 TCP 连接；Actions 只读取 KV 中已完成的批次、合并和发布。
+读取接口未配置时，节点累积和七天过期仍正常运行，TCP 清理暂停。公开节点池和配置无需
+任何凭据。见[节点池协议与 API 示例](docs/pool.zh-CN.md)、[自行部署 Workers](docs/workers.zh-CN.md)。
+现有触发 Worker 及 `29,59 * * * *` 调度保持不变。
 
 ## 新鲜度与一致性
 
@@ -169,7 +197,7 @@ JavaScript 会验证三个文件的哈希、节点 ID、配置和国家统计；
 
 ```bash
 python -m unittest discover -s tests -v
-node --test tests/test_consumer.mjs
+node --test tests/test_consumer.mjs tests/test_pool_consumer.mjs workers/test/core.test.mjs
 python -m mirror build --source-file tests/fixtures/normal.csv --output build/offline
 python -m mirror check-live  # 可选实时检查，不发布
 python -m mirror verify     # 校验含 latest.json 的已发布检出目录

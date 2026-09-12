@@ -26,9 +26,14 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version-file: .python-version
-      - name: Check code, fetch, validate, publish and probe
+      - name: Check code, fetch, merge completed Worker results and publish
         env:
           GH_TOKEN: ${{ github.token }}
+          POOL_ENABLED: ${{ vars.POOL_ENABLED != 'false' }}
+          TCP_PRUNE_ENABLED: ${{ vars.TCP_PRUNE_ENABLED != 'false' }}
+          # Optional authenticated read-only KV endpoint. Never probe nodes here.
+          PROBE_RESULTS_URL: ${{ vars.PROBE_RESULTS_URL }}
+          PROBE_READ_TOKEN: ${{ secrets.PROBE_READ_TOKEN }}
         run: python -m mirror sync
       - name: Report an incomplete workflow
         if: failure()
