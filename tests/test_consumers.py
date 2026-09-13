@@ -9,7 +9,7 @@ from mirror import DATA_PATHS, MirrorError
 from mirror.consumer import install_cache, load_snapshot, read_cache
 from mirror.snapshot import json_bytes, parse_json
 from mirror.validate import sha256
-from support import example
+from support import example, modified
 
 
 class ConsumerTests(unittest.TestCase):
@@ -34,6 +34,15 @@ class ConsumerTests(unittest.TestCase):
         self.assertEqual(read_cache(self.cache)[0], self.index)
         self.assertEqual(len(self.calls), 4)
         self.assertTrue(all("@" + self.index["data_commit"] in url for url in self.calls[1:]))
+
+    def test_unregistered_identifier_survives_verified_cache_install(self):
+        host = "_unregistered_vpn335506854"
+        self.index, self.files = example(modified(HostName=host))
+        self.load()
+        index, files = read_cache(self.cache)
+        self.assertEqual(index, self.index)
+        self.assertEqual(files, self.files)
+        self.assertIn(host, [row["hostname"] for row in parse_json(files["data/servers.json"])["servers"]])
 
     def test_cdn_hash_failure_uses_same_commit_raw(self):
         def read(url, limit):

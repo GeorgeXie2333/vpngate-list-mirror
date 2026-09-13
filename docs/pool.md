@@ -43,7 +43,7 @@ full 40-character `data_commit`. Do not use the root mirror index for pool files
 | Field | Meaning |
 | --- | --- |
 | `id` | Existing `v1:` + SHA-256 of UTF-8 `vpngate-node-v1\0<normalized-hostname>\0<canonical-ip>`; port/config changes do not change identity |
-| `hostname`, `ip` | Original hostname and canonical CSV IP |
+| `hostname`, `ip` | Original source identifier (underscores allowed; see [v1 name rules](protocol.md#normalized-nodes)) and canonical CSV IP |
 | `country_code`, `country_name` | Uppercase two-letter code / original upstream name, or `null`; unknown country remains included |
 | `score`, `ping_ms`, `speed_bps`, `num_vpn_sessions` | Nonnegative safe integers or `null`; upstream values in score units, milliseconds, bits/s, session count |
 | `first_seen_at`, `last_seen_at` | Earliest/latest successful source observation retained in this pool; no Git-history backfill |

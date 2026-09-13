@@ -76,7 +76,7 @@ class SyncTests(unittest.TestCase):
             probes.assert_not_called()
 
     def test_invalid_hostname_reports_context_and_exact_source_without_publishing(self):
-        raw = modified(HostName="bad_host")
+        raw = modified(HostName="bad/host")
         with patch.dict(os.environ, self.environment), \
                 patch("mirror.__main__.checked_source", return_value=(raw, TIME)), \
                 patch("mirror.__main__.publish") as publish, \
@@ -90,7 +90,7 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(report["fetched_at"], TIME)
         self.assertEqual(report["rejected_source"], {"bytes": len(raw), "sha256": sha256(raw)})
         self.assertEqual(report["validation_error"]["field"], "HostName")
-        self.assertEqual(json.loads(report["validation_error"]["value_preview"]), "bad_host")
+        self.assertEqual(json.loads(report["validation_error"]["value_preview"]), "bad/host")
         self.assertNotIn("publication", report["durations_seconds"])
         with patch("builtins.print") as output, patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": ""}):
             write_summary(report)

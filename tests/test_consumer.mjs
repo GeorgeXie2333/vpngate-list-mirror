@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { PATHS, decodeConfig, digest, loadSnapshot, validateIndex, verifySnapshot } from "../examples/consume.mjs";
+import { PATHS, decodeConfig, digest, loadSnapshot, normalizeSourceHostname, validateIndex, verifySnapshot } from "../examples/consume.mjs";
 
 const golden = JSON.parse(await readFile(new URL("./fixtures/snapshot.json", import.meta.url), "utf8"));
 const fresh = () => ({ index: structuredClone(golden.index),
@@ -31,6 +31,36 @@ test("complete snapshot, country selection, and exact decoded configuration", as
   assert.match(new TextDecoder().decode(config), /up \/this-command-must-never-run/);
   assert.equal(calls.length, 4);
   assert.ok(calls.slice(1).every(url => url.includes("@" + input.index.data_commit)));
+});
+
+test("source identifiers allow underscores while rejecting malformed labels", () => {
+  assert.equal(normalizeSourceHostname(" _UNREGISTERED_vpn335506854. "), "_unregistered_vpn335506854");
+  assert.equal(normalizeSourceHostname("_" + "a".repeat(62)), "_" + "a".repeat(62));
+  for (const value of ["", "bad/host", "bad host", "bad\nhost", "bad\n.host", "bad\0host", "bad..host",
+    "-bad", "bad-", "bad:443", "bad@host", "\u202ehost", "_" + "a".repeat(63), Array(4).fill("a".repeat(63)).join(".")])
+    assert.throws(() => normalizeSourceHostname(value), /Invalid hostname/);
+});
+
+test("unregistered source identifier loads with consistent file hashes and stable ID", async () => {
+  const input = fresh(), host = "_unregistered_vpn335506854";
+  const servers = JSON.parse(new TextDecoder().decode(input.files[PATHS[1]]));
+  const node = servers.servers.find(row => row.hostname === "vpn-example");
+  const config = node.openvpn_config_base64;
+  node.hostname = host;
+  node.id = "v1:2d982db7bbb3bbcabc99d990b5ff43a505d48ba2d28c8de586ffdd02d285501c";
+  servers.servers.sort((a, b) => a.id.localeCompare(b.id));
+  input.files[PATHS[0]] = new TextEncoder().encode(new TextDecoder().decode(input.files[PATHS[0]])
+    .replace("vpn-example,", `${host},`));
+  servers.source_csv_sha256 = await digest(input.files[PATHS[0]]);
+  const countries = JSON.parse(new TextDecoder().decode(input.files[PATHS[2]]));
+  countries.source_csv_sha256 = servers.source_csv_sha256;
+  input.files[PATHS[1]] = json(servers);
+  input.files[PATHS[2]] = json(countries);
+  for (const path of PATHS) Object.assign(input.index.files[path],
+    {bytes: input.files[path].length, sha256: await digest(input.files[path])});
+  const snapshot = await loadSnapshot({read: reader(input)});
+  assert.equal(snapshot.servers.find(row => row.id === node.id).hostname, host);
+  assert.equal(snapshot.servers.find(row => row.id === node.id).openvpn_config_base64, config);
 });
 
 test("bad CDN content falls back to Raw at the same full SHA", async () => {

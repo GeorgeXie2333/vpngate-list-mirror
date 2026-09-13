@@ -80,6 +80,20 @@ class PoolTests(unittest.TestCase):
             self.assertEqual(self.first.files[row["config"]["path"]], second.files[row["config"]["path"]])
         verify_pool(index(second, 1), second.files)
 
+    def test_unregistered_identifier_survives_pool_verification_and_reobservation(self):
+        raw = source().files["data/vpngate.csv"].replace(b"vpn-example,", b"_unregistered_vpn335506854,", 1)
+        snapshot = build_snapshot(raw)
+        first = build_pool(snapshot, at())
+        second = build_pool(snapshot, at(1), previous=first.files)
+        verify_pool(index(second, 1), second.files)
+        row = next(r for r in verify_catalog(index(second, 1), second.files)
+                   if r["hostname"] == "_unregistered_vpn335506854")
+        self.assertEqual(second.report["added"], 0)
+        self.assertEqual(row["first_seen_at"], at())
+        self.assertEqual(row["last_seen_at"], at(1))
+        self.assertEqual(row["probe_targets"], [{"ip": "8.8.8.8", "port": 443}])
+        self.assertEqual(second.files[row["config"]["path"]], first.files[row["config"]["path"]])
+
     def test_absent_node_keeps_real_last_seen_and_expires_at_seven_days(self):
         second = build_pool(source("1.1.1.1"), at(24), previous=self.first.files)
         absent = next(r for r in nodes(second) if r["ip"] == "8.8.8.8")

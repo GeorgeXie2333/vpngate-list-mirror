@@ -1,5 +1,5 @@
 // Anonymous pool consumer for HTTPS browsers and Node.js 22+.
-import {readBytes, parseJSON, digest, decodeConfig} from "./consume.mjs";
+import {readBytes, parseJSON, digest, decodeConfig, normalizeSourceHostname} from "./consume.mjs";
 const paths = ["pool/servers.json", "pool/countries.json"];
 const hex = /^[0-9a-f]{64}$/;
 const check = (ok, message) => { if (!ok) throw new Error(message); };
@@ -57,9 +57,8 @@ export async function verifyPoolCatalog(index, files) {
   for (const row of catalog.servers) {
     check(/^v1:[0-9a-f]{64}$/.test(row.id) && row.id > lastId, "Unsorted or duplicate pool ID");
     lastId = row.id;
-    check(typeof row.hostname === "string" && row.hostname.length <= 254 && typeof row.ip === "string", "Invalid host/IP");
-    const host = row.hostname.trim().toLowerCase().replace(/\.$/, "");
-    check(host && host.split(".").every(s => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(s)), "Invalid hostname");
+    check(typeof row.ip === "string", "Invalid IP");
+    const host = normalizeSourceHostname(row.hostname);
     if (row.ip.includes(":")) check(new URL(`http://[${row.ip}]/`).hostname.slice(1,-1) === row.ip, "Invalid IPv6");
     else check(row.ip.split(".").length === 4 && row.ip.split(".").every(s => /^(0|[1-9]\d{0,2})$/.test(s) && +s <= 255), "Invalid IPv4");
     check(row.id === "v1:" + await digest(new TextEncoder().encode(`vpngate-node-v1\0${host}\0${row.ip}`)), "Pool ID mismatch");

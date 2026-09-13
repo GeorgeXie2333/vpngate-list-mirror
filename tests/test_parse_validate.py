@@ -48,6 +48,29 @@ class ParserTests(unittest.TestCase):
         nodes, count = parse_csv(fixture("duplicate.csv"))
         self.assertEqual((len(nodes), count), (2, 3))
 
+    def test_unregistered_source_identifier_preserves_data_and_stable_ids(self):
+        host = "_unregistered_vpn335506854"
+        raw = modified(HostName=host)
+        snapshot = build_snapshot(raw)
+        rows = parse_json(snapshot.files["data/servers.json"])["servers"]
+        node = next(row for row in rows if row["hostname"] == host)
+        self.assertEqual(node["id"], "v1:2d982db7bbb3bbcabc99d990b5ff43a505d48ba2d28c8de586ffdd02d285501c")
+        self.assertEqual(node_id(" " + host.upper() + ". ", node["ip"]), node["id"])
+        self.assertEqual(node_id("vpn-example", "192.0.2.10"),
+                         "v1:717aab474fb39473b499a61f123fbd409027cebe28c02c18ab2a2536b05beb24")
+        original = next(row for row in parse_csv(fixture())[0] if row["ip"] == node["ip"])
+        self.assertEqual(node["openvpn_config_base64"], original["openvpn_config_base64"])
+        self.assertEqual(snapshot.files["data/vpngate.csv"], raw)
+        duplicate = raw.replace(b"\r\n*\r\n", b"\r\n" + raw.split(b"\r\n")[2] + b"\r\n*\r\n")
+        self.assertEqual((len(parse_csv(duplicate)[0]), parse_csv(duplicate)[1]), (2, 3))
+
+    def test_source_identifiers_still_reject_invalid_names_and_size_limits(self):
+        for host in ["", "bad/host", "bad host", "bad\nhost", "bad\0host", "bad..host",
+                     "-bad", "bad-", "bad:443", "bad@host", "\u202ehost", "_" + "a" * 63,
+                     ".".join(["a" * 63] * 4)]:
+            with self.subTest(host=host), self.assertRaises(MirrorError):
+                parse_csv(modified(HostName=host))
+
     def test_invalid_fixtures(self):
         for name in ["conflicting-duplicate.csv", "invalid-base64.csv", "truncated.csv", "empty.csv"]:
             with self.subTest(name=name), self.assertRaises(MirrorError):
@@ -105,7 +128,7 @@ class ParserTests(unittest.TestCase):
     def test_remote_hostname_diagnostic_identifies_configuration_field(self):
         for connection_block in (False, True):
             with self.subTest(connection_block=connection_block):
-                remote = "remote bad_host.example 443 tcp-client"
+                remote = "remote _unregistered_vpn335506854 443 tcp-client"
                 if connection_block:
                     remote = "<connection>\n" + remote + "\n</connection>"
                 config = ("client\ndev tun\n" + remote + "\n<ca>\n"
@@ -116,7 +139,7 @@ class ParserTests(unittest.TestCase):
                     parse_csv(modified(OpenVPN_ConfigData_Base64=encoded))
                 detail = caught.exception.diagnostic
                 self.assertEqual(detail["field"], "OpenVPN_ConfigData_Base64.remote.host")
-                self.assertEqual(json.loads(detail["value_preview"]), "bad_host.example")
+                self.assertEqual(json.loads(detail["value_preview"]), "_unregistered_vpn335506854")
                 self.assertEqual(detail["csv_record"], 1)
                 serialized = json.dumps(detail)
                 self.assertNotIn("TEST-CERTIFICATE", serialized)

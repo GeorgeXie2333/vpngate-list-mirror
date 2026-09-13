@@ -16,6 +16,7 @@ SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
 UTC = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\Z")
 LABEL = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\Z")
+SOURCE_LABEL = re.compile(r"[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?\Z")
 PROTOCOLS = {"udp", "udp4", "udp6", "tcp", "tcp4", "tcp6", "tcp-client", "tcp4-client", "tcp6-client"}
 
 
@@ -35,13 +36,24 @@ def _hostname_error(value, field, message):
     })
 
 
-def hostname(value, *, field="hostname"):
+def _normalize_hostname(value, field, label):
     if len(value) > 254:
         raise _hostname_error(value, field, "Hostname exceeds size limit")
     normalized = value.strip().lower().removesuffix(".")
-    if not normalized or len(normalized) > 253 or any(not LABEL.fullmatch(x) for x in normalized.split(".")):
+    if not normalized or len(normalized) > 253 or any(not label.fullmatch(x) for x in normalized.split(".")):
         raise _hostname_error(value, field, "Invalid hostname")
     return normalized
+
+
+def hostname(value, *, field="hostname"):
+    """Validate a DNS destination used by an OpenVPN remote directive."""
+    return _normalize_hostname(value, field, LABEL)
+
+
+def source_hostname(value, *, field="HostName"):
+    # CSV HostName is a source identifier, e.g. _unregistered_vpn335506854.
+    # It is retained as metadata and must not be used to infer a DNS endpoint.
+    return _normalize_hostname(value, field, SOURCE_LABEL)
 
 
 def address(value):
@@ -57,7 +69,7 @@ def address(value):
 
 
 def node_id(host, ip):
-    return "v1:" + sha256(("vpngate-node-v1\0" + hostname(host) + "\0" + address(ip)).encode("utf-8"))
+    return "v1:" + sha256(("vpngate-node-v1\0" + source_hostname(host) + "\0" + address(ip)).encode("utf-8"))
 
 
 def nullable_integer(value, field):
@@ -171,7 +183,7 @@ def decode_config(encoded):
 
 def normalize_record(record):
     host = record["HostName"]
-    hostname(host, field="HostName")
+    source_hostname(host)
     ip = address(record["IP"])
     code = record["CountryShort"].strip().upper()
     if not re.fullmatch(r"[A-Z]{2}", code) or code in {"ZZ", "XX"}:

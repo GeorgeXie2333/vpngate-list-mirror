@@ -36,7 +36,7 @@ Git 保存正式状态；KV 只是会过期的探测结果收件箱。原镜像 
 | 字段 | 含义 |
 | --- | --- |
 | `id` | 沿用 `v1:` + UTF-8 `vpngate-node-v1\0<规范主机名>\0<规范IP>` 的 SHA-256；配置或端口变化不改变 ID |
-| `hostname`、`ip` | 原始主机名、规范化 CSV IP |
+| `hostname`、`ip` | 原始源站标识（可含下划线，见 [v1 名称规则](protocol.zh-CN.md#节点字段)）、规范化 CSV IP |
 | `country_code`、`country_name` | 大写双字母代码／上游原名称，未知为 `null`，不丢弃未知国家节点 |
 | `score`、`ping_ms`、`speed_bps`、`num_vpn_sessions` | 非负安全整数或 `null`；上游评分、毫秒、bit/s、会话数，不是本项目实测 |
 | `first_seen_at`、`last_seen_at` | 池保留的首次／最近成功源站观察时间，不回填整个 Git 历史 |

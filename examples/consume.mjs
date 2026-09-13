@@ -13,6 +13,15 @@ const count = (n, min = 1, max = 5000) => Number.isSafeInteger(n) && n >= min &&
 const bytesOf = value => value instanceof Uint8Array ? value : new Uint8Array(value);
 export const parseJSON = bytes => JSON.parse(decoder.decode(bytes));
 
+// Source metadata may contain underscores; this is not a DNS destination check.
+export function normalizeSourceHostname(value) {
+  assert(typeof value === "string" && value.length <= 254, "Invalid hostname");
+  const host = value.trim().toLowerCase().replace(/\.$/, "");
+  assert(host.length > 0 && host.length <= 253 && !/[^a-z0-9_.-]/.test(host) && host.split(".").every(label =>
+    /^[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?$/.test(label)), "Invalid hostname");
+  return host;
+}
+
 export async function digest(bytes) {
   return [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
     .map(x => x.toString(16).padStart(2, "0")).join("");
@@ -134,9 +143,7 @@ export async function verifySnapshot(index, files) {
   for (const node of nodes.servers) {
     assert(typeof node.id === "string" && /^v1:[0-9a-f]{64}$/.test(node.id) && node.id > lastId, "Duplicate or unsorted ID");
     lastId = node.id;
-    assert(typeof node.hostname === "string" && node.hostname.length <= 254, "Invalid hostname");
-    const host = node.hostname.trim().toLowerCase().replace(/\.$/, "");
-    assert(host.length > 0 && host.split(".").every(label => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)), "Invalid hostname");
+    const host = normalizeSourceHostname(node.hostname);
     assert(typeof node.ip === "string", "Invalid address");
     if (node.ip.includes(":")) {
       assert(new URL(`http://[${node.ip}]/`).hostname.slice(1, -1) === node.ip, "Noncanonical IPv6");

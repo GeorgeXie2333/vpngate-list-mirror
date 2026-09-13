@@ -79,7 +79,7 @@ CSV hash. Nodes are sorted by ascending `id`.
 | Node field | Type and convention |
 | --- | --- |
 | `id` | `v1:` followed by 64 lowercase SHA-256 digits |
-| `hostname` | Original source hostname string; syntax is checked using its trimmed lowercase form without a final DNS dot |
+| `hostname` | Original CSV `HostName` identifier, which may contain underscores; not necessarily a DNS name |
 | `ip` | Canonical IPv4/IPv6 string; scoped, unspecified, multicast and loopback addresses fail |
 | `country_code` | Source two-letter code uppercased, or `null`; non-two-letter values and `XX`/`ZZ` become unknown |
 | `country_name` | Original nonempty source name or `null`; no geolocation lookup or renaming |
@@ -96,6 +96,16 @@ stays zero. Other nonnumeric values, negatives, fractions and numbers above
 `9007199254740991` fail rather than silently becoming unknown. Unknown country
 code originals remain available in CSV. These are upstream observations, not
 local measurements, and there is no `online` or `verified_online` field.
+
+`hostname` is stored unchanged. Validation and ID generation use its trimmed,
+lowercase form with one final dot removed. Each dot-separated label has 1–63
+ASCII letters, digits, underscores or hyphens, with no leading/trailing hyphen;
+the normalized total is at most 253 characters (original field at most 254).
+For example, upstream can return `_unregistered_vpn335506854`. Do not derive a
+connection address or append a DNS suffix to this metadata. OpenVPN `remote`
+destinations retain separate IP/DNS validation; TCP probes use verified numeric
+IP/port targets only. Consumers copied before this correction must update their
+hostname validator. The v1 JSON shape and normalization of existing IDs are unchanged.
 
 ID input is the exact UTF-8 byte sequence:
 

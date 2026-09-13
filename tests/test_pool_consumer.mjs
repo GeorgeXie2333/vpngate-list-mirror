@@ -24,6 +24,18 @@ test("catalog first; country filter; lazily verify and decode exactly one config
   assert.match(new TextDecoder().decode(body),/up \/this-command-must-never-run/);
   assert.equal(calls.length,4);assert.ok(calls.slice(1).every(u=>u.includes("@"+pool.index.data_commit)));
 });
+test("unregistered source identifier remains downloadable through the pool consumer",async()=>{
+  const input=fresh(),path="pool/servers.json",catalog=JSON.parse(new TextDecoder().decode(input.files[path]));
+  const row=catalog.servers.find(r=>r.hostname==="vpn-example");
+  row.hostname="_unregistered_vpn335506854";
+  row.id="v1:"+await digest(new TextEncoder().encode(`vpngate-node-v1\0${row.hostname}\0${row.ip}`));
+  catalog.servers.sort((a,b)=>a.id.localeCompare(b.id));
+  input.files[path]=json(catalog);
+  input.index.files[path]={bytes:input.files[path].length,sha256:await digest(input.files[path])};
+  const read=reader(input),pool=await loadPool({read}),node=pool.servers.find(r=>r.id===row.id);
+  assert.equal(node.hostname,row.hostname);
+  assert.equal(await digest(await loadPoolConfig(pool,node,{read})),row.openvpn_config_sha256);
+});
 test("CDN corruption uses Raw with identical commit for catalog and config",async()=>{
   const input=fresh(),calls=[],read=reader(input,calls,true),pool=await loadPool({read});
   await loadPoolConfig(pool,pool.servers[0],{read});
