@@ -1,12 +1,13 @@
 import base64
 import csv
 import io
+import json
 import unittest
 
 from mirror import MAX_CONFIG_BYTES, MAX_SOURCE_BYTES, MirrorError
 from mirror.parse import parse_csv
 from mirror.snapshot import build_snapshot, parse_json
-from mirror.validate import decode_config, node_id
+from mirror.validate import decode_config, node_id, sha256
 from support import fixture, modified
 
 
@@ -74,6 +75,52 @@ class ParserTests(unittest.TestCase):
         for key, value in values:
             with self.subTest(key=key, value=value), self.assertRaises(MirrorError):
                 parse_csv(modified(**{key: value}))
+
+    def test_hostname_diagnostic_escapes_values_and_counts_csv_records(self):
+        value = 'bad\n::error::"host"\x1b\u202e'
+        with self.assertRaises(MirrorError) as caught:
+            parse_csv(modified(HostName=value))
+        error = caught.exception
+        self.assertEqual(str(error), "CSV record 1: Invalid hostname")
+        detail = error.diagnostic
+        self.assertEqual((detail["csv_record"], detail["csv_line_end"]), (1, 4))
+        self.assertEqual(detail["field"], "HostName")
+        self.assertEqual(json.loads(detail["value_preview"]), value)
+        self.assertTrue(all(32 <= ord(c) < 127 for c in detail["value_preview"]))
+        self.assertEqual(detail["value_characters"], len(value))
+        self.assertFalse(detail["value_truncated"])
+        self.assertEqual(detail["value_sha256"], sha256(value.encode()))
+
+    def test_hostname_diagnostic_is_bounded_even_for_large_unicode_values(self):
+        value = "\u4e2d" * 10000
+        with self.assertRaises(MirrorError) as caught:
+            parse_csv(modified(HostName=value))
+        detail = caught.exception.diagnostic
+        self.assertEqual(json.loads(detail["value_preview"]), value[:96])
+        self.assertLessEqual(len(detail["value_preview"]), 96 * 6 + 2)
+        self.assertTrue(detail["value_truncated"])
+        self.assertEqual(detail["value_characters"], 10000)
+        self.assertEqual(detail["value_sha256"], sha256(value.encode()))
+
+    def test_remote_hostname_diagnostic_identifies_configuration_field(self):
+        for connection_block in (False, True):
+            with self.subTest(connection_block=connection_block):
+                remote = "remote bad_host.example 443 tcp-client"
+                if connection_block:
+                    remote = "<connection>\n" + remote + "\n</connection>"
+                config = ("client\ndev tun\n" + remote + "\n<ca>\n"
+                          "-----BEGIN CERTIFICATE-----\nTEST-CERTIFICATE-MUST-NOT-BE-LOGGED\n"
+                          "-----END CERTIFICATE-----\n</ca>\n").encode()
+                encoded = base64.b64encode(config).decode()
+                with self.assertRaises(MirrorError) as caught:
+                    parse_csv(modified(OpenVPN_ConfigData_Base64=encoded))
+                detail = caught.exception.diagnostic
+                self.assertEqual(detail["field"], "OpenVPN_ConfigData_Base64.remote.host")
+                self.assertEqual(json.loads(detail["value_preview"]), "bad_host.example")
+                self.assertEqual(detail["csv_record"], 1)
+                serialized = json.dumps(detail)
+                self.assertNotIn("TEST-CERTIFICATE", serialized)
+                self.assertNotIn(encoded, serialized)
 
     def test_limits_and_base64_padding(self):
         for body in [b"", b"x" * (MAX_SOURCE_BYTES + 1)]:

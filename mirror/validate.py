@@ -4,6 +4,7 @@ import base64
 import binascii
 import hashlib
 import ipaddress
+import json
 import re
 import shlex
 from datetime import datetime
@@ -22,12 +23,24 @@ def sha256(body):
     return hashlib.sha256(body).hexdigest()
 
 
-def hostname(value):
+def _hostname_error(value, field, message):
+    # Only the offending name is logged, never the surrounding configuration.
+    # ASCII JSON escapes keep control characters and Unicode visible on one line.
+    return MirrorError(message, diagnostic={
+        "field": field,
+        "value_preview": json.dumps(value[:96], ensure_ascii=True),
+        "value_characters": len(value),
+        "value_truncated": len(value) > 96,
+        "value_sha256": sha256(value.encode("utf-8", errors="backslashreplace")),
+    })
+
+
+def hostname(value, *, field="hostname"):
     if len(value) > 254:
-        raise MirrorError("Hostname exceeds size limit")
+        raise _hostname_error(value, field, "Hostname exceeds size limit")
     normalized = value.strip().lower().removesuffix(".")
     if not normalized or len(normalized) > 253 or any(not LABEL.fullmatch(x) for x in normalized.split(".")):
-        raise MirrorError("Invalid hostname")
+        raise _hostname_error(value, field, "Invalid hostname")
     return normalized
 
 
@@ -67,7 +80,7 @@ def validate_remote(parts):
     except MirrorError:
         if re.fullmatch(r"[0-9.]+", parts[1]) or ":" in parts[1]:
             raise MirrorError("Invalid remote IP address")
-        hostname(parts[1])
+        hostname(parts[1], field="OpenVPN_ConfigData_Base64.remote.host")
     if len(parts) >= 3 and (not re.fullmatch(r"[0-9]{1,5}", parts[2]) or not 1 <= int(parts[2]) <= 65535):
         raise MirrorError("Invalid remote port")
     if len(parts) == 4 and parts[3] not in PROTOCOLS:
@@ -110,7 +123,8 @@ def decode_config(encoded):
                             try:
                                 validate_remote(shlex.split(entry, comments=True))
                             except ValueError as exc:
-                                raise MirrorError("Malformed connection remote") from exc
+                                raise MirrorError("Malformed connection remote",
+                                                  diagnostic=getattr(exc, "diagnostic", None)) from exc
                             remotes += 1
                 blocks[block] = "\n".join(content)
                 block, content = None, []
@@ -157,7 +171,7 @@ def decode_config(encoded):
 
 def normalize_record(record):
     host = record["HostName"]
-    hostname(host)
+    hostname(host, field="HostName")
     ip = address(record["IP"])
     code = record["CountryShort"].strip().upper()
     if not re.fullmatch(r"[A-Z]{2}", code) or code in {"ZZ", "XX"}:

@@ -1,4 +1,5 @@
 import os
+import json
 import subprocess
 import sys
 import threading
@@ -6,9 +7,10 @@ import unittest
 from unittest.mock import patch
 
 from mirror import DATA_PATHS, MirrorError
-from mirror.__main__ import checked_source, main, probe, run_code_check
+from mirror.__main__ import checked_source, main, probe, run_code_check, summary as write_summary
 from mirror.consumer import file_urls
-from support import TIME, example, fixture
+from mirror.validate import sha256
+from support import TIME, example, fixture, modified
 
 
 class SyncTests(unittest.TestCase):
@@ -72,6 +74,29 @@ class SyncTests(unittest.TestCase):
             self.assertEqual(main(["sync"]), 1)
             publish.assert_not_called()
             probes.assert_not_called()
+
+    def test_invalid_hostname_reports_context_and_exact_source_without_publishing(self):
+        raw = modified(HostName="bad_host")
+        with patch.dict(os.environ, self.environment), \
+                patch("mirror.__main__.checked_source", return_value=(raw, TIME)), \
+                patch("mirror.__main__.publish") as publish, \
+                patch("mirror.__main__.collect_batches") as batches, \
+                patch("mirror.__main__.summary") as summary:
+            self.assertEqual(main(["sync"]), 1)
+            publish.assert_not_called()
+            batches.assert_not_called()
+        report = summary.call_args.args[0]
+        self.assertEqual(report["status"], "failed")
+        self.assertEqual(report["fetched_at"], TIME)
+        self.assertEqual(report["rejected_source"], {"bytes": len(raw), "sha256": sha256(raw)})
+        self.assertEqual(report["validation_error"]["field"], "HostName")
+        self.assertEqual(json.loads(report["validation_error"]["value_preview"]), "bad_host")
+        self.assertNotIn("publication", report["durations_seconds"])
+        with patch("builtins.print") as output, patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": ""}):
+            write_summary(report)
+        logged = json.loads(output.call_args.args[0])
+        self.assertEqual(logged["validation_error"], report["validation_error"])
+        self.assertNotIn(fixture().decode(), output.call_args.args[0])
 
     def test_all_six_probes_overlap_and_verify_the_same_commit(self):
         ready = threading.Barrier(6, timeout=10)

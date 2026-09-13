@@ -47,7 +47,10 @@ def parse_csv(body):
             try:
                 normalized = normalize_record(dict(zip(header, row)))
             except MirrorError as exc:
-                raise MirrorError(f"CSV record {row_count}: {exc}") from exc
+                raise MirrorError(f"CSV record {row_count}: {exc}", diagnostic={
+                    "csv_record": row_count, "csv_line_end": reader.line_num,
+                    **(exc.diagnostic or {}),
+                }) from exc
             key = normalized["id"]
             if key in original_rows and original_rows[key] != row:
                 raise MirrorError(f"Conflicting duplicate node at record {row_count}")

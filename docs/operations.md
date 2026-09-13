@@ -155,6 +155,17 @@ temporarily be unavailable to a particular client, which retains its old cache.
 | Unsupported schema | Keep old verified data, display its age and upgrade the consumer |
 | Requested country has no nodes | Do not claim the nodes are offline; choose a currently listed country or wait for a later snapshot |
 
+For CSV validation failures, `validation_error` in the log and task summary gives
+the one-based `csv_record` and the record's ending physical line, `csv_line_end`.
+Name errors also identify `field`: `HostName` for the CSV column, or
+`OpenVPN_ConfigData_Base64.remote.host` for a configuration remote hostname,
+including remotes inside `<connection>` blocks. `value_preview` is an ASCII
+JSON-escaped preview of the first 96 characters, with the original character
+count, truncation flag and UTF-8 SHA-256. `rejected_source` gives the exact failed
+response's byte count and SHA-256; it identifies the response but does not retain
+a copy. Full CSV, Base64 configurations and certificates are not logged. Failed
+validation still prevents publication and preserves the previous good snapshot.
+
 From an HTTPS browser origin, use anonymous `fetch` with `credentials: "omit"`,
 read bytes and verify with `crypto.subtle.digest`. Confirm the response is
 readable, not opaque, and that all requested data and config hashes match. Do

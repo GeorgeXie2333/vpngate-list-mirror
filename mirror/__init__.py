@@ -12,3 +12,7 @@ MAX_SAFE_INTEGER = 2**53 - 1
 
 class MirrorError(ValueError):
     """An explicit validation or publication failure."""
+
+    def __init__(self, message, *, diagnostic=None):
+        super().__init__(message)
+        self.diagnostic = diagnostic

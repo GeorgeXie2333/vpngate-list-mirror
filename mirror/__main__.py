@@ -121,7 +121,13 @@ def main(argv=None):
                 else:
                     raw, fetched_at = timed(report, "fetch", fetch_source)
                 report["fetched_at"] = fetched_at
-            snapshot = timed(report, "build_validate", lambda: build_snapshot(raw))
+            try:
+                snapshot = timed(report, "build_validate", lambda: build_snapshot(raw))
+            except MirrorError:
+                # Identify the exact rejected response without logging its CSV,
+                # Base64 configurations, certificates, or keys.
+                report["rejected_source"] = {"bytes": len(raw), "sha256": sha256(raw)}
+                raise
             generated_at = utc_now()
             report.update(source_record_count=snapshot.source_record_count, server_count=snapshot.server_count,
                           country_count=snapshot.country_count,
@@ -164,6 +170,8 @@ def main(argv=None):
     except (MirrorError, OSError, http.client.HTTPException, subprocess.SubprocessError,
             KeyError, TypeError, ValueError, AttributeError) as exc:
         report.update(status="failed", error=str(exc)[:1000])
+        if isinstance(exc, MirrorError) and exc.diagnostic:
+            report["validation_error"] = exc.diagnostic
         return 1
     finally:
         report["durations_seconds"]["total"] = round(time.monotonic() - started, 3)

@@ -116,6 +116,14 @@ PR 检查明确为只读。
 | 协议不支持 | 保留旧数据、展示其年龄，升级消费端 |
 | 国家没有节点 | 不断言离线；选择本次实际返回的国家或等待下次目录 |
 
+CSV 校验失败时，任务日志和摘要中的 `validation_error` 给出从 1 开始的
+`csv_record` 及记录结束的物理行号 `csv_line_end`。名称错误还包含 `field`：
+`HostName` 表示 CSV 字段，`OpenVPN_ConfigData_Base64.remote.host` 表示配置中的
+远端主机名（包括 `<connection>` 内的 `remote`）。`value_preview` 是前 96 个字符的
+ASCII JSON 转义预览，配合原值字符数、截断标志和 UTF-8 SHA-256 定位问题。
+`rejected_source` 给出整份失败响应的字节数及 SHA-256；这是响应指纹，不是响应备份。
+日志不输出完整 CSV、Base64 配置或证书；校验失败仍拒绝发布，并保留旧的成功快照。
+
 浏览器应从 HTTPS 来源进行匿名 `fetch`，设置 `credentials: "omit"`，读取字节并通过
 Web Crypto 校验。确认响应可读取而非 opaque，三个数据文件和配置哈希匹配。不使用
 `mode: "no-cors"`、凭据、API Token 或手工 `If-None-Match`。跨域和缓存响应头由服务方
