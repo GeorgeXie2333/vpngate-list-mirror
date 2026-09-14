@@ -497,6 +497,8 @@
             "budget"
           ]
         },
+        "close_confirmed": {"type": "boolean"},
+        "cleanup_error": {"enum": [null, "close_timeout", "close_rejected"]},
         "connect_ms": {
           "anyOf": [
             {

@@ -90,16 +90,28 @@ current-source controls, with four concurrent sockets, three seconds per connect
 and 45 seconds of probe budget. A success on any endpoint marks TCP reachable;
 only all completed endpoint failures can mark unreachable. Platform restrictions,
 port 25, resource errors and unclassified exceptions are unknown. No application
-data is sent. Sockets are actively closed, including timeout paths. An unconfirmed
-closure stops new socket creation for that batch; affected endpoints become `unknown`
-and remaining work is deferred, so the batch can still write KV with at most four
-sockets outstanding.
+data is sent. Sockets are actively closed, including timeout paths. Cleanup waits
+up to one second for either `close()` or `closed` to fulfill; rejection alone is
+not confirmation. If neither confirms release, that one lane retires while the
+others continue. The batch retains at most four outstanding sockets, leaving room
+for its KV write. A handshake already confirmed by `opened` remains `reachable`
+even if cleanup fails; an ambiguous failure stays `unknown`. No new attempt starts
+without four seconds of remaining budget for connection and cleanup.
 
 Invocation delay is limited to three hours, independently of the three-hour source
 freshness check. Bucket selection uses the scheduled time; the result round uses
 actual execution time. Optional v1 batch fields `scheduled_at`, `stop_reason` and
-`unclosed_sockets` record the original schedule and any unconfirmed socket closures.
-They do not authorize backfilling failure rounds.
+`unclosed_sockets` record the original schedule and retired lanes. A lane stays
+retired for this invocation even if its socket later closes. `stop_reason` is
+`socket_close_unconfirmed` only when all four lanes retire with work left;
+`budget_exhausted` identifies unfinished work due to the time budget instead.
+`attempted_endpoints` counts processed unique endpoint attempts (including locally
+rejected targets), and `endpoint_error_counts` groups errors including unattempted
+`budget` results. These counts include controls, while `deferred` counts nodes.
+Endpoint diagnostics `close_confirmed` and `cleanup_error` (`close_timeout` or
+`close_rejected`) distinguish cleanup trouble from connection outcomes. They are
+stored in KV; the public node catalog retains the existing TCP status fields.
+These optional fields do not authorize backfilling failure rounds.
 
 Actions reads completed batches for current/previous rounds, never waits for a
 probe to finish and never connects to node IPs. Batches carry unique UUIDs,

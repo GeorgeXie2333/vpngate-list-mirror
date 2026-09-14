@@ -41,9 +41,10 @@ test("socket opened is awaited and every socket is closed, including timeout rej
   const socket={opened:Promise.resolve(),closed:Promise.resolve(),close:async()=>{closes++;}};
   assert.equal((await connectOnce(target().endpoints[0],()=>socket)).status,"reachable");
   const result=await connectOnce(target().endpoints[0],()=>({opened:new Promise(()=>{}),closed:Promise.reject(new Error("closed")),
-    close:async()=>{closes++;throw new Error("close failed");}}),{timeout:5});
+    close:async()=>{closes++;throw new Error("close failed");}}),{timeout:5,closeTimeout:5});
   assert.equal(result.error,"platform");
   assert.equal(result.status,"unknown");
+  assert.equal(result.cleanup_error,"close_rejected");
   assert.equal(closes,2);
   const timeout=await connectOnce(target().endpoints[0],()=>({opened:new Promise(()=>{}),closed:Promise.resolve(),close:async()=>{}}),{timeout:5});
   assert.equal(timeout.error,"timeout");
@@ -54,6 +55,47 @@ test("socket opened is awaited and every socket is closed, including timeout rej
   assert.equal(blocked.status,"unknown");
   assert.equal(classify(new Error("unknown internal exception")),"platform");
   assert.equal(classify(new Error("resource limit: connection refused")),"platform");
+});
+
+test("a confirmed handshake survives slow or rejected cleanup",async()=>{
+  for(const reject of [false,true]) {
+    let retired=0;
+    const socket={opened:Promise.resolve(),closed:new Promise(()=>{}),
+      close:()=>reject?Promise.reject(new Error("close failed")):new Promise(()=>{})};
+    const result=await connectOnce(target().endpoints[0],()=>socket,{closeTimeout:5,onUnclosed:()=>retired++});
+    assert.equal(result.status,"reachable");
+    assert.equal(result.error,null);
+    assert.equal(result.close_confirmed,false);
+    assert.equal(result.cleanup_error,reject?"close_rejected":"close_timeout");
+    assert.equal(retired,1);
+  }
+});
+
+test("closure after the former 100 ms deadline is accepted within the new grace period",async()=>{
+  let retired=0,closes=0;
+  const result=await connectOnce(target().endpoints[0],()=>({opened:Promise.resolve(),closed:new Promise(()=>{}),
+    close:()=>new Promise(resolve=>setTimeout(()=>{closes++;resolve();},150))}),{onUnclosed:()=>retired++});
+  assert.equal(result.status,"reachable");
+  assert.equal(result.close_confirmed,true);
+  assert.equal(result.cleanup_error,null);
+  assert.equal(retired,0);
+  assert.equal(closes,1);
+});
+
+test("a fulfilled closed promise confirms release despite rejected close; late rejections are handled",async()=>{
+  let closeCalls=0,resolveClosed,rejectClose;
+  const closed=new Promise(resolve=>{resolveClosed=resolve;});
+  const closing=new Promise((resolve,reject)=>{rejectClose=reject;});
+  const socket={opened:Promise.resolve(),closed,close:()=>{closeCalls++;resolveClosed();return closing;}};
+  const result=await connectOnce(target().endpoints[0],()=>socket,{onUnclosed:()=>assert.fail("closed slot must be reusable")});
+  assert.equal(result.close_confirmed,true);
+  assert.equal(closeCalls,1);
+  rejectClose(new Error("late close rejection"));
+  await new Promise(resolve=>setImmediate(resolve));
+  const rejected=await connectOnce(target().endpoints[0],()=>({opened:Promise.resolve(),closed:Promise.resolve(),
+    close:()=>Promise.reject(new Error("already closed"))}),{onUnclosed:()=>assert.fail()});
+  assert.equal(rejected.status,"reachable");
+  assert.equal(rejected.close_confirmed,true);
 });
 
 test("unknown/private targets and port 25 create zero sockets",async()=>{
@@ -74,7 +116,7 @@ test("40 endpoint calls include controls, at most four concurrent, oldest target
   assert.equal(batch.guarded,false);
 });
 
-test("pending socket closure stops new connections and leaves room for the KV write",async t=>{
+test("four pending socket closures exhaust lanes and leave room for the KV write",async t=>{
   for(const settle of ["resolve","reject"]) await t.test(settle,async()=>{
     let active=0,peak=0,kvWrites=0;
     const release=[];
@@ -97,6 +139,8 @@ test("pending socket closure stops new connections and leaves room for the KV wr
       assert.equal(batch.results.every(r=>r.status==="unknown"),true);
       assert.equal(batch.deferred,9); // one control plus three targets used the four lanes
       assert.equal(batch.stop_reason,"socket_close_unconfirmed");
+      assert.equal(batch.attempted_endpoints,4);
+      assert.deepEqual(batch.endpoint_error_counts,{platform:4,budget:9});
     }}};
     try {
       const result=await scheduled({scheduledTime:now},env,connect,{now:()=>now,read:data.read,
@@ -113,16 +157,50 @@ test("pending socket closure stops new connections and leaves room for the KV wr
   });
 });
 
-test("rejected close also stops replenishing socket lanes",async()=>{
+test("rejected close retires its lane without erasing a confirmed handshake",async()=>{
   let connections=0;
   const batch=await runBatch(work(Array.from({length:12},(_,n)=>target(n,[1000+n])),[]),()=>{
     connections++;
-    return {opened:Promise.resolve(),closed:Promise.resolve(),close:async()=>{throw new Error("close failed");}};
-  });
+    return {opened:Promise.resolve(),closed:new Promise(()=>{}),close:async()=>{throw new Error("close failed");}};
+  },{attempt:(e,connect,options)=>connectOnce(e,connect,{...options,closeTimeout:5})});
   assert.equal(connections,4);
   assert.equal(batch.unclosed_sockets,4);
-  assert.equal(batch.results.every(r=>r.status==="unknown"),true);
+  assert.equal(batch.results.filter(r=>r.status==="reachable").length,4);
+  assert.equal(batch.results.filter(r=>r.status==="unknown").length,8);
   assert.equal(batch.deferred,8);
+  assert.equal(batch.stop_reason,"socket_close_unconfirmed");
+});
+
+test("one stuck socket reserves only its own lane while other lanes finish the bucket",async()=>{
+  let active=0,peak=0,release,calls=0,callsAtRetirement=0;
+  const connect=({port})=>{
+    active++;calls++;peak=Math.max(peak,active);
+    let resolveClosed;
+    const closed=new Promise(resolve=>{resolveClosed=resolve;});
+    if(port===1000) {
+      const opened=new Promise(resolve=>{release=resolve;});
+      return {opened,closed,close:()=>opened.then(()=>{active--;resolveClosed();})};
+    }
+    return {opened:Promise.resolve(),closed,close:()=>new Promise(resolve=>setTimeout(()=>{
+      active--;resolveClosed();resolve();
+    },3))};
+  };
+  try {
+    const batch=await runBatch(work(Array.from({length:35},(_,n)=>target(n,[1000+n]))),connect,{
+      attempt:(endpoint,connect,options)=>connectOnce(endpoint,connect,{...options,timeout:5,closeTimeout:5,
+        onUnclosed:()=>{callsAtRetirement=calls;options.onUnclosed();}})});
+    assert.equal(peak,4);
+    assert.equal(active,1);
+    assert.ok(calls>callsAtRetirement,"other lanes must continue after the stuck lane retires");
+    assert.equal(batch.unclosed_sockets,1);
+    assert.equal(batch.attempted_endpoints,36);
+    assert.equal(batch.results.filter(r=>r.status==="reachable").length,34);
+    assert.equal(batch.results.filter(r=>r.status==="unknown").length,1);
+    assert.equal(batch.deferred,0);
+    assert.equal(batch.stop_reason,null);
+    assert.deepEqual(batch.endpoint_error_counts,{platform:1});
+  } finally {release();await new Promise(resolve=>setImmediate(resolve));}
+  assert.equal(active,0);
 });
 
 test("shared endpoints do not spend additional calls; results remain bounded",async()=>{
@@ -150,7 +228,20 @@ test("budget deferral is unknown, due round suppresses repeated work",async()=>{
   const batch=await runBatch(work([target(0,[443,445])]),null,{now:()=>time,budget:4000,
     attempt:async e=>{time+=4000;return failure(e);}});
   assert.equal(batch.results[0].status,"unknown");assert.equal(batch.deferred,1);
+  assert.equal(batch.stop_reason,null);
+  assert.equal(batch.budget_exhausted,true);
+  assert.equal(batch.attempted_endpoints,1);
   assert.equal(await runBatch(work([{...target(),last_probe_round:roundOf(now)}]),null,{now:()=>now,attempt:success}),null);
+});
+
+test("probe budget reserves time for both connect and cleanup before starting a new endpoint",async()=>{
+  let calls=0;
+  const batch=await runBatch(work(),null,{now:()=>now,budget:3999,attempt:()=>{calls++;return success(target().endpoints[0]);}});
+  assert.equal(calls,0);
+  assert.equal(batch.attempted_endpoints,0);
+  assert.equal(batch.stop_reason,null);
+  assert.equal(batch.budget_exhausted,true);
+  assert.equal(batch.deferred,1);
 });
 
 test("loads only the selected hash-checked bucket, rejects stale/mixed data",async()=>{

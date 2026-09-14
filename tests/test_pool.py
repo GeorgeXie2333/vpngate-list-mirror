@@ -94,6 +94,19 @@ class PoolTests(unittest.TestCase):
         self.assertEqual(row["probe_targets"], [{"ip": "8.8.8.8", "port": 443}])
         self.assertEqual(second.files[row["config"]["path"]], first.files[row["config"]["path"]])
 
+    def test_worker_cleanup_diagnostics_preserve_a_confirmed_success(self):
+        batch = report(self.first, 1, "reachable")
+        batch.update(stop_reason=None, unclosed_sockets=1, budget_exhausted=False,
+                     attempted_endpoints=2, endpoint_error_counts={})
+        batch["results"][0]["endpoints"][0].update(close_confirmed=False, cleanup_error="close_timeout")
+        second = build_pool(source("1.1.1.1"), at(1), previous=self.first.files, batches=[batch])
+        row = next(r for r in nodes(second) if r["ip"] == "8.8.8.8")
+        self.assertEqual(second.report["batch_errors"], [])
+        self.assertEqual(second.report["batches_applied"], 1)
+        self.assertEqual(row["tcp_probe"]["status"], "reachable")
+        self.assertEqual(row["tcp_probe"]["last_success_at"], at(1))
+        self.assertEqual(row["tcp_probe"]["consecutive_failures"], 0)
+
     def test_absent_node_keeps_real_last_seen_and_expires_at_seven_days(self):
         second = build_pool(source("1.1.1.1"), at(24), previous=self.first.files)
         absent = next(r for r in nodes(second) if r["ip"] == "8.8.8.8")

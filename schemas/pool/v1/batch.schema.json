@@ -77,6 +77,20 @@
       "minimum": 0,
       "maximum": 4
     },
+    "attempted_endpoints": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 40,
+      "description": "Unique endpoint attempts processed, including locally rejected unsupported targets."
+    },
+    "budget_exhausted": {"type": "boolean"},
+    "endpoint_error_counts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": ["timeout", "refused", "platform", "unsupported", "budget"]
+      },
+      "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 40}
+    },
     "results": {
       "type": "array",
       "items": {

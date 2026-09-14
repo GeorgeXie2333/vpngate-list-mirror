@@ -135,15 +135,17 @@ export function classify(error) {
 }
 
 export async function connectOnce(endpoint, connect,
-  {timeout = 3000, now = Date.now, closeTimeout = 100, onUnclosed = () => {}} = {}) {
+  {timeout = 3000, now = Date.now, closeTimeout = 1000, onUnclosed = () => {}} = {}) {
   const base = {ip: endpoint.ip, port: endpoint.port};
   if (!publicIP(endpoint.ip) || !Number.isInteger(endpoint.port) || endpoint.port < 1 || endpoint.port > 65535 || endpoint.port === 25)
     return {...base, status: "unknown", error: "unsupported", connect_ms: null};
-  let socket, timer, result;
+  let socket, timer, result, closed;
   const started = now();
   try {
     socket = connect({hostname: endpoint.ip, port: endpoint.port}, {secureTransport: "off", allowHalfOpen: false});
-    socket.closed.catch(() => {});
+    // A fulfilled closed promise also confirms closure when close() is slow or
+    // rejects. Rejection alone does not prove that a connection slot is free.
+    closed = new Promise(resolve => { socket.closed.then(() => resolve(true), () => {}); });
     const deadline = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("probe_timeout")), timeout); });
     await Promise.race([socket.opened, deadline]);
     result = {...base, status: "reachable", error: null, connect_ms: Math.max(0, Math.min(3000, Math.round(now() - started)))};
@@ -153,19 +155,28 @@ export async function connectOnce(endpoint, connect,
   } finally {
     clearTimeout(timer);
     if (socket) {
-      // workerd may wait for opened before close() releases the connection. Keep
-      // this lane occupied until closure is confirmed or the batch is stopped.
+      // workerd may wait for opened before close() releases the connection. A
+      // timed-out close must keep this lane reserved, without stopping others.
       let closingTimer;
       let confirmed = false;
+      let closeRejected = false;
       try {
-        confirmed = await Promise.race([Promise.resolve(socket.close()).then(() => true),
+        confirmed = await Promise.race([closed,
+          Promise.resolve().then(() => socket.close()).then(() => true, () => {
+            closeRejected = true;
+            return closed;
+          }),
           new Promise(resolve => { closingTimer = setTimeout(() => resolve(false), closeTimeout); })]);
-      } catch { /* Rejection does not confirm that the connection slot was released. */ }
+      }
       finally { clearTimeout(closingTimer); }
       if (!confirmed) {
         onUnclosed();
-        result = {...base, status: "unknown", error: "platform", connect_ms: null};
+        // A completed handshake remains evidence of reachability, regardless of
+        // cleanup. Keep ambiguous failures conservative when closure is unknown.
+        if (result.status !== "reachable") result = {...base, status: "unknown", error: "platform", connect_ms: null};
       }
+      result.close_confirmed = confirmed;
+      result.cleanup_error = confirmed ? null : closeRejected ? "close_rejected" : "close_timeout";
     }
   }
   return result;
@@ -194,9 +205,12 @@ export async function runBatch(work, connect, {now = Date.now, attempt = connect
   for (const target of due) if (chosen.length < maxTargets && add(target)) chosen.push(target);
   const queue = [...jobs.values()], results = new Map();
   let next = 0, unclosedSockets = 0;
-  const onUnclosed = () => { unclosedSockets++; };
   await Promise.all(Array.from({length: 4}, async () => {
-    while (!unclosedSockets && next < queue.length && now() - started <= budget - 3000) {
+    let retired = false;
+    const onUnclosed = () => { if (!retired) { retired = true; unclosedSockets++; } };
+    // Reserve up to three seconds to connect plus one second for cleanup. Each
+    // lane retires independently if its socket might still occupy a connection.
+    while (!retired && next < queue.length && now() - started <= budget - 4000) {
       const endpoint = queue[next++];
       const result = await attempt(endpoint, connect, {now, onUnclosed});
       results.set(`${endpoint.ip}:${endpoint.port}`, result);
@@ -212,7 +226,14 @@ export async function runBatch(work, connect, {now = Date.now, attempt = connect
     data_commit: work.data_commit, plan_sha256: work.plan_sha256, bucket_sha256: work.bucket_sha256,
     started_at: new Date(started).toISOString(), finished_at: new Date(now()).toISOString(),
     results: targetResults, controls, guarded, completed: complete.length,
-    stop_reason: unclosedSockets ? "socket_close_unconfirmed" : null, unclosed_sockets: unclosedSockets,
+    stop_reason: next < queue.length && unclosedSockets === 4 ? "socket_close_unconfirmed" : null,
+    budget_exhausted: next < queue.length && unclosedSockets < 4,
+    unclosed_sockets: unclosedSockets, attempted_endpoints: results.size,
+    endpoint_error_counts: queue.reduce((counts, e) => {
+      const error = results.get(`${e.ip}:${e.port}`)?.error ?? (results.has(`${e.ip}:${e.port}`) ? null : "budget");
+      if (error) counts[error] = (counts[error] ?? 0) + 1;
+      return counts;
+    }, {}),
     deferred: due.length - chosen.length + targetResults.filter(r => r.endpoints.some(e => e.error === "budget")).length};
 }
 
@@ -224,7 +245,9 @@ export async function scheduled(controller, env, connect, dependencies = {}) {
   assert(new TextEncoder().encode(body).length <= 65536, "Result batch exceeds limit");
   await env.RESULTS.put(`results/${batch.round}/${batch.batch_id}`, body, {expirationTtl: 259200});
   return {status: "stored", batch_id: batch.batch_id, bucket: batch.bucket, completed: batch.completed,
-    deferred: batch.deferred, guarded: batch.guarded, stop_reason: batch.stop_reason, unclosed_sockets: batch.unclosed_sockets};
+    deferred: batch.deferred, guarded: batch.guarded, stop_reason: batch.stop_reason, unclosed_sockets: batch.unclosed_sockets,
+    budget_exhausted: batch.budget_exhausted, attempted_endpoints: batch.attempted_endpoints,
+    endpoint_error_counts: batch.endpoint_error_counts};
 }
 
 async function authorized(request, secret) {
