@@ -174,6 +174,8 @@ test("rejected close retires its lane without erasing a confirmed handshake",asy
 
 test("one stuck socket reserves only its own lane while other lanes finish the bucket",async()=>{
   let active=0,peak=0,release,calls=0,callsAtRetirement=0;
+  let retireLane;
+  const laneRetired=new Promise(resolve=>{retireLane=resolve;});
   const connect=({port})=>{
     active++;calls++;peak=Math.max(peak,active);
     let resolveClosed;
@@ -182,14 +184,21 @@ test("one stuck socket reserves only its own lane while other lanes finish the b
       const opened=new Promise(resolve=>{release=resolve;});
       return {opened,closed,close:()=>opened.then(()=>{active--;resolveClosed();})};
     }
-    return {opened:Promise.resolve(),closed,close:()=>new Promise(resolve=>setTimeout(()=>{
-      active--;resolveClosed();resolve();
-    },3))};
+    return {opened:Promise.resolve(),closed,close:()=>{
+      active--;resolveClosed();return Promise.resolve();
+    }};
   };
   try {
     const batch=await runBatch(work(Array.from({length:35},(_,n)=>target(n,[1000+n]))),connect,{
-      attempt:(endpoint,connect,options)=>connectOnce(endpoint,connect,{...options,timeout:5,closeTimeout:5,
-        onUnclosed:()=>{callsAtRetirement=calls;options.onUnclosed();}})});
+      now:()=>now,recoveryWait:0,
+      attempt:async(endpoint,connect,options)=>{
+        // Gate healthy lanes on retirement, not on competing wall-clock timers.
+        if(endpoint.port!==1000)await laneRetired;
+        return connectOnce(endpoint,connect,{...options,timeout:5,closeTimeout:5,
+          onUnclosed:confirmation=>{
+            callsAtRetirement=calls;options.onUnclosed(confirmation);retireLane();
+          }});
+      }});
     assert.equal(peak,4);
     assert.equal(active,1);
     assert.ok(calls>callsAtRetirement,"other lanes must continue after the stuck lane retires");
