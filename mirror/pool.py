@@ -174,7 +174,7 @@ class PoolSnapshot:
                 "files": {path: descriptor(self.files[path]) for path in POOL_PATHS}, "workflow_run_url": run_url}
 
 
-def assemble(nodes, configs, processed, fetched_at, report=None):
+def assemble(nodes, configs, processed, fetched_at, report=None, *, task_files=None, legacy=False):
     rows = sorted(nodes.values(), key=lambda row: row["id"])
     common = {"kind": "vpngate-pool", "schema_version": 1, "source_fetched_at": fetched_at,
               "server_count": len(rows)}
@@ -193,8 +193,12 @@ def assemble(nodes, configs, processed, fetched_at, report=None):
         buckets[str(number)] = {"path": path, **descriptor(files[path])}
     controls = [target_record(row) for row in rows
                 if row["present_in_latest_source"] and len(row["probe_targets"]) == 1][:5]
-    files["pool/probe-plan.json"] = json_bytes({"schema_version": 1, "bucket_count": BUCKETS,
-            "source_fetched_at": fetched_at, "controls": controls, "buckets": buckets})
+    plan = {"schema_version": 1, "bucket_count": BUCKETS,
+            "source_fetched_at": fetched_at, "controls": controls, "buckets": buckets}
+    if not legacy:
+        from .probe_plan import attach_tasks, build_tasks
+        attach_tasks(files, plan, build_tasks(rows, fetched_at) if task_files is None else task_files)
+    files["pool/probe-plan.json"] = json_bytes(plan)
     require(all(len(body) <= MAX_FILE_BYTES for body in files.values()), "Pool file exceeds size limit")
     require(len(files["pool/probe-plan.json"]) <= MAX_INDEX, "Probe manifest exceeds size limit")
     return PoolSnapshot(files, fetched_at, len(rows), report or {})
@@ -227,7 +231,11 @@ def valid_result(result, row):
 
 def apply_batches(nodes, batches, processed, now, prune):
     report = {"batches_applied": 0, "batches_ignored": 0, "batch_errors": [], "tcp_removed": 0,
-              "guarded_batches": 0, "deferred": 0}
+              "guarded_batches": 0, "deferred": 0,
+              "probe_diagnostics": {"reported_nodes": 0, "attempted_nodes": 0, "definitive_nodes": 0,
+                  "unattempted_nodes": 0, "endpoint_error_counts": {}, "cleanup_error_counts": {},
+                  "processed_endpoints": 0, "socket_attempts": 0, "unclosed_sockets": 0,
+                  "recovered_sockets": 0, "budget_exhausted_batches": 0, "socket_stopped_batches": 0}}
     current_round, fresh_failures = utc_round(now), set()
     instant = parse_utc(now)
     for batch in sorted(batches, key=lambda b: (str(b.get("finished_at", "")), str(b.get("batch_id", ""))) if isinstance(b, dict) else ("", "")):
@@ -236,17 +244,28 @@ def apply_batches(nodes, batches, processed, now, prune):
             require(isinstance(identifier, str) and BATCH.fullmatch(identifier), "Invalid batch ID")
             if identifier in processed:
                 continue
-            require(type(batch.get("schema_version")) is int and batch["schema_version"] == 1, "Unsupported batch schema")
+            version = batch.get("schema_version")
+            require(type(version) is int and version in (1, 2), "Unsupported batch schema")
             round_number = batch.get("round")
             integer(round_number, 0, 10**9, "Probe round")
             integer(batch.get("worker_id"), 0, 1, "Worker ID")
-            integer(batch.get("bucket"), 0, 143, "Probe bucket")
-            require(batch["bucket"] // 72 == batch["worker_id"], "Wrong worker partition")
+            if version == 1:
+                integer(batch.get("bucket"), 0, 143, "Probe bucket")
+                require(batch["bucket"] // 72 == batch["worker_id"], "Wrong worker partition")
+                require(digest(batch.get("bucket_sha256")), "Invalid probe bucket hash")
+            else:
+                from .probe_plan import task_path
+                integer(batch.get("task_slot"), 0, 10**10, "Task slot")
+                require(batch.get("task_path") == task_path(batch["worker_id"], batch["task_slot"])
+                        and digest(batch.get("task_sha256")) and digest(batch.get("task_manifest_sha256")), "Invalid task reference")
+                require(int(parse_utc(batch["scheduled_at"]).timestamp()) // 300 == batch["task_slot"], "Wrong task slot")
             require(isinstance(batch.get("data_commit"), str) and COMMIT.fullmatch(batch["data_commit"]), "Invalid probe commit")
-            require(digest(batch.get("plan_sha256")) and digest(batch.get("bucket_sha256")), "Invalid probe manifest hash")
+            require(digest(batch.get("plan_sha256")), "Invalid probe manifest hash")
             start, end = parse_utc(batch["started_at"]), parse_utc(batch["finished_at"])
             require(start <= end <= instant + timedelta(minutes=5) and end - start <= timedelta(minutes=2), "Invalid batch times")
             require(0 <= start.timestamp() - round_number * ROUND_SECONDS <= ROUND_SECONDS + 120, "Wrong batch round")
+            if version == 2:
+                require(-300 <= (start - parse_utc(batch["scheduled_at"])).total_seconds() <= 10800, "Invalid task execution delay")
             results, controls = batch.get("results"), batch.get("controls")
             require(isinstance(results, list) and isinstance(controls, list) and len(results) <= 40 and len(controls) <= 5, "Invalid batch arrays")
             unique_endpoints = {}
@@ -268,6 +287,12 @@ def apply_batches(nodes, batches, processed, now, prune):
             require(len(unique_endpoints) <= 40 and all(len(r["endpoints"]) == 1 for r in controls), "Oversized probe batch")
             require(len({r.get("id") for r in results}) == len(results), "Duplicate probe node")
             integer(batch.get("deferred", 0), 0, MAX_SERVERS, "Deferred count")
+            integer(batch.get("unclosed_sockets", 0), 0, 4, "Unclosed sockets")
+            integer(batch.get("recovered_sockets", 0), 0, 40, "Recovered sockets")
+            require(type(batch.get("budget_exhausted", False)) is bool, "Invalid budget diagnostic")
+            require(batch.get("stop_reason") in (None, "socket_close_unconfirmed"), "Invalid stop reason")
+            for endpoint in unique_endpoints.values():
+                require(endpoint.get("cleanup_error") in (None, "close_timeout", "close_rejected"), "Invalid cleanup diagnostic")
             if round_number not in {current_round, current_round - 1} or instant - end > timedelta(hours=12):
                 report["batches_ignored"] += 1
                 continue
@@ -278,7 +303,9 @@ def apply_batches(nodes, batches, processed, now, prune):
                 if not row or row["openvpn_config_sha256"] != result.get("config_sha256"):
                     continue
                 if not control:
-                    require(bucket_id(row["id"]) == batch["bucket"], "Result in wrong bucket")
+                    require(bucket_id(row["id"]) // 72 == batch["worker_id"], "Result in wrong worker partition")
+                    if version == 1:
+                        require(bucket_id(row["id"]) == batch["bucket"], "Result in wrong bucket")
                 status = valid_result(result, row)
                 if control:
                     control_success |= status == "reachable"
@@ -288,12 +315,37 @@ def apply_batches(nodes, batches, processed, now, prune):
             guarded = not control_success or (len(complete) >= 10 and complete.count("unreachable") / len(complete) >= 0.8)
             report["guarded_batches"] += guarded
             report["deferred"] += batch.get("deferred", 0)
+            diagnostics = report["probe_diagnostics"]
+            diagnostics["reported_nodes"] += len(results)
+            diagnostics["definitive_nodes"] += len(complete)
+            unattempted = sum(all(e["error"] == "budget" for e in r["endpoints"]) for r in results)
+            diagnostics["unattempted_nodes"] += unattempted
+            diagnostics["attempted_nodes"] += len(results) - unattempted
+            diagnostics["processed_endpoints"] += sum(e["error"] != "budget" for e in unique_endpoints.values())
+            diagnostics["socket_attempts"] += sum(e["error"] not in ("budget", "unsupported") for e in unique_endpoints.values())
+            diagnostics["unclosed_sockets"] += batch.get("unclosed_sockets", 0)
+            diagnostics["recovered_sockets"] += batch.get("recovered_sockets", 0)
+            diagnostics["budget_exhausted_batches"] += batch.get("budget_exhausted", False)
+            diagnostics["socket_stopped_batches"] += batch.get("stop_reason") == "socket_close_unconfirmed"
+            for endpoint in unique_endpoints.values():
+                for field, key in (("error", "endpoint_error_counts"), ("cleanup_error", "cleanup_error_counts")):
+                    value = endpoint.get(field)
+                    if value:
+                        diagnostics[key][value] = diagnostics[key].get(value, 0) + 1
             for row, result, status in usable:
                 probe = row["tcp_probe"]
+                # Pure deferral is not an observation and cannot consume a round.
+                if all(e["error"] == "budget" for e in result["endpoints"]):
+                    continue
+                previous_attempt = probe.get("last_attempted_at") or probe["checked_at"]
+                if previous_attempt and parse_utc(previous_attempt) > end:
+                    continue
                 old_round = probe["round"]
                 if old_round is not None and round_number < old_round:
                     continue
-                if old_round == round_number and (probe["status"] == "reachable" or status == "unknown"):
+                probe.update(last_attempted_at=batch["finished_at"], last_attempt_status=status)
+                if old_round == round_number and ((probe["status"] == "reachable" and status != "reachable")
+                                                  or (probe["status"] != "unknown" and status == "unknown")):
                     continue
                 counted = probe["last_failure_round"]
                 can_fail = (status == "unreachable" and not guarded and not row["present_in_latest_source"]
@@ -369,7 +421,9 @@ def build_pool(snapshot, fetched_at, *, previous=None, seed=None, batches=(), tc
                   never_probed=sum(r["tcp_probe"]["checked_at"] is None for r in nodes.values()),
                   oldest_probe_age_hours=max((round(max(0, (parse_utc(fetched_at) - parse_utc(r["tcp_probe"]["checked_at"])).total_seconds()) / 3600, 2)
                                               for r in nodes.values() if r["tcp_probe"]["checked_at"]), default=None))
-    return assemble(nodes, configs, processed, fetched_at, result)
+    from .probe_plan import build_tasks
+    task_files = build_tasks(list(nodes.values()), fetched_at, previous)
+    return assemble(nodes, configs, processed, fetched_at, result, task_files=task_files)
 
 
 def validate_pool_index(index):
@@ -435,6 +489,11 @@ def verify_catalog(index, files):
         require((probe["checked_at"] is None) == (probe["round"] is None) == (probe["worker_id"] is None), "Incomplete probe identity")
         require(probe["round"] is None or utc_round(probe["checked_at"]) in {probe["round"], probe["round"] + 1}, "Invalid probe round")
         require(probe["last_success_at"] is None or (probe["checked_at"] is not None and parse_utc(probe["last_success_at"]) <= parse_utc(probe["checked_at"])), "Invalid success time")
+        if "last_attempted_at" in probe:
+            require(probe.get("last_attempt_status") in {"reachable", "unreachable", "unknown"}, "Invalid attempt status")
+            attempt_at = parse_utc(probe["last_attempted_at"])
+            require(attempt_at <= parse_utc(index["index_generated_at"]) + timedelta(minutes=5)
+                    and (probe["checked_at"] is None or parse_utc(probe["checked_at"]) <= attempt_at), "Invalid attempt time")
         require(not probe["consecutive_failures"] or (probe["last_failure_round"] == probe["round"] and probe["status"] == "unreachable"), "Invalid failure round")
         require(isinstance(row["probe_targets"], list) and len(row["probe_targets"]) <= 8, "Invalid targets")
         for endpoint in row["probe_targets"]:
@@ -473,7 +532,10 @@ def verify_pool(index, files):
     for key, value in state["processed_batches"].items():
         require(BATCH.fullmatch(key) is not None, "Invalid processed batch ID")
         integer(value, 0, 10**9, "Processed round")
-    expected = assemble({r["id"]: r for r in rows}, files, state["processed_batches"], index["source_fetched_at"])
+    from .probe_plan import verified_tasks
+    task_files = verified_tasks(files, parse_json(files["pool/probe-plan.json"]), rows, index["source_fetched_at"])
+    expected = assemble({r["id"]: r for r in rows}, files, state["processed_batches"], index["source_fetched_at"],
+                        task_files=task_files, legacy=task_files is None)
     require(expected.files == files, "Pool derived files mismatch")
     return expected
 

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "VPN Gate task plan v2",
+  "required": [
+    "schema_version",
+    "normal_interval_seconds",
+    "retry_interval_seconds",
+    "tasks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "normal_interval_seconds": {
+      "const": 14400
+    },
+    "retry_interval_seconds": {
+      "const": 3600
+    },
+    "tasks": {
+      "type": "object",
+      "maxProperties": 148,
+      "propertyNames": {
+        "pattern": "^[01]:[0-9]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^pool/tasks/[01]-[0-9]+\\.json$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65536
+          }
+        }
+      }
+    }
+  }
+}

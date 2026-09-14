@@ -56,6 +56,10 @@ https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/data/countr
 轮次失败时可提前移除。未知、UDP、缺失和延期结果不累计失败。完整配置按内容哈希复用，
 消费端按需下载。
 
+TCP 常规检查目标为四小时，未知结果满一小时后可使用剩余容量重试。两个探测 Worker
+仍每五分钟执行，每次最多写一个 KV 批次（正常调度每天最多 576 次）。
+见[任务分配与诊断字段](docs/pool.zh-CN.md#探测与合并)。
+
 ```text
 https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/servers.json
 https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/countries.json

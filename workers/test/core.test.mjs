@@ -144,6 +144,7 @@ test("four pending socket closures exhaust lanes and leave room for the KV write
     }}};
     try {
       const result=await scheduled({scheduledTime:now},env,connect,{now:()=>now,read:data.read,
+        recoveryWait:0,
         attempt:(endpoint,socketConnect,options)=>connectOnce(endpoint,socketConnect,{...options,timeout:5,closeTimeout:5})});
       assert.equal(result.status,"stored");
       assert.equal(result.unclosed_sockets,4);
@@ -162,7 +163,7 @@ test("rejected close retires its lane without erasing a confirmed handshake",asy
   const batch=await runBatch(work(Array.from({length:12},(_,n)=>target(n,[1000+n])),[]),()=>{
     connections++;
     return {opened:Promise.resolve(),closed:new Promise(()=>{}),close:async()=>{throw new Error("close failed");}};
-  },{attempt:(e,connect,options)=>connectOnce(e,connect,{...options,closeTimeout:5})});
+  },{recoveryWait:0,attempt:(e,connect,options)=>connectOnce(e,connect,{...options,closeTimeout:5})});
   assert.equal(connections,4);
   assert.equal(batch.unclosed_sockets,4);
   assert.equal(batch.results.filter(r=>r.status==="reachable").length,4);
@@ -331,4 +332,111 @@ test("fetch explicitly uses manual redirects and bounded response reads",async()
   assert.equal(result.length,2);
   await assert.rejects(readBytes("https://example.test/data",2,{fetcher:async()=>new Response("123")}),/limit/);
   await assert.rejects(readBytes("https://example.test/data",2,{fetcher:async()=>new Response(null,{status:302})}),/HTTP 302/);
+});
+
+async function taskInputs(targets, {worker=0, wrongWorker=false, missing=false, unknownProtocol=false}={}) {
+  const slot=Math.floor(now/300000), path=`pool/tasks/${worker}-${slot}.json`;
+  const scheduledAt=slot*300000+(worker===0?120000:240000);
+  const task=bytes({schema_version:2,worker_id:wrongWorker?1-worker:worker,slot,scheduled_at:iso(scheduledAt),targets});
+  const manifest=bytes({schema_version:2,normal_interval_seconds:14400,retry_interval_seconds:3600,
+    tasks:missing?{}:{[`${worker}:${slot}`]:{path,bytes:task.length,sha256:await hash(task)}}});
+  const plan=bytes({schema_version:1,bucket_count:144,source_fetched_at:iso(now),controls:[target(1,[444])],
+    buckets:{},task_protocol_version:unknownProtocol?3:2,
+    task_manifest:{path:"pool/task-plan.json",bytes:manifest.length,sha256:await hash(manifest)}});
+  const index=bytes({kind:"vpngate-pool",schema_version:1,data_commit:"a".repeat(40),source_fetched_at:iso(now),
+    files:{"pool/probe-plan.json":{bytes:plan.length,sha256:await hash(plan)}}});
+  const calls=[];
+  const read=async url=>{calls.push(url);return url.endsWith("latest.json")?index:
+    url.endsWith("probe-plan.json")?plan:url.endsWith("task-plan.json")?manifest:task;};
+  return {read,calls,task,scheduledAt,path};
+}
+
+test("v2 task packs cross buckets within one partition and write one KV key",async()=>{
+  const targets=Array.from({length:35},(_,n)=>({...target(n,[1000+n]),next_probe_at:iso(now),last_probe_round:roundOf(now)}));
+  const data=await taskInputs(targets), writes=[];
+  const env={WORKER_ID:"0",REPOSITORY:"owner/repo",RESULTS:{put:async(...args)=>writes.push(args)}};
+  const stored=await scheduled({scheduledTime:now},env,null,{now:()=>now,read:data.read,attempt:success});
+  assert.equal(stored.schema_version,2);
+  assert.equal(data.calls.length,4);
+  assert.equal(writes.length,1);
+  assert.equal(writes[0][2].expirationTtl,259200);
+  const batch=JSON.parse(writes[0][1]);
+  assert.equal(batch.results.length,35);
+  assert.equal(batch.bucket,undefined);
+  assert.equal(batch.task_path,data.path);
+  assert.equal(batch.attempted_endpoints,36);
+  assert.equal(batch.results.every(r=>r.status==="reachable"),true);
+});
+
+test("missing tasks and targets not yet due do not probe or write; no same-round suppression in v2",async()=>{
+  const writes=[],env={WORKER_ID:0,REPOSITORY:"owner/repo",RESULTS:{put:async(...args)=>writes.push(args)}};
+  for(const data of [await taskInputs([],{missing:true}),await taskInputs([{...target(),next_probe_at:iso(now+3600000)}])]) {
+    const result=await scheduled({scheduledTime:now},env,()=>assert.fail(),
+      {now:()=>now,read:data.read,attempt:()=>assert.fail("future target must be skipped")});
+    assert.equal(result.status,"no_due_targets");
+  }
+  assert.equal(writes.length,0);
+});
+
+test("task hash, protocol, assignment and public address checks precede any socket",async()=>{
+  const good={...target(),next_probe_at:iso(now)},env={WORKER_ID:0,REPOSITORY:"owner/repo"};
+  for(const [data,pattern] of [
+    [await taskInputs([good],{wrongWorker:true}),/Mixed task/],
+    [await taskInputs([good],{unknownProtocol:true}),/Unsupported task/],
+    [await taskInputs([{...good,id:id(72)}]),/Wrong task partition/],
+    [await taskInputs([{...good,endpoints:[{ip:"10.0.0.1",port:443}]}]),/Invalid endpoint/],
+    [await taskInputs([good,good]),/duplicate task/]
+  ]) await assert.rejects(loadWork(env,now,{now:()=>now,read:data.read}),pattern);
+  const data=await taskInputs([good]);
+  await assert.rejects(loadWork(env,now,{now:()=>now,
+    read:url=>url.endsWith(data.path)?bytes({}):data.read(url)}),/hash mismatch/);
+  const delayed=await loadWork(env,now,{now:()=>now+10800000,read:data.read});
+  assert.equal(delayed.task_slot,Math.floor(now/300000));
+  const one=await taskInputs([{...good,id:id(72)}],{worker:1});
+  assert.equal((await loadWork({...env,WORKER_ID:1},one.scheduledAt,{now:()=>one.scheduledAt,read:one.read})).worker_id,1);
+});
+
+test("confirmed late closure recovers lanes without exceeding four outstanding sockets",async()=>{
+  let active=0,peak=0,calls=0;
+  const connect=()=>{
+    active++;calls++;peak=Math.max(peak,active);
+    let resolveClosed;
+    const closed=new Promise(resolve=>{resolveClosed=resolve;});
+    return {opened:Promise.resolve(),closed,close:()=>new Promise(resolve=>setTimeout(()=>{
+      active--;resolveClosed();resolve();
+    },35))};
+  };
+  const batch=await runBatch(work(Array.from({length:12},(_,n)=>target(n,[1000+n])),[]),connect,
+    {recoveryWait:200,attempt:(e,c,options)=>connectOnce(e,c,{...options,closeTimeout:5})});
+  assert.equal(calls,12);
+  assert.equal(peak,4);
+  assert.ok(batch.recovered_sockets>=8);
+  assert.equal(batch.deferred,0);
+  assert.equal(batch.results.every(r=>r.status==="reachable"),true);
+  await new Promise(resolve=>setTimeout(resolve,50));
+  assert.equal(active,0);
+});
+
+test("rejected closure never frees a lane and recovery waiting is bounded",async()=>{
+  let calls=0;
+  const batch=await runBatch(work(Array.from({length:8},(_,n)=>target(n,[1000+n])),[]),()=>{
+    calls++;return {opened:Promise.resolve(),closed:Promise.reject(new Error("closed rejected")),
+      close:()=>Promise.reject(new Error("close rejected"))};
+  },{recoveryWait:10,attempt:(e,c,options)=>connectOnce(e,c,{...options,closeTimeout:5})});
+  assert.equal(calls,4);
+  assert.equal(batch.recovered_sockets,0);
+  assert.equal(batch.unclosed_sockets,4);
+  assert.equal(batch.stop_reason,"socket_close_unconfirmed");
+});
+
+test("a six-hour boundary during input loading cannot backdate the execution round",async()=>{
+  const nextRound=(roundOf(now)+1)*21600000;
+  const before=work([{...target(),last_probe_round:roundOf(now)}]);
+  const batch=await runBatch(before,null,{now:()=>nextRound,attempt:success});
+  assert.equal(batch.round,roundOf(nextRound));
+  assert.equal(batch.results.length,1);
+  const packed={...before,task_slot:Math.floor(now/300000),task_path:"pool/tasks/0-1.json",
+    task_sha256:"a".repeat(64),task_manifest_sha256:"b".repeat(64),
+    targets:[{...target(),next_probe_at:iso(now)}]};
+  assert.equal((await runBatch(packed,null,{now:()=>nextRound,attempt:success})).round,roundOf(nextRound));
 });

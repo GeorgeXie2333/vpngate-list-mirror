@@ -37,14 +37,35 @@ only Node.js built-ins. The command also refreshes the identical local `build/wo
 copy. CI checks the committed file against its sources; edit the sources and regenerate it.
 
 Each scheduled invocation logs `started`, followed by `stored`, `no_due_targets` or `failed`.
-If a socket's closure cannot be confirmed, the batch stops starting new connections,
-marks the affected endpoint `unknown`, defers remaining work, and still attempts one KV write.
-The stored summary includes `stop_reason: socket_close_unconfirmed` and `unclosed_sockets`.
-At most four sockets remain outstanding, leaving capacity for the KV request.
+The updated summary includes `schema_version`, `task_slot`, endpoint errors and recovered
+socket slots. Confirmed late closure can recover a reserved lane within a bounded wait;
+unconfirmed closure never frees capacity. Confirmed handshakes survive cleanup trouble.
+At most four sockets remain outstanding, leaving capacity for the single KV write.
 
 Cron delivery may be up to three hours late, provided source observations are still at most
-three hours old. The original scheduled time chooses the bucket; the actual probe execution
-chooses the result round, so delayed work cannot backfill an old failure round.
+three hours old. The original scheduled time chooses the task; actual execution chooses the
+six-hour failure round. Regular checks target four hours; one-hour unknown retries only
+use spare capacity. Tasks contain up to 35 nodes and reserve five of 40 endpoints for controls.
+
+### Upgrading existing deployments to task packs
+
+1. Publish the updated repository code first. After a successful sync, `pool/probe-plan.json`
+   contains `task_protocol_version: 2` and a hash-checked `task_manifest`. Actions now accepts
+   both legacy schema-1 batches and schema-2 task batches. Older probe Workers continue to
+   use the retained buckets during this transition.
+2. Paste the regenerated [worker-dashboard.js](../workers/worker-dashboard.js) into both
+   probe Workers in the Dashboard and deploy. No Wrangler, new KV namespace, Cron change,
+   secret or binding is needed. Keep `MAX_TARGETS_PER_RUN=40` for full operation and retain
+   the existing `TCP_PRUNE_ENABLED` choice. First-time trial settings above do not require
+   an already accepted installation to revert to a two-node trial.
+3. Look for `schema_version: 2` and `task_slot` in `stored` events. Each event still writes
+   one `results/<round>/<uuid>` key. The next Actions summary has a dedicated TCP diagnostics
+   table; compare actual attempts, definitive results, deferrals, cleanup errors and CPU.
+   Maximum 420 assigned nodes per half hour is capacity, not a promised reachable count.
+
+A new Worker also supports an older index without the task descriptor, using legacy buckets.
+Unknown task protocol versions fail closed. Repeated Cron deliveries are not guaranteed
+exactly once; batch IDs and six-hour failure merging prevent repeated failure accumulation.
 
 ## Install and deploy with Wrangler (optional)
 
@@ -98,14 +119,14 @@ chooses the result round, so delayed work cannot backfill an old failure round.
    Confirm Cron `2-57/5 * * * *` on Worker 0 and `4-59/5 * * * *` on Worker 1.
    Both use UTC. Allow up to 15 minutes for [Cron configuration propagation](https://developers.cloudflare.com/workers/configuration/cron-triggers/).
    Review normal-batch CPU usage and a complete six-hour round, then set
-   `TCP_PRUNE_ENABLED=true`. A six-hour target interval can slip under load or
+   `TCP_PRUNE_ENABLED=true`. The four-hour regular check target can slip under load or
    missed schedules; it is not a deadline guarantee.
 
 ## Required live acceptance
 
 - Inspect actual **scheduled** events in Cloudflare logs, not an HTTP GET to
   `/__scheduled`. Production HTTP handlers never trigger probes. Wait for a
-  nonempty bucket; empty/due-filtered buckets correctly log `no_due_targets`.
+  nonempty task; missing, empty or not-yet-due tasks correctly log `no_due_targets`.
 - Confirm `socket.opened` success, immediate close, and classification of
   platform errors as unknown. A run has at most two target nodes during initial
   rollout (plus up to five controls); no application data or OpenVPN is sent.
@@ -113,7 +134,7 @@ chooses the result round, so delayed work cannot backfill an old failure round.
   subrequests. Network wait is not CPU time. Small-batch success does not prove
   40-endpoint batches fit the free CPU budget: re-check after rollout.
 - Confirm a single immutable `results/<round>/<uuid>` KV object with 72-hour
-  expiration; inspect results/control/guard/deferred fields. Empty buckets may
+  expiration; inspect results/control/guard/deferred fields. Empty tasks may
   make no write. Listing/get may lag across locations.
 - After the next existing half-hour Actions run, confirm `pool.reader.status`
   is `read`, `batches_applied` grows, batch UUID appears in committed
@@ -137,7 +158,7 @@ Check scheduled probing, KV writes and Actions reads separately:
 | Only `fetch` / `GET /v1/batches` logs | These are Actions reads; they do not prove a scheduled probe ran |
 | Cron exists but no `scheduled` logs | Open **Settings → Trigger Events → View events** for the deployed production Worker |
 | Cron execution history is also empty | Verify the production deployment has the `scheduled` handler, the saved Cron remains listed, and the account has Cron capacity; this alone does not identify a KV fault |
-| `status: no_due_targets` | The bucket is empty or already completed this round; no KV write is expected. Check subsequent buckets |
+| `status: no_due_targets` | The task is missing, empty or not yet due; no KV write is expected. Check subsequent slots |
 | `status: stored` but the KV view is empty | Compare both Workers' `RESULTS` namespace IDs with the namespace being viewed |
 | Actions `pool.reader.errors` includes `http_404` | The listing API must use Worker 0's origin; Worker 1 always returns 404. A single batch 404 can also mean delayed visibility |
 | Actions reports `http_401` | Check that Worker 0 and Actions have the same `PROBE_READ_TOKEN`; do not paste secrets into logs |

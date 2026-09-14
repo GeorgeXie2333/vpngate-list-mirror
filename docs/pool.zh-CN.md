@@ -15,6 +15,8 @@ Git 保存正式状态；KV 只是会过期的探测结果收件箱。原镜像 
 | `pool/configs/<解码内容SHA-256>.json` | 完整原始 Base64 及解码字节的 SHA-256、长度 |
 | `pool/probe-plan.json` | 144 桶的路径／哈希／大小，以及最多五个本轮源站单端点对照节点 |
 | `pool/probes/000.json` … `143.json` | 节点 ID、配置哈希、IP／端口、最近观察及探测轮次；无证书和 Base64 |
+| `pool/task-plan.json` | v2 绝对时隙任务索引，由探测清单引用并校验哈希 |
+| `pool/tasks/<worker>-<slot>.json` | 同一 Worker 分区最多 35 个目标及各自到期时间 |
 | `pool/state.json` | 已消费批次 UUID 及轮次，与池共同提交的维护状态 |
 
 [JSON Schema](../schemas/pool/v1/) 覆盖公开文件和 Worker 批次。添加可选字段兼容，消费端
@@ -61,38 +63,69 @@ Git 保存正式状态；KV 只是会过期的探测结果收件箱。原镜像 
 
 ## 探测与合并
 
-轮次为 `floor(unix_seconds / 21600)`，UTC 00/06/12/18 点对齐。桶号为
-`int(去掉v1:后的ID前8位, 16) % 144`。Worker 0 负责 0–71，Worker 1 负责 72–143；
-六小时内每个五分钟槽为 `floor((scheduled_milliseconds % 21600000) / 300000)`，
-桶号为 `worker_id * 72 + slot`，桶内优先最早检查的节点。六小时是目标间隔，错过调度或
-超预算会延期；两个 Worker 不代表不同地区的独立观测。
+失败轮次仍为 `floor(unix_seconds / 21600)`，UTC 00/06/12/18 点对齐。
+常规检查改为四小时目标间隔，失败累计的六小时规则不变。桶号仍为
+`int(去掉 v1: 后的 ID 前 8 位, 16) % 144`；Worker 0 负责 0–71，Worker 1 负责 72–143。
+两个 Worker 保留原五分钟 Cron，不表示不同地区的独立观测。
 
-Worker 读取 Raw 索引，再读取完整 SHA 下经哈希校验的清单和当前桶。源站获取时间超过
-三小时则暂停。仅处理所有远端均与 CSV 公网 IP 一致、端口明确的纯 TCP 配置；支持多个
-顶层 `remote` 和显式协议覆盖，最多八个去重端点。域名、代理、外部引用、连接块和混合／
-不确定协议保留记录，不猜测端点。
+发布器跨同一 Worker 的桶分配任务包，每包最多 35 个节点、35 个不同目标端点，给最多五个
+本轮源站对照预留容量。先安排从未尝试和已到四小时期限的节点，最早检查者优先；未知结果
+满一小时后，仅使用常规检查剩余容量重试。四小时是目标，超额、平台异常和调度延迟仍会延期。
 
-每次最多建立 40 个不同端点的连接，含最多五个本轮源站对照；并发四个、每连接三秒、
-探测预算 45 秒。任一端点成功即 TCP 可达，全部完成且失败才不可达。平台限制、端口 25、
-资源异常和不明确错误均未知。只等待 `socket.opened` 然后关闭，不发送应用数据；超时也主动关闭。
-关闭确认最多等待一秒，`close()` 或 `closed` 任一成功完成即可；仅 Promise 拒绝不算确认释放。
-仍无法确认时只停用该连接占用的探测槽，其余槽继续工作；最多保留四个未关闭连接，为 KV 写入
-留出余量。`opened` 已确认成功的连接仍保留 `reachable`，关闭异常不会抹掉成功事实；无法确认
-关闭的模糊失败保持 `unknown`。只有预算还剩至少四秒时，才开始下一次连接和关闭尝试。
+`pool/probe-plan.json` 保持 schema 1 和旧桶描述，新增 `task_protocol_version: 2`、
+`task_manifest` 描述，指向 `pool/task-plan.json`。后者为 schema 2，用 `worker_id:slot`
+映射任务文件路径、大小和 SHA-256；`slot = floor(scheduled_milliseconds / 300000)` 为绝对时隙。
+`pool/tasks/<worker_id>-<slot>.json` 含 schema 2、Worker 编号、时隙、名义计划时间及带
+`next_probe_at` 的目标。Worker 读取 Raw 小索引后，依次校验同一完整 commit 下的探测清单、
+任务清单和自己的任务包，共四次 HTTPS 读取；不下载全池、不使用 KV 任务锁。任务不存在则
+返回 `no_due_targets`，不擅自改探其他时隙。
 
-调用延迟最多允许三小时，与源数据三小时新鲜度检查分别执行。桶号按原计划时间选择，结果轮次
-按实际执行时间记录。批次新增兼容 v1 的可选字段 `scheduled_at`、`stop_reason` 和
-`unclosed_sockets`，记录原计划时间与停用槽数量；即使连接稍后关闭，本次调用也不复用该槽。
-只有四个槽全部停用且仍有剩余任务时，`stop_reason` 才为 `socket_close_unconfirmed`；
-时间预算导致的剩余任务由 `budget_exhausted` 标记。`attempted_endpoints` 统计已处理的去重端点
-尝试（含本地拒绝的目标），`endpoint_error_counts` 分类统计错误及未执行端点的 `budget`。
-这两个计数包含对照；`deferred` 则按节点计数。端点的 `close_confirmed` 和 `cleanup_error`
-（`close_timeout`／`close_rejected`）用于区分回收异常与连接结果。这些诊断保存在 KV，公开目录
-保留原有 TCP 状态字段；新增可选字段均不用于补算历史失败轮次。
+任务预留保存在 Git。每次发布保留未来 30 分钟内已分配的任务，并重排更远的三小时后备计划。
+删除或配置变化的节点从预留中移除，目标元数据刷新为当前池状态。过去三小时的任务保留给
+延迟 Cron。近期预留避免立即重复分配；缺失结果只占用 30 分钟预留，不计作已探测。
+这不保证恰好执行一次；延迟、重复事件及 KV 最终一致性由幂等合并处理。正常调度仍每天最多
+576 次 KV 写入，每个非空调用只保存一个唯一批次对象。
 
-Actions 只读取当前及上一轮已完成的批次，不等待探测、不连接节点 IP。批次含唯一 UUID、
-Worker／桶／轮次、数据完整 SHA、清单和桶哈希、开始结束时间、逐端点结果、对照、完成／
-延期数及异常保护标记。合并器重新验证并计算结果和保护条件。批次哈希不是独立来源认证。
+仅处理所有远端均与 CSV 公网 IP 一致、端口明确的纯 TCP 配置，支持最多八个顶层远端和
+显式协议覆盖。域名、代理、外部引用、连接块和不确定协议不猜测端点。源数据超过三小时
+暂停探测，调用延迟独立限制为三小时。按原计划时间选任务，按实际执行时间计失败轮次。
+
+每次最多处理 40 个不同端点（含最多五个对照），四路并发、连接超时三秒、探测预算 45 秒。
+不发送应用数据。任一端点成功即可达，全部完成且有效失败才不可达；平台限制、端口 25、
+资源异常和不明错误均为未知。每条 socket 主动关闭，先等待一秒确认 `close()` 或 `closed`
+成功完成，Promise 拒绝本身不算释放。未确认的槽继续占位，其他槽继续工作；如有剩余任务，
+可额外等待最多五秒，得到明确关闭确认后才复用。恢复等待包含在 45 秒预算内，并给下一次
+连接和关闭预留四秒。最多保留四个未关闭连接，为 KV 留出容量。已确认的握手成功不被
+关闭异常抹掉，无法确认关闭的模糊连接失败仍为未知。
+
+任务包返回 schema 2 批次，旧桶仍返回 schema 1。v2 用 `task_slot`、`task_path`、
+`task_sha256`、`task_manifest_sha256` 替代 `bucket`／`bucket_sha256`；其他结果、保护字段、
+KV 键和 TTL 不变。[探测 v2 Schema](../schemas/probe/v2/) 描述任务清单、任务及批次。
+Actions 同时接受 v1/v2，校验 Worker 分区、配置、端点和时间；只读取当前／上一轮已经完成的
+结果，不等待探测，不连接节点 IP。哈希提供一致性校验，不是独立的探测来源认证。
+
+所有端点均为 `budget` 的结果属于完全延期，不覆盖状态、`checked_at`、尝试时间或失败次数。
+部分端点已尝试时仍可能产生未知。可选 `tcp_probe.last_attempted_at`／`last_attempt_status`
+记录最新尝试，与保留的可达性结论分开。同一六小时轮次成功优先，所以后续失败可以推进
+尝试时间，而 `checked_at` 和可达状态仍指向此前成功。旧记录无新字段时调度回退使用
+`checked_at`；无法追溯区分历史未知是否由旧版延期标记产生。
+
+Actions 日志和摘要的 `pool.probe_diagnostics` 包含：
+
+- `reported_nodes`／`attempted_nodes`／`definitive_nodes`／`unattempted_nodes`：结果行数、
+  至少处理一个端点的节点数、明确可达或不可达行数、完全延期行数。不含对照，按批次统计，
+  尚未扣除旧配置或同轮冲突，因此不是池中实际变更的唯一节点数。
+- `processed_endpoints` 含本地拒绝的 unsupported 目标；`socket_attempts` 排除 unsupported
+  和 budget。两者包含对照，仅在单批内按端点去重，不是跨批唯一计数。
+- `endpoint_error_counts`／`cleanup_error_counts` 从已验证端点结果重新汇总。
+  `close_timeout`／`close_rejected` 描述首次关闭确认期限，随后恢复单独计入 `recovered_sockets`。
+- `unclosed_sockets`／`recovered_sockets`／`budget_exhausted_batches`／`socket_stopped_batches`
+  分别统计占位槽、恢复槽、时间耗尽批次、四槽全阻塞批次。`deferred` 含小批限制、容量限制及
+  部分／完全未尝试的节点。这些不是节点失效次数。
+
+诊断随原批次写入，无额外 KV 写入。Worker 日志包含 `schema_version`、`task_slot`、
+`attempted_endpoints`、`endpoint_error_counts`、`unclosed_sockets`、`recovered_sockets`、
+`budget_exhausted` 和 `stop_reason`；公共节点目录不保存逐端点错误日志。
 
 - 节点已删、配置已变、结果过期超过 12 小时、旧轮次或时间异常则不更新；时钟容忍五分钟，
   单批次最多两分钟。乱序旧结果不能覆盖新状态。
@@ -103,7 +136,7 @@ Worker／桶／轮次、数据完整 SHA、清单和桶哈希、开始结束时�
   没有新结果时旧失败记录不会自行触发清理；未知、UDP 和延期不增加失败数。
 - 七天未被源站返回则按记录过期移除，即使 TCP 可达。容量不足优先淘汰最早观察的缺席节点，
   保留当前响应，原因单独报告。
-- 上限：5,000 节点、64 MiB 被引用配置 JSON、每份目录 16 MiB、索引／清单 64 KiB、
+- 上限：5,000 节点、64 MiB 被引用配置 JSON、每份目录 16 MiB、索引／清单／任务包 64 KiB、
   每桶 256 KiB、单条解码配置 128 KiB。旧池损坏、源站异常或当前数据本身超容量则停止发布并保留上次成功。
 
 KV 键为 `results/<round>/<uuid>`，TTL 72 小时，非空调用最多写一次，不写每节点键或共享

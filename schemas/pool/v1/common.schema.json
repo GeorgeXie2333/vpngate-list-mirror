@@ -174,9 +174,30 @@
               "type": "null"
             }
           ]
+        },
+        "last_attempted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+          "description": "Latest processed probe attempt, independent of the retained same-round reachability result. Pure budget deferral does not advance this time."
+        },
+        "last_attempt_status": {
+          "enum": [
+            "reachable",
+            "unreachable",
+            "unknown"
+          ]
         }
       },
-      "additionalProperties": true
+      "additionalProperties": true,
+      "dependentRequired": {
+        "last_attempted_at": [
+          "last_attempt_status"
+        ],
+        "last_attempt_status": [
+          "last_attempted_at"
+        ]
+      }
     },
     "node": {
       "type": "object",
@@ -423,6 +444,11 @@
               "type": "null"
             }
           ]
+        },
+        "next_probe_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
         }
       },
       "additionalProperties": true
@@ -497,8 +523,16 @@
             "budget"
           ]
         },
-        "close_confirmed": {"type": "boolean"},
-        "cleanup_error": {"enum": [null, "close_timeout", "close_rejected"]},
+        "close_confirmed": {
+          "type": "boolean"
+        },
+        "cleanup_error": {
+          "enum": [
+            null,
+            "close_timeout",
+            "close_rejected"
+          ]
+        },
         "connect_ms": {
           "anyOf": [
             {

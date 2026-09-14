@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "VPN Gate probe task v2",
+  "required": [
+    "schema_version",
+    "worker_id",
+    "slot",
+    "scheduled_at",
+    "targets"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "worker_id": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "slot": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000
+    },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "targets": {
+      "type": "array",
+      "maxItems": 35,
+      "items": {
+        "allOf": [
+          {
+            "$ref": "../../pool/v1/common.schema.json#/$defs/target"
+          },
+          {
+            "required": [
+              "next_probe_at"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

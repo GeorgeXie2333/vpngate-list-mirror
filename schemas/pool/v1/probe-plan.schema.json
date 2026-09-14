@@ -58,7 +58,40 @@
           }
         }
       }
+    },
+    "task_protocol_version": {
+      "const": 2
+    },
+    "task_manifest": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "path": {
+          "const": "pool/task-plan.json"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        }
+      }
     }
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "dependentRequired": {
+    "task_protocol_version": [
+      "task_manifest"
+    ],
+    "task_manifest": [
+      "task_protocol_version"
+    ]
+  }
 }

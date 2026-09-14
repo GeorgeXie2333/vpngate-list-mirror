@@ -68,6 +68,11 @@ removed earlier after 24 hours absent and three consecutive valid six-hour
 probe rounds fail. Unknown, UDP, missing and deferred results do not count as
 failures. Configurations are stored once per content hash and downloaded on demand.
 
+TCP checks target a four-hour interval. Unknown results may use spare capacity for
+retries after one hour. The two probe Workers keep their five-minute schedules and
+write at most one KV batch per invocation (576 writes/day under normal scheduling).
+See the [task scheduling and diagnostic fields](docs/pool.md#scheduling-and-merge-rules).
+
 ```text
 https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/servers.json
 https://cdn.jsdelivr.net/gh/GeorgeXie2333/vpngate-list-mirror@latest/pool/countries.json

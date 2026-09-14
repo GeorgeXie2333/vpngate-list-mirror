@@ -29,6 +29,14 @@ def summary(report):
         for key, value in report.items():
             display = json.dumps(value, ensure_ascii=False) if isinstance(value, (dict, list)) else str(value)
             lines.append(f"| {html.escape(key)} | {html.escape(display).replace('|', '&#124;').replace(chr(10), ' ')} |")
+        diagnostics = report.get("pool", {}).get("probe_diagnostics")
+        if diagnostics:
+            lines.extend(["", "### TCP probe diagnostics", "",
+                          "Endpoint counts include network controls; node counts exclude controls.", "",
+                          "| Metric | Value |", "| --- | --- |"])
+            for key, value in diagnostics.items():
+                display = json.dumps(value, sort_keys=True) if isinstance(value, dict) else str(value)
+                lines.append(f"| {html.escape(key)} | {html.escape(display)} |")
         with open(path, "a", encoding="utf-8", newline="\n") as output:
             output.write("\n".join(lines) + "\n")
 

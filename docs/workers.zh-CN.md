@@ -34,12 +34,29 @@ Worker 1 无需秘密。两个探测 Worker 都不持有 GitHub 写入或触发�
 修改源码后重新生成，不要手动维护两份 JS。
 
 每次定时调用先记录 `started`，随后记录 `stored`、`no_due_targets` 或 `failed`。
-如果无法确认 socket 已关闭，本批停止开启新连接，受影响端点记为 `unknown`，剩余任务延期，
-并继续尝试一次 KV 写入。日志包含 `stop_reason: socket_close_unconfirmed` 与
-`unclosed_sockets`。最多保留四个未关闭连接，为 KV 请求留出余量。
+新版摘要还包含 `schema_version`、`task_slot`、端点错误和恢复槽数量。槽位在关闭未确认时
+保持占用；额外有限等待期间确认关闭后才复用。已确认的握手成功不被关闭异常抹掉。
+最多保留四个未关闭 socket，为唯一一次 KV 写入留出余量。
 
-调度延迟最多允许三小时，同时仍要求源数据不超过三小时。原计划时间决定桶号，实际探测时间
-决定结果轮次；延迟执行不会补算过去轮次的失败。
+Cron 延迟最多允许三小时，同时仍要求源数据不超过三小时。原计划时间决定任务，实际执行
+时间决定六小时失败轮次。常规检查目标四小时，未知结果满一小时后仅使用剩余容量重试。
+每包最多 35 个节点，40 个端点预算中为对照预留五个。
+
+### 已有部署升级到任务包
+
+1. 先发布仓库新代码。成功同步后 `pool/probe-plan.json` 应出现 `task_protocol_version: 2`
+   和经哈希校验的 `task_manifest`。Actions 同时接受旧 schema 1 和新 schema 2 批次；
+   旧探测 Worker 在过渡期间仍可使用保留的桶文件。
+2. 将重新生成的 [worker-dashboard.js](../workers/worker-dashboard.js) 粘贴到两个探测
+   Worker 并在 Dashboard 部署。无需 Wrangler、新 KV、Cron、Secret 或 binding。
+   完整运行保持 `MAX_TARGETS_PER_RUN=40`，保留当前 `TCP_PRUNE_ENABLED` 选择。
+   上面的首次安装小批设置不要求已经完成验收的部署退回两个节点测试。
+3. `stored` 日志应出现 `schema_version: 2` 和 `task_slot`；每次仍只有一个
+   `results/<round>/<uuid>` 写入。下一次 Actions 摘要单独展示 TCP 诊断表，对比实际尝试、
+   明确结果、延期、关闭异常和真实 CPU。每半小时最多分配 420 个节点是容量估算，不是可达数保证。
+
+新 Worker 遇到尚未带任务描述的旧索引时会使用旧桶；不支持的任务协议版本明确失败。
+不保证 Cron 恰好执行一次，批次 ID 和六小时失败合并规则防止重复累计失败。
 
 ## 使用 Wrangler 部署（可选）
 
@@ -86,7 +103,7 @@ Worker 1 无需秘密。两个探测 Worker 都不持有 GitHub 写入或触发�
    确认 Worker 0 的 Cron 为 `2-57/5 * * * *`，Worker 1 为 `4-59/5 * * * *`，均使用 UTC。
    [Cron 变更传播](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
    最多可能需 15 分钟。检查正常批次 CPU 和一个完整六小时轮次，再设
-   `TCP_PRUNE_ENABLED=true`。六小时是目标间隔，平台调度和超预算仍可能延期。
+   `TCP_PRUNE_ENABLED=true`。常规检查目标四小时，平台调度和超预算仍可能延期。
 
 ## 必须完成的真实验收
 
@@ -116,7 +133,7 @@ Worker 1 无需秘密。两个探测 Worker 都不持有 GitHub 写入或触发�
 | 日志只有 `fetch` / `GET /v1/batches` | 这是 Actions 读取，不能证明定时探测执行过 |
 | Cron 已配置，但没有 `scheduled` 日志 | 查看 Worker **Settings → Trigger Events → View events** 的 Cron 执行历史，确认正在查看已部署的生产 Worker |
 | Cron 执行历史也为空 | 核对生产部署确实含 `scheduled` 处理器、Cron 保存后仍在列表中，以及账号 Cron 配额；不能仅据此认定为 KV 故障 |
-| `status: no_due_targets` | 当前桶为空或本轮已完成，按设计不写 KV；看后续不同桶 |
+| `status: no_due_targets` | 当前任务为空、缺失或目标尚未到期，按设计不写 KV；看后续时隙 |
 | `status: stored`，所查看的 KV 仍为空 | 比较两个 Worker 的 `RESULTS` 绑定与当前打开的 namespace ID |
 | Actions `pool.reader.errors` 包含 `http_404` | 列表接口地址应是 Worker 0 的 origin；Worker 1 固定返回 404。单条批次 404 也可能是暂不可见 |
 | Actions 报 `http_401` | 核对 Worker 0 与 Actions 的 `PROBE_READ_TOKEN`，不要把秘密贴进日志 |

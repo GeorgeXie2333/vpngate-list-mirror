@@ -1,27 +1,30 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "VPN Gate pool v1 batch",
+  "title": "VPN Gate probe result batch v2",
   "type": "object",
   "required": [
     "schema_version",
     "batch_id",
     "worker_id",
-    "bucket",
     "round",
     "data_commit",
     "plan_sha256",
-    "bucket_sha256",
     "started_at",
     "finished_at",
     "results",
     "controls",
     "guarded",
     "completed",
-    "deferred"
+    "deferred",
+    "scheduled_at",
+    "task_slot",
+    "task_path",
+    "task_sha256",
+    "task_manifest_sha256"
   ],
   "properties": {
     "schema_version": {
-      "const": 1
+      "const": 2
     },
     "batch_id": {
       "type": "string",
@@ -31,11 +34,6 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 1
-    },
-    "bucket": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 143
     },
     "round": {
       "type": "integer",
@@ -47,10 +45,6 @@
       "pattern": "^[0-9a-f]{40}$"
     },
     "plan_sha256": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "bucket_sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
@@ -109,14 +103,14 @@
     "results": {
       "type": "array",
       "items": {
-        "$ref": "common.schema.json#/$defs/result"
+        "$ref": "../../pool/v1/common.schema.json#/$defs/result"
       },
       "maxItems": 40
     },
     "controls": {
       "type": "array",
       "items": {
-        "$ref": "common.schema.json#/$defs/result"
+        "$ref": "../../pool/v1/common.schema.json#/$defs/result"
       },
       "maxItems": 5
     },
@@ -138,6 +132,23 @@
       "minimum": 0,
       "maximum": 40,
       "description": "Reserved slots reused only after positive closure confirmation."
+    },
+    "task_slot": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000000
+    },
+    "task_path": {
+      "type": "string",
+      "pattern": "^pool/tasks/[01]-[0-9]+\\.json$"
+    },
+    "task_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "task_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "additionalProperties": true

@@ -272,9 +272,16 @@ class PoolTests(unittest.TestCase):
             self.assertTrue(set(schema["required"]).issubset(instance),name)
             self.assertEqual(schema["properties"]["schema_version"]["const"],1)
         golden=parse_json(Path(__file__).with_name("fixtures").joinpath("pool.json").read_bytes())
-        self.assertEqual(golden["index"],index(self.first))
-        for path,body in golden["files"].items():
-            self.assertEqual(base64.b64decode(body),self.first.files[path])
+        # Keep the original fixture: historical v1 snapshots/consumers must survive
+        # the additive task manifest and optional attempt metadata.
+        legacy_files = {path: base64.b64decode(body) for path, body in golden["files"].items()}
+        self.assertEqual(verify_catalog(golden["index"], legacy_files), nodes(self.first))
+        legacy = assemble({r["id"]: r for r in nodes(self.first)}, self.first.files, {}, at(), legacy=True)
+        self.assertEqual(golden["index"], index(legacy))
+        verify_pool(index(legacy), legacy.files)
+        for path, body in legacy_files.items():
+            self.assertEqual(body, legacy.files[path])
+        verify_pool(index(self.first), self.first.files)
 
     def test_partial_existing_cache_or_failed_pointer_cannot_replace_success(self):
         candidate=self.first
